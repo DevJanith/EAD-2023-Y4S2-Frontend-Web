@@ -34,8 +34,11 @@ import {
 import { DeleteTwoTone, EditTwoTone, EyeTwoTone, PlusOutlined } from '@ant-design/icons';
 
 //types 
+import { Typography } from '@mui/material';
+import Dot from 'components/@extended/Dot';
 import AddEditUser from 'sections/application/user-management/AddEditUser';
 import AlertUserDelete from 'sections/application/user-management/AlertUserDelete';
+import { ColorProps } from 'types/extended';
 import { ReactTableProps, dataProps, userProps } from './types/types';
 
 // ==============================|| REACT TABLE ||============================== //
@@ -106,10 +109,10 @@ function ReactTable({ columns, data, handleAddEdit }: ReactTableProps) {
                             );
                         })
                     ) : (
-                        <EmptyTable msg="No Data" colSpan={5} />
+                        <EmptyTable msg="No Data" colSpan={12} />
                     )}
                     <TableRow>
-                        <TableCell sx={{ p: 2 }} colSpan={5}>
+                        <TableCell sx={{ p: 2 }} colSpan={12}>
                             <TablePagination gotoPage={gotoPage} rows={rows} setPageSize={setPageSize} pageIndex={pageIndex} pageSize={pageSize} />
                         </TableCell>
                     </TableRow>
@@ -118,6 +121,54 @@ function ReactTable({ columns, data, handleAddEdit }: ReactTableProps) {
         </>
     );
 }
+
+// ==============================|| User TABLE - STATUS ||============================== //
+
+interface Props {
+    status: "Default" | "New" | "Approved" | "Deleted" | "Active" | "In-Active" | string
+}
+
+const UserStatus = ({ status }: Props) => {
+    let color: ColorProps;
+    let title: string;
+
+    switch (status) {
+        case 'Default':
+            color = 'primary';
+            title = 'New';
+            break;
+        case 'New':
+            color = 'secondary';
+            title = 'New';
+            break;
+        case 'Approved':
+            color = 'success';
+            title = 'Approved';
+            break;
+        case 'Deleted':
+            color = 'error';
+            title = 'Deleted';
+            break;
+        case 'Active':
+            color = 'success';
+            title = 'Active';
+            break;
+        case "Inactive":
+            color = 'error';
+            title = 'In-Active';
+            break;
+        default:
+            color = 'primary';
+            title = '-';
+    }
+
+    return (
+        <Stack direction="row" spacing={1} alignItems="center">
+            <Dot color={color} />
+            <Typography>{title}</Typography>
+        </Stack>
+    );
+};
 
 // ==============================|| List ||============================== //
 
@@ -149,8 +200,113 @@ const List = () => {
                     }
                 },
                 {
-                    Header: 'Email',
+                    Header: 'User Name',
                     accessor: 'email'
+                },
+                {
+                    Header: 'User Full Name',
+                    accessor: 'firstName',
+                    Cell: ({ row }: { row: Row }) => {
+                        //@ts-ignore
+                        const data: dataProps = row.original
+
+                        if (data.firstName === undefined || data.firstName === null || data.firstName === '') {
+                            return <>-</>
+                        }
+                        if (typeof data.firstName === 'string') {
+                            return <> {data.salutation}{data.firstName} {data.lastName}</>;
+                        }
+                        if (typeof data.firstName === 'number') {
+                            return <>{data.firstName}</>;
+                        }
+                        // Handle any other data types if necessary
+                        return <>-</>;
+                    }
+                },
+                {
+                    Header: 'Contact Number',
+                    accessor: 'contactNumber'
+                },
+                {
+                    Header: 'User Type',
+                    accessor: 'userType'
+                },
+                {
+                    Header: 'Status',
+                    accessor: 'status',
+                    Cell: ({ row }: { row: Row }) => {
+                        if (row.values.status === undefined || row.values.status === null || row.values.status === '') {
+                            return <>-</>
+                        }
+                        if (typeof row.values.status === 'string') {
+                            return <><UserStatus status={row.values.status} />  </>;
+                        }
+                        if (typeof row.values.status === 'number') {
+                            return <>{row.values.status}</>;
+                        }
+                        // Handle any other data types if necessary
+                        return <>-</>;
+                    }
+                },
+                {
+                    Header: 'Is Active',
+                    accessor: 'isActive',
+                    Cell: ({ row }: { row: Row }) => {
+                        if (row.values.isActive === undefined || row.values.isActive === null || row.values.isActive === '') {
+                            return <>-</>
+                        }
+                        if (typeof row.values.isActive === 'string') {
+                            return <><UserStatus status={row.values.isActive ? "Active" : "In-Active"} />  </>;
+                        }
+                        if (typeof row.values.isActive === 'boolean') {
+                            return <><UserStatus status={row.values.isActive ? "Active" : "In-Active"} />  </>;
+                        }
+                        if (typeof row.values.isActive === 'number') {
+                            return <>{row.values.isActive}</>;
+                        }
+                        // Handle any other data types if necessary
+                        return <>-</>;
+                    }
+                },
+                {
+                    Header: 'Created By | On',
+                    accessor: 'createdOn',
+                    Cell: ({ row }: { row: Row }) => {
+                        //@ts-ignore
+                        const data: dataProps = row.original
+
+                        if (row.values.createdOn === undefined || row.values.createdOn === null || row.values.createdOn === '') {
+                            return <>-</>
+                        }
+                        if (typeof row.values.createdOn === 'string') {
+                            return <> {data.createdBy} | {row.values.createdOn}  </>;
+                        }
+                        if (typeof row.values.createdOn === 'number') {
+                            return <>{row.values.createdOn}</>;
+                        }
+                        // Handle any other data types if necessary
+                        return <>-</>;
+                    }
+                },
+                {
+                    Header: 'Updated By | On',
+                    accessor: 'updatedOn',
+                    Cell: ({ row }: { row: Row }) => {
+                        //@ts-ignore
+                        const data: dataProps = row.original
+
+                        if (row.values.updatedOn === undefined || row.values.updatedOn === null || row.values.updatedOn === '') {
+                            return <>-</>
+                        }
+                        if (typeof row.values.updatedOn === 'string') {
+                            return <> {data.updatedBy} | {row.values.updatedOn}  </>;
+                        }
+                        if (typeof row.values.updatedOn === 'number') {
+                            return <>{row.values.updatedOn}</>;
+                        }
+                        // Handle any other data types if necessary
+                        return <>-</>;
+                    }
                 },
                 {
                     id: "actions",
@@ -218,15 +374,46 @@ const List = () => {
         setOpenAlert(!openAlert);
     };
 
-    useEffect(() => { 
-        setData([])
+    useEffect(() => {
+        setData([
+            {
+                id: 1,
+                salutation: "Mr.",
+                firstName: "John",
+                lastName: "Doe",
+                contactNumber: "123-456-7890",
+                email: "johndoe@example.com",
+                userType: "Admin",
+                status: "Approved",
+                isActive: true,
+                createdOn: "2023-10-05",
+                updatedOn: "2023-10-05",
+                createdBy: "AdminUser",
+                updatedBy: "AdminUser",
+            },
+            {
+                id: 2,
+                salutation: "Ms.",
+                firstName: "Jane",
+                lastName: "Smith",
+                contactNumber: "987-654-3210",
+                email: "janesmith@example.com",
+                userType: "User",
+                status: "New",
+                isActive: true,
+                createdOn: "2023-10-04",
+                updatedOn: "2023-10-04",
+                createdBy: "BackOfficeUser",
+                updatedBy: "BackOfficeUser",
+            },
+        ])
     }, [])
 
     return (
         <>
             <MainCard content={false}>
                 <ScrollX>
-                    <ReactTable columns={columns} data={data} handleAddEdit={handleAddEdit} />
+                    <ReactTable columns={columns} data={data || []} handleAddEdit={handleAddEdit} />
                 </ScrollX>
                 {/* add / edit user dialog */}
                 <Dialog

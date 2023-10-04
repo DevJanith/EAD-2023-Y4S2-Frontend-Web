@@ -35,8 +35,19 @@ import AlertUserDelete from './AlertUserDelete';
 const getInitialValues = (user: FormikValues | null) => {
 
     const newUser = {
-        id: undefined,
-        email: ''
+        id: undefined, 
+        salutation: "",
+        firstName: "",
+        lastName: "",
+        contactNumber: "",
+        email: "",
+        userType: undefined,
+        status: undefined,
+        isActive: undefined,
+        createdOn: "",
+        updatedOn: "",
+        createdBy: "",
+        updatedBy: "",
     }
 
     if (user) {
@@ -50,13 +61,24 @@ const getInitialValues = (user: FormikValues | null) => {
 
 export interface Props {
     user?: {
-        id: number | string | undefined
-        email: string
+        id?: number | string
+        salutation?: string
+        firstName?: string
+        lastName?: string
+        contactNumber?: string
+        email?: string
+        userType?: "Admin" | "Back-Office" | "Travel-Agent" | "User"
+        status?: "Default" | "New" | "Approved" | "Deleted"
+        isActive?: boolean
+        createdOn?: string
+        updatedOn?: string
+        createdBy?: string
+        updatedBy?: string
     };
     onCancel: () => void;
 }
 
-const AddEditUser = ({ user, onCancel }: Props) => { 
+const AddEditUser = ({ user, onCancel }: Props) => {
     const isCreating = !user;
 
     const UserSchema = Yup.object().shape({});

@@ -22,6 +22,10 @@ const MaintenanceComingSoon = Loadable(lazy(() => import('pages/maintenance/comi
 // render - home page
 const Dashboard = Loadable(lazy(() => import('pages/home/dashboard')));
 
+// render - application page
+const UserList = Loadable(lazy(() => import('pages/application/user-management/list/list')))
+const UserProfile = Loadable(lazy(() => import('pages/application/user-management/profile/profile')))
+
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
@@ -43,7 +47,25 @@ const MainRoutes = {
               element: <Dashboard />
             }
           ]
-        }, 
+        },
+        {
+          path: 'application',
+          children: [
+            {
+              path: 'user-management',
+              children: [
+                {
+                  path: 'list',
+                  element: <UserList />
+                },
+                {
+                  path: 'profile/:id',
+                  element: <UserProfile />
+                }
+              ]
+            }
+          ]
+        },
       ]
     },
     {

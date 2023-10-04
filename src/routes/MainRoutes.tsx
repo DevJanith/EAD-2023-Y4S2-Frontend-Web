@@ -5,6 +5,9 @@ import Loadable from 'components/Loadable';
 import CommonLayout from 'layout/CommonLayout';
 import MainLayout from 'layout/MainLayout';
 import AuthGuard from 'utils/route-guard/AuthGuard';
+import Schedule from 'pages/home/schedule';
+import EditSchedule from 'pages/home/EditSchedule';
+import CreateSchedule from 'pages/home/CreateSchedule';
 
 // pages routing
 const AuthLogin = Loadable(lazy(() => import('pages/auth/login')));
@@ -41,9 +44,21 @@ const MainRoutes = {
             {
               path: 'dashboard',
               element: <Dashboard />
+            },
+            {
+              path: 'schedule',
+              element: <Schedule />
+            },
+            {
+              path: 'schedule/:id',
+              element: <EditSchedule />
+            },
+            {
+              path: 'schedule-create',
+              element: <CreateSchedule />
             }
           ]
-        }, 
+        }
       ]
     },
     {
@@ -97,7 +112,7 @@ const MainRoutes = {
           element: <AuthCodeVerification />
         }
       ]
-    },
+    }
   ]
 };
 

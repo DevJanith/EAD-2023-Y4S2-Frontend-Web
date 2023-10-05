@@ -7,6 +7,7 @@ export interface dataProps {
     lastName?: string
     contactNumber?: string
     email?: string
+    nic?: string
     userType?: "Admin" | "Back-Office" | "Travel-Agent" | "User"
     status?: "Default" | "New" | "Approved" | "Deleted"
     isActive?: boolean
@@ -29,6 +30,7 @@ export interface userProps {
     lastName?: string
     contactNumber?: string
     email?: string
+    nic?: string
     userType?: "Admin" | "Back-Office" | "Travel-Agent" | "User"
     status?: "Default" | "New" | "Approved" | "Deleted"
     isActive?: boolean

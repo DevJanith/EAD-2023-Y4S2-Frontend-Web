@@ -200,8 +200,8 @@ const List = () => {
                     }
                 },
                 {
-                    Header: 'User Name',
-                    accessor: 'email'
+                    Header: 'NIC (User_Name)',
+                    accessor: 'nic'
                 },
                 {
                     Header: 'User Full Name',
@@ -226,6 +226,10 @@ const List = () => {
                 {
                     Header: 'Contact Number',
                     accessor: 'contactNumber'
+                },
+                {
+                    Header: 'Email',
+                    accessor: 'email'
                 },
                 {
                     Header: 'User Type',
@@ -383,6 +387,7 @@ const List = () => {
                 lastName: "Doe",
                 contactNumber: "123-456-7890",
                 email: "johndoe@example.com",
+                nic: "200102402805",
                 userType: "Admin",
                 status: "Approved",
                 isActive: true,
@@ -398,6 +403,7 @@ const List = () => {
                 lastName: "Smith",
                 contactNumber: "987-654-3210",
                 email: "janesmith@example.com",
+                nic: "200102402814",
                 userType: "User",
                 status: "New",
                 isActive: true,

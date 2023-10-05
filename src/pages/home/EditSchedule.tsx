@@ -110,6 +110,7 @@ function ReactTable({ columns, data, striped }: { columns: Column[]; data: Train
     </>
   );
 }
+// @ts-ignore
 const EditSchedule = () => {
   const [data, setData] = useState([]);
   const [selectedTrain, setSelectedTrain] = useState<any>(null);

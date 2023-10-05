@@ -18,7 +18,9 @@ import moment from 'moment';
 
 import { EditOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons';
 import { dispatch } from 'store';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
+import { ListItem } from '@mui/material';
+import { List } from '@mui/material';
 // Define a type for the data
 type Reservation = {
   id: string;
@@ -32,31 +34,31 @@ type Reservation = {
   scheduleId: string | null;
 };
 
-type Train = {
-  id: string;
-  trainName: string;
-  trainNumber: string;
-  allocatedDriver: string;
-  allocatedGuard: string;
-  status: string;
-  publishStatus: string;
-  totalSeats: number;
-};
+// type Train = {
+//   id: string;
+//   trainName: string;
+//   trainNumber: string;
+//   allocatedDriver: string;
+//   allocatedGuard: string;
+//   status: string;
+//   publishStatus: string;
+//   totalSeats: number;
+// };
 
-type Schedule = {
-  id: string;
-  fromLocation: string;
-  toLocation: string;
-  startDatetime: string;
-  endDatetime: string;
-  ticketPrice: number;
-  status: string;
-  train: Train;
-  reservations: Reservation[];
-};
+// type Schedule = {
+//   id: string;
+//   fromLocation: string;
+//   toLocation: string;
+//   startDatetime: string;
+//   endDatetime: string;
+//   ticketPrice: number;
+//   status: string;
+//   train: Train;
+//   reservations: Reservation[];
+// };
 
 // ==============================|| Dashboard ||============================== //
-function ReactTable({ columns, data, striped }: { columns: Column[]; data: Schedule[]; striped?: boolean }) {
+function ReactTable({ columns, data, striped }: { columns: Column[]; data: Reservation[]; striped?: boolean }) {
   const {
     getTableProps,
     getTableBodyProps,
@@ -110,57 +112,59 @@ function ReactTable({ columns, data, striped }: { columns: Column[]; data: Sched
     </>
   );
 }
-const Schedule = () => {
+const ScheduleReservations = () => {
   const [data, setData] = useState([]);
   const [selectedItem, setSelectedItem] = useState<any>({});
+  const [selectedSchedule, setSelectedSchedule] = useState<any>({});
   const navigate = useNavigate();
+  const params = useParams();
 
   const striped = true;
   const columns = useMemo(
     () => [
       {
-        Header: 'Schedule ID',
+        Header: 'Reservation ID',
         accessor: 'id',
         className: 'cell-left'
       },
       {
-        Header: 'Start Location',
-        accessor: 'fromLocation'
-      },
-      {
-        Header: 'End Location',
-        accessor: 'toLocation'
-      },
-      {
-        Header: 'Start Date Time',
-        accessor: 'startDatetime',
-        Cell: ({ value }: { value: any }) => <div>{moment(value).format('YYYY-MM-DD HH:mm:ss')}</div>
-      },
-      {
-        Header: 'End Date Time',
-        accessor: 'endDatetime',
-        Cell: ({ value }: { value: any }) => <div>{moment(value).format('YYYY-MM-DD HH:mm:ss')}</div>
+        Header: 'Display Name',
+        accessor: 'displayName'
       },
 
       {
-        Header: 'Ticket Price',
-        accessor: 'ticketPrice',
+        Header: 'Created At',
+        accessor: 'createdAt',
+        Cell: ({ value }: { value: any }) => <div>{moment(value).format('YYYY-MM-DD HH:mm:ss')}</div>
+      },
+      {
+        Header: 'Reservation Date',
+        accessor: 'reservationDate',
+        Cell: ({ value }: { value: any }) => <div>{moment(value).format('YYYY-MM-DD HH:mm:ss')}</div>
+      },
+      {
+        Header: 'Reserve Count',
+        accessor: 'reservedCount',
+        className: 'cell-center'
+      },
+      {
+        Header: 'Amount',
+        accessor: 'amount',
         Cell: ({ value }: { value: any }) => <div>Rs. {value.toLocaleString()} </div>
       },
-
       {
         Header: 'Status',
-        accessor: 'status',
+        accessor: 'reservationStatus',
         className: 'cell-center',
         Cell: ({ value }: { value: string }) => {
           switch (value) {
             case 'CANCELLED':
               return <Chip color="error" label="CANCELLED" size="small" variant="light" />;
-            case 'ACTIVE':
-              return <Chip color="success" label="ACTIVE" size="small" variant="light" />;
-            case 'OTHER':
+            case 'RESERVED':
+              return <Chip color="success" label="RESERVED" size="small" variant="light" />;
+            case 'PENDING':
             default:
-              return <Chip color="info" label="N/A" size="small" variant="light" />;
+              return <Chip color="info" label="PENDING" size="small" variant="light" />;
           }
         }
       },
@@ -237,10 +241,11 @@ const Schedule = () => {
 
   const getScheduleData = () => {
     axios
-      .get('https://localhost:7051/api/Schedule')
+      .get(`https://localhost:7051/api/Schedule/${params.id}`)
       .then((response) => {
         if (response.status == 200) {
-          setData(response.data);
+          setSelectedSchedule(response.data);
+          setData(response.data.reservations);
         } else {
           console.log('ERROR  >>> ');
         }
@@ -394,13 +399,7 @@ const Schedule = () => {
             </Grid>
 
             <Grid container spacing={1.5} alignItems="center" sx={{ mt: 2 }}>
-              <Button
-                variant="contained"
-                fullWidth={true}
-                onClick={() => {
-                  navigate(`/home/schedule/reservations/${selectedItem.id}`);
-                }}
-              >
+              <Button variant="contained" fullWidth={true}>
                 View Reservations
               </Button>
             </Grid>
@@ -414,9 +413,65 @@ const Schedule = () => {
       </Dialog>
       <MainCard
         content={false}
-        title="Schedule Data"
+        title={``}
         secondary={<CSVExport data={data.slice(0, 10)} filename={striped ? 'striped-table.csv' : 'basic-table.csv'} />}
       >
+        <Grid item xs={12}>
+          <MainCard title={`Schedule Details : ${params.id}`}>
+            <List sx={{ py: 0 }}>
+              <ListItem divider>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={6}>
+                    <Stack spacing={0.5}>
+                      <Typography color="secondary">Start Location</Typography>
+                      <Typography>{selectedSchedule.fromLocation}</Typography>
+                    </Stack>
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <Stack spacing={0.5}>
+                      <Typography color="secondary">End Location</Typography>
+                      <Typography>{selectedSchedule.fromLocation}</Typography>
+                    </Stack>
+                  </Grid>
+                </Grid>
+              </ListItem>
+              <ListItem divider>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={6}>
+                    <Stack spacing={0.5}>
+                      <Typography color="secondary">Schedule Start Date & Time</Typography>
+                      <Typography>{moment(selectedSchedule.startDatetime).format('YYYY-MM-DD HH:MM')}</Typography>
+                    </Stack>
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <Stack spacing={0.5}>
+                      <Typography color="secondary">Schedule End Date & Time</Typography>
+                      <Typography>{moment(selectedSchedule.endDatetime).format('YYYY-MM-DD HH:MM')}</Typography>
+                    </Stack>
+                  </Grid>
+                </Grid>
+              </ListItem>
+              <ListItem>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={6}>
+                    <Stack spacing={0.5}>
+                      <Typography color="secondary">Ticket Price</Typography>
+                      <Typography> Rs. {selectedSchedule.ticketPrice}</Typography>
+                    </Stack>
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <Stack spacing={0.5}>
+                      <Typography color="secondary">Allocated Train Name</Typography>
+                      <Typography>
+                        {selectedSchedule.train && selectedSchedule.train.trainName ? selectedSchedule.train.trainName : 'N/A'}
+                      </Typography>
+                    </Stack>
+                  </Grid>
+                </Grid>
+              </ListItem>
+            </List>
+          </MainCard>
+        </Grid>
         <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}></Stack>
         <ScrollX>
           <ReactTable columns={columns} data={data} striped={striped} />
@@ -426,4 +481,4 @@ const Schedule = () => {
   );
 };
 
-export default Schedule;
+export default ScheduleReservations;

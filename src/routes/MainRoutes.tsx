@@ -8,6 +8,7 @@ import AuthGuard from 'utils/route-guard/AuthGuard';
 import Schedule from 'pages/home/schedule';
 import EditSchedule from 'pages/home/EditSchedule';
 import CreateSchedule from 'pages/home/CreateSchedule';
+import ScheduleReservations from 'pages/home/ScheduleReservations';
 
 // pages routing
 const AuthLogin = Loadable(lazy(() => import('pages/auth/login')));
@@ -56,6 +57,10 @@ const MainRoutes = {
             {
               path: 'schedule-create',
               element: <CreateSchedule />
+            },
+            {
+              path: 'schedule/reservations/:id',
+              element: <ScheduleReservations />
             }
           ]
         }

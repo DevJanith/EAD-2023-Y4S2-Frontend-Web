@@ -447,11 +447,11 @@ const CreateSchedule = () => {
             </Grid>
             <Grid item xs={12} sm={6}>
               <Stack spacing={1}>
-                <InputLabel>Price (Per 1 Ticket)</InputLabel>
+                <InputLabel>Price (Per 1 Ticket Rs.)</InputLabel>
                 <TextField
                   id="ticketPrice"
                   name="ticketPrice"
-                  placeholder="Enter ticket price"
+                  placeholder="Enter ticket price (Rs.)"
                   value={formik.values.ticketPrice}
                   onChange={trimFc(formik)}
                   onBlur={formik.handleBlur}

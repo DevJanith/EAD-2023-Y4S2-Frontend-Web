@@ -30,7 +30,7 @@ import ScrollX from 'components/ScrollX';
 import { CSVExport, TablePagination } from 'components/third-party/ReactTable';
 import axios from 'axios';
 
-import { PlusCircleOutlined, WarningFilled } from '@ant-design/icons';
+import { CloseOutlined, PlusCircleOutlined, WarningFilled } from '@ant-design/icons';
 import { dispatch } from 'store';
 
 import MainCard from 'components/MainCard';
@@ -40,6 +40,7 @@ import { FormControlLabel } from '@mui/material';
 import { Radio } from '@mui/material';
 import { AlertTitle } from '@mui/material';
 import { useNavigate } from 'react-router';
+import IconButton from 'components/@extended/IconButton';
 
 // Define a type for the data
 
@@ -265,16 +266,19 @@ const CreateSchedule = () => {
         .post('https://localhost:7051/api/Schedule', data)
         .then((response) => {
           if (response.status == 201) {
-            openSnackbar({
-              open: true,
-              message: 'Schedule created succesfully.',
-              variant: 'alert',
-              alert: {
-                color: 'success'
-              },
-              anchorOrigin: { vertical: 'top', horizontal: 'center' },
-              close: false
-            });
+            dispatch(
+              openSnackbar({
+                open: true,
+                message: 'Schedule created succesfully.',
+                variant: 'alert',
+                alert: {
+                  color: 'success'
+                },
+                anchorOrigin: { vertical: 'top', horizontal: 'center' },
+                close: false
+              })
+            );
+
             navigate(`/home/schedule`);
           } else {
             dispatch(
@@ -343,9 +347,18 @@ const CreateSchedule = () => {
       {/* Info Dialog */}
       <Dialog open={open} onClose={handleClose} fullWidth={true}>
         <Box sx={{ p: 1, py: 1.5 }}>
-          <DialogTitle>
-            <Typography variant="h4">Select Train For Schedule</Typography>
-          </DialogTitle>
+          <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
+            <DialogTitle>
+              <Typography variant="h4">Select Train For Schedule</Typography>
+            </DialogTitle>
+
+            <IconButton shape="rounded" color="error" onClick={handleClose}>
+              <CloseOutlined />
+            </IconButton>
+          </Stack>
+
+          <Divider />
+
           <DialogContent>
             <MainCard
               content={false}
@@ -358,11 +371,6 @@ const CreateSchedule = () => {
               </ScrollX>
             </MainCard>
           </DialogContent>
-          <DialogActions>
-            <Button variant="outlined" color="error" onClick={handleClose}>
-              Close
-            </Button>
-          </DialogActions>
         </Box>
       </Dialog>
 

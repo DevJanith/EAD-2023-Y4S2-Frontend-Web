@@ -9,6 +9,8 @@ import Schedule from 'pages/home/schedule';
 import EditSchedule from 'pages/home/EditSchedule';
 import CreateSchedule from 'pages/home/CreateSchedule';
 import ScheduleReservations from 'pages/home/ScheduleReservations';
+import ActiveSchedules from 'pages/home/ActiveSchedules';
+import MySchedules from 'pages/home/MySchedules';
 
 // pages routing
 const AuthLogin = Loadable(lazy(() => import('pages/auth/login')));
@@ -61,6 +63,39 @@ const MainRoutes = {
             {
               path: 'schedule/reservations/:id',
               element: <ScheduleReservations />
+            }
+          ]
+        },
+        {
+          path: 'home',
+          children: [
+            {
+              path: 'dashboard',
+              element: <Dashboard />
+            },
+            {
+              path: 'schedule',
+              element: <Schedule />
+            },
+            {
+              path: 'schedule/:id',
+              element: <EditSchedule />
+            },
+            {
+              path: 'schedule-create',
+              element: <CreateSchedule />
+            },
+            {
+              path: 'schedule/reservations/:id',
+              element: <ScheduleReservations />
+            },
+            {
+              path: 'active-schedules',
+              element: <ActiveSchedules />
+            },
+            {
+              path: 'my-schedules',
+              element: <MySchedules />
             }
           ]
         }

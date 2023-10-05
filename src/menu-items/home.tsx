@@ -37,6 +37,20 @@ const home: NavItemType = {
       type: 'item',
       url: '/home/schedule-create',
       icon: icons.DashboardOutlined
+    },
+    {
+      id: 'active schedules',
+      title: <FormattedMessage id="Active Schedules" />,
+      type: 'item',
+      url: '/home/active-schedules',
+      icon: icons.DashboardOutlined
+    },
+    {
+      id: 'my schedules',
+      title: <FormattedMessage id="My Schedules" />,
+      type: 'item',
+      url: '/home/my-schedules',
+      icon: icons.DashboardOutlined
     }
   ]
 };

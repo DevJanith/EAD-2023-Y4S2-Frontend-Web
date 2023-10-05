@@ -269,16 +269,18 @@ const EditSchedule = () => {
         .put(`https://localhost:7051/api/Schedule/${params.id}`, data)
         .then((response) => {
           if (response.status == 200) {
-            openSnackbar({
-              open: true,
-              message: 'Schedule updated succesfully.',
-              variant: 'alert',
-              alert: {
-                color: 'success'
-              },
-              anchorOrigin: { vertical: 'top', horizontal: 'center' },
-              close: false
-            });
+            dispatch(
+              openSnackbar({
+                open: true,
+                message: 'Schedule updated succesfully.',
+                variant: 'alert',
+                alert: {
+                  color: 'success'
+                },
+                anchorOrigin: { vertical: 'top', horizontal: 'center' },
+                close: false
+              })
+            );
             navigate(`/home/schedule`);
           } else {
             dispatch(

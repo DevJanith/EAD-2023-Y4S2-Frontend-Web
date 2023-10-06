@@ -146,7 +146,7 @@ const CreateSchedule = () => {
         Cell: ({ value }: { value: string }) => {
           switch (value) {
             case 'INACTIVE':
-              return <Chip color="error" label="CANCELLED" size="small" variant="light" />;
+              return <Chip color="error" label="INACTIVE" size="small" variant="light" />;
             case 'ACTIVE':
               return <Chip color="success" label="ACTIVE" size="small" variant="light" />;
             case 'OTHER':
@@ -476,7 +476,7 @@ const CreateSchedule = () => {
                 <FormControl>
                   <RadioGroup row aria-label="color" value={formik.values.status} onChange={formik.handleChange} name="status" id="status">
                     <FormControlLabel value="ACTIVE" control={<Radio color="success" />} label="Active" />
-                    <FormControlLabel value="CANCELLED" control={<Radio color="error" />} label="Cencelled" />
+                    <FormControlLabel value="INACTIVE" control={<Radio color="error" />} label="Inactive" />
                   </RadioGroup>
                 </FormControl>
                 {formik.errors.status && (

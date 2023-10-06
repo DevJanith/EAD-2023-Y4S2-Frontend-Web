@@ -11,6 +11,7 @@ import CreateSchedule from 'pages/home/CreateSchedule';
 import ScheduleReservations from 'pages/home/ScheduleReservations';
 import ActiveSchedules from 'pages/home/ActiveSchedules';
 import MySchedules from 'pages/home/MySchedules';
+import MyScheduleReservations from 'pages/home/MyScheduleReservations';
 
 // pages routing
 const AuthLogin = Loadable(lazy(() => import('pages/auth/login')));
@@ -96,6 +97,10 @@ const MainRoutes = {
             {
               path: 'my-schedules',
               element: <MySchedules />
+            },
+            {
+              path: 'my-schedule/reservations/:id',
+              element: <MyScheduleReservations />
             }
           ]
         }

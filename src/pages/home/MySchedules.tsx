@@ -24,6 +24,7 @@ import IconButton from 'components/@extended/IconButton';
 import { useFormik } from 'formik';
 import { TextField } from '@mui/material';
 import trimFc from 'utils/trimFc';
+import { useNavigate } from 'react-router';
 
 // Define a type for the data
 type Reservation = {
@@ -118,8 +119,10 @@ function ReactTable({ columns, data, striped }: { columns: Column[]; data: Sched
 }
 const MySchedules = () => {
   const [data, setData] = useState([]);
-  const [selectedItem, setSelectedItem] = useState<any>({});
-
+  const [selectedItem] = useState<any>({});
+  const [open, setOpen] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
+  const navigate = useNavigate();
   const striped = true;
   const columns = useMemo(
     () => [
@@ -179,7 +182,8 @@ const MySchedules = () => {
               variant="outlined"
               color="primary"
               onClick={() => {
-                handleClickOpen(row.original);
+                // handleClickOpen(row.original);
+                navigate(`/home/my-schedule/reservations/${row.original.id}`);
               }}
               endIcon={<EyeFilled />}
             >
@@ -253,13 +257,10 @@ const MySchedules = () => {
     }
   };
 
-  const [open, setOpen] = useState(false);
-  const [openDelete, setOpenDelete] = useState(false);
-
-  const handleClickOpen = (data: any) => {
-    setOpen(true);
-    setSelectedItem(data);
-  };
+  // const handleClickOpen = (data: any) => {
+  //   setOpen(true);
+  //   setSelectedItem(data);
+  // };
 
   const handleClose = () => {
     setOpen(false);

@@ -136,5 +136,14 @@
   "utils": "Utils",
   "widgets": "Widgets",
   "More Items": "More Items",
-  "home": "Home"
+  "home": "Home",
+  "application": "Application",
+  "hr": "HR",
+  "user-management": "User Management",
+  "train-management": "Train Management",
+  "train-list": "Train List",
+  "schedule-management": "Schedule Management",
+  "schedule-list": "Schedule List",
+  "reservation-management": "Reservation Management",
+  "reservation-list": "Reservation List"
 }

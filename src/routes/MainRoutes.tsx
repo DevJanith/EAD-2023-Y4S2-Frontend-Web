@@ -47,9 +47,9 @@ const MainRoutes = {
               element: <Dashboard />
             }
           ]
-        },
+        }, 
         {
-          path: 'application',
+          path: 'hr',
           children: [
             {
               path: 'user-management',
@@ -59,7 +59,7 @@ const MainRoutes = {
                   element: <UserList />
                 },
                 {
-                  path: 'profile/:id',
+                  path: 'profile',
                   element: <UserProfile />
                 }
               ]

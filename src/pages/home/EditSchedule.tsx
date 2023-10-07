@@ -525,7 +525,7 @@ const EditSchedule = () => {
                     id="status"
                   >
                     <FormControlLabel value="ACTIVE" control={<Radio color="success" />} label="Active" />
-                    <FormControlLabel value="INACTIVE" control={<Radio color="error" />} label="Inactive" />
+                    <FormControlLabel value="CANCELLED" control={<Radio color="error" />} label="Cancelled" />
                   </RadioGroup>
                 </FormControl>
                 {formik.errors.status && (

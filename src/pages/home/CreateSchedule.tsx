@@ -499,7 +499,7 @@ const CreateSchedule = () => {
                     id="status"
                   >
                     <FormControlLabel value="ACTIVE" control={<Radio color="success" />} label="Active" />
-                    <FormControlLabel value="INACTIVE" control={<Radio color="error" />} label="Inactive" />
+                    <FormControlLabel value="CANCELLED" control={<Radio color="error" />} label="Cancelled" />
                   </RadioGroup>
                 </FormControl>
                 {formik.errors.status && (
@@ -519,7 +519,7 @@ const CreateSchedule = () => {
                 onClick={() => {
                   handleClickOpen();
                 }}
-                disabled={formik.values.status == 'INACTIVE'}
+                disabled={formik.values.status == 'CANCELLED'}
               >
                 Add Train to Schedule
               </Button>

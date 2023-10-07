@@ -154,8 +154,8 @@ const Schedule = () => {
         className: 'cell-center',
         Cell: ({ value }: { value: string }) => {
           switch (value) {
-            case 'INACTIVE':
-              return <Chip color="error" label="INACTIVE" size="small" variant="light" />;
+            case 'CANCELLED':
+              return <Chip color="error" label="CANCELLED" size="small" variant="light" />;
             case 'ACTIVE':
               return <Chip color="success" label="ACTIVE" size="small" variant="light" />;
             case 'OTHER':

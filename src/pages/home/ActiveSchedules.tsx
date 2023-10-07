@@ -2,7 +2,7 @@
 
 // project import
 import { useEffect, useMemo, useState } from 'react';
-import { Card, CardContent, Chip, Divider, InputLabel, Stack, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import { Chip, Divider, InputLabel, Stack, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { Grid, Typography } from '@mui/material';
 // third-party
@@ -328,8 +328,6 @@ const ActiveSchedules = () => {
         .post(`https://localhost:7051/api/Reservation/createForSchedule/${selectedItem.id}`, data)
         .then((response) => {
           if (response.status == 201) {
-            alert(response.status);
-
             dispatch(
               openSnackbar({
                 open: true,
@@ -567,35 +565,6 @@ const ActiveSchedules = () => {
           <ReactTable columns={columns} data={data} striped={striped} />
         </ScrollX>
       </MainCard>
-
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        {data.map((item) => (
-          <Card style={{ minWidth: '300px', margin: '10px' }}>
-            <CardContent>
-              {/*  @ts-ignore */}
-              <Typography variant="h6" component="div">
-                asas
-              </Typography>
-              {/*  @ts-ignore */}
-              <Typography color="text.secondary">From: {item.fromLocation}</Typography>
-              {/*  @ts-ignore */}
-              <Typography color="text.secondary">To: {item.toLocation}</Typography>
-              {/*  @ts-ignore */}
-              <Typography color="text.secondary">Departure: {item.startDatetime}</Typography>
-              {/*  @ts-ignore */}
-              <Typography color="text.secondary">Arrival: {item.endDatetime}</Typography>
-              <Typography variant="body2" color="text.primary">
-                {/*  @ts-ignore */}
-                Price: ${item.ticketPrice}
-              </Typography>
-              <Typography variant="body2" color="text.primary">
-                {/*  @ts-ignore */}
-                Status: {item.status}
-              </Typography>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
     </>
   );
 };

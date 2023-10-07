@@ -2,12 +2,12 @@
 
 // project import
 import { useEffect, useMemo, useState } from 'react';
-import { Chip, IconButton, Stack, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { Alert, AlertTitle, Chip, Stack, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+
 import { Grid, Typography } from '@mui/material';
 // third-party
 import { Cell, Column, HeaderGroup, useFilters, usePagination, useTable } from 'react-table';
-import { openSnackbar } from 'store/reducers/snackbar';
+
 // project import
 
 import MainCard from 'components/MainCard';
@@ -16,11 +16,13 @@ import { CSVExport, TablePagination } from 'components/third-party/ReactTable';
 import axios from 'axios';
 import moment from 'moment';
 
-import { EditOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons';
-import { dispatch } from 'store';
-import { useNavigate, useParams } from 'react-router';
+import { useParams } from 'react-router';
 import { ListItem } from '@mui/material';
 import { List } from '@mui/material';
+import { Divider } from '@mui/material';
+import Avatar from 'components/@extended/Avatar';
+import { CheckCircleOutlined, CloseCircleOutlined, WarningFilled } from '@ant-design/icons';
+import { CardContent } from '@mui/material';
 // Define a type for the data
 type Reservation = {
   id: string;
@@ -114,9 +116,9 @@ function ReactTable({ columns, data, striped }: { columns: Column[]; data: Reser
 }
 const ScheduleReservations = () => {
   const [data, setData] = useState([]);
-  const [selectedItem, setSelectedItem] = useState<any>({});
+  // const [selectedItem, setSelectedItem] = useState<any>({});
   const [selectedSchedule, setSelectedSchedule] = useState<any>({});
-  const navigate = useNavigate();
+
   const params = useParams();
 
   const striped = true;
@@ -167,49 +169,44 @@ const ScheduleReservations = () => {
               return <Chip color="info" label="PENDING" size="small" variant="light" />;
           }
         }
-      },
-      {
-        Header: 'Actions',
-        accessor: 'progress',
-        className: 'cell-center',
-        Cell: ({ row }: { row: any }) => (
-          <>
-            <IconButton
-              color="primary"
-              size="large"
-              onClick={() => {
-                editScheduleInfo(row.original);
-              }}
-            >
-              <EditOutlined />
-            </IconButton>
-            <IconButton
-              color="inherit"
-              size="large"
-              onClick={() => {
-                handleClickOpenDelete(row.original);
-              }}
-            >
-              <DeleteOutlined />
-            </IconButton>
-
-            <IconButton
-              color="inherit"
-              size="large"
-              onClick={() => {
-                handleClickOpen(row.original);
-              }}
-            >
-              <EyeOutlined />
-            </IconButton>
-          </>
-        )
       }
-      //   {
-      //     Header: 'Profile Progress',
-      //     accessor: 'progress',
-      //     Cell: ({ value }: { value: number }) => <LinearWithLabel value={value} sx={{ minWidth: 75 }} />
-      //   }
+      // {
+      //   Header: 'Actions',
+      //   accessor: 'progress',
+      //   className: 'cell-center',
+      //   Cell: ({ row }: { row: any }) => (
+      //     <>
+      //       <IconButton
+      //         color="primary"
+      //         size="large"
+      //         onClick={() => {
+      //           editScheduleInfo(row.original);
+      //         }}
+      //       >
+      //         <EditOutlined />
+      //       </IconButton>
+      //       <IconButton
+      //         color="inherit"
+      //         size="large"
+      //         onClick={() => {
+      //           handleClickOpenDelete(row.original);
+      //         }}
+      //       >
+      //         <DeleteOutlined />
+      //       </IconButton>
+
+      //       <IconButton
+      //         color="inherit"
+      //         size="large"
+      //         onClick={() => {
+      //           handleClickOpen(row.original);
+      //         }}
+      //       >
+      //         <EyeOutlined />
+      //       </IconButton>
+      //     </>
+      //   )
+      // }
     ],
     []
   );
@@ -220,24 +217,24 @@ const ScheduleReservations = () => {
     getScheduleData();
   }, []);
 
-  const editScheduleInfo = (schedule: any) => {
-    if (schedule.reservations.length > 0) {
-      dispatch(
-        openSnackbar({
-          open: true,
-          message: 'Can not edit schedule with existing Reservations.',
-          variant: 'alert',
-          alert: {
-            color: 'error'
-          },
-          anchorOrigin: { vertical: 'top', horizontal: 'center' },
-          close: false
-        })
-      );
-    } else {
-      navigate(`/home/schedule/${schedule.id}`);
-    }
-  };
+  // const editScheduleInfo = (schedule: any) => {
+  //   if (schedule.reservations.length > 0) {
+  //     dispatch(
+  //       openSnackbar({
+  //         open: true,
+  //         message: 'Can not edit schedule with existing Reservations.',
+  //         variant: 'alert',
+  //         alert: {
+  //           color: 'error'
+  //         },
+  //         anchorOrigin: { vertical: 'top', horizontal: 'center' },
+  //         close: false
+  //       })
+  //     );
+  //   } else {
+  //     navigate(`/home/schedule/${schedule.id}`);
+  //   }
+  // };
 
   const getScheduleData = () => {
     axios
@@ -255,162 +252,64 @@ const ScheduleReservations = () => {
       });
   };
 
-  const DeleteSchedule = (schedule: any) => {
-    handleCloseDelete();
-    if (schedule.reservations.length > 0) {
-      dispatch(
-        openSnackbar({
-          open: true,
-          message: 'Can not delete schedule with existing Reservations.',
-          variant: 'alert',
-          alert: {
-            color: 'error'
-          },
-          anchorOrigin: { vertical: 'top', horizontal: 'center' },
-          close: false
-        })
-      );
-    } else {
-      axios
-        .delete(`https://localhost:7051/api/Schedule/${schedule.id}`)
-        .then((response) => {
-          if (response.status == 200) {
-            getScheduleData();
-          } else {
-            console.log('ERROR  >>> ');
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  };
+  // const DeleteSchedule = (schedule: any) => {
+  //   handleCloseDelete();
+  //   if (schedule.reservations.length > 0) {
+  //     dispatch(
+  //       openSnackbar({
+  //         open: true,
+  //         message: 'Can not delete schedule with existing Reservations.',
+  //         variant: 'alert',
+  //         alert: {
+  //           color: 'error'
+  //         },
+  //         anchorOrigin: { vertical: 'top', horizontal: 'center' },
+  //         close: false
+  //       })
+  //     );
+  //   } else {
+  //     axios
+  //       .delete(`https://localhost:7051/api/Schedule/${schedule.id}`)
+  //       .then((response) => {
+  //         if (response.status == 200) {
+  //           getScheduleData();
+  //         } else {
+  //           console.log('ERROR  >>> ');
+  //         }
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+  //       });
+  //   }
+  // };
 
-  const [open, setOpen] = useState(false);
-  const [openDelete, setOpenDelete] = useState(false);
+  // const [open, setOpen] = useState(false);
+  // const [openDelete, setOpenDelete] = useState(false);
 
-  const handleClickOpen = (data: any) => {
-    setOpen(true);
-    setSelectedItem(data);
-  };
+  // const handleClickOpen = (data: any) => {
+  //   setOpen(true);
+  //   setSelectedItem(data);
+  // };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
+  // const handleClose = () => {
+  //   setOpen(false);
+  // };
 
-  const handleClickOpenDelete = (data: any) => {
-    setOpenDelete(true);
-    setSelectedItem(data);
-  };
+  // const handleClickOpenDelete = (data: any) => {
+  //   setOpenDelete(true);
+  //   setSelectedItem(data);
+  // };
 
-  const handleCloseDelete = () => {
-    setOpenDelete(false);
-  };
+  // const handleCloseDelete = () => {
+  //   setOpenDelete(false);
+  // };
 
   return (
     <>
       {/* Delete Dialog */}
-      <Dialog
-        open={openDelete}
-        onClose={handleCloseDelete}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <Box sx={{ p: 1, py: 1.5 }}>
-          <DialogTitle id="alert-dialog-title">Alert !!!</DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">Do you want to delete the schedule ?</DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button color="error" onClick={handleCloseDelete}>
-              No
-            </Button>
-            <Button
-              variant="contained"
-              onClick={() => {
-                DeleteSchedule(selectedItem);
-              }}
-              autoFocus
-            >
-              Yes
-            </Button>
-          </DialogActions>
-        </Box>
-      </Dialog>
 
       {/* Info Dialog */}
-      <Dialog open={open} onClose={handleClose}>
-        <Box sx={{ p: 1, py: 1.5 }}>
-          <DialogTitle>
-            {' '}
-            <Typography variant="h4">Schedule Details</Typography>
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Schedule Details for ID - <strong> {selectedItem.id}</strong>{' '}
-            </DialogContentText>
-            <Grid container spacing={1.5} alignItems="center" sx={{ mt: 1 }}>
-              <Grid item>
-                <Typography variant="h6">Start Location : </Typography>
-              </Grid>
-              <Grid item>
-                <Typography variant="h6">{selectedItem.fromLocation}</Typography>
-              </Grid>
-            </Grid>
-            <Grid container spacing={1.5} alignItems="center" sx={{ mt: 1 }}>
-              <Grid item>
-                <Typography variant="h6">End Location : </Typography>
-              </Grid>
-              <Grid item>
-                <Typography variant="h6">{selectedItem.toLocation}</Typography>
-              </Grid>
-            </Grid>
 
-            <Grid container spacing={1.5} alignItems="center" sx={{ mt: 1 }}>
-              <Grid item>
-                <Typography variant="h6">Start Date Time : </Typography>
-              </Grid>
-              <Grid item>
-                <Typography variant="h6">{moment(selectedItem.startDatetime).format('YYYY-MM-DD HH:mm:ss')}</Typography>
-              </Grid>
-            </Grid>
-            <Grid container spacing={1.5} alignItems="center" sx={{ mt: 1 }}>
-              <Grid item>
-                <Typography variant="h6">End Date Time : </Typography>
-              </Grid>
-              <Grid item>
-                <Typography variant="h6">{moment(selectedItem.endDatetime).format('YYYY-MM-DD HH:mm:ss')}</Typography>
-              </Grid>
-            </Grid>
-
-            <Grid container spacing={1.5} alignItems="center" sx={{ mt: 1 }}>
-              <Grid item>
-                <Typography variant="h6">Status : </Typography>
-              </Grid>
-              <Grid item>
-                <Typography variant="h6">
-                  {selectedItem.status == 'ACTIVE' ? (
-                    <Chip color="success" label="ACTIVE" size="small" variant="light" />
-                  ) : (
-                    <Chip color="error" label="CANCELLED" size="small" variant="light" />
-                  )}
-                </Typography>
-              </Grid>
-            </Grid>
-
-            <Grid container spacing={1.5} alignItems="center" sx={{ mt: 2 }}>
-              <Button variant="contained" fullWidth={true}>
-                View Reservations
-              </Button>
-            </Grid>
-          </DialogContent>
-          <DialogActions>
-            <Button variant="outlined" color="error" onClick={handleClose}>
-              Close
-            </Button>
-          </DialogActions>
-        </Box>
-      </Dialog>
       <MainCard
         content={false}
         title={``}
@@ -471,6 +370,82 @@ const ScheduleReservations = () => {
               </ListItem>
             </List>
           </MainCard>
+          {selectedSchedule.train != null ? (
+            <div>
+              <MainCard title="Selected Train" content={false}>
+                <CardContent>
+                  <Grid container spacing={3} alignItems="center">
+                    <Grid item xs={12}>
+                      <Grid container spacing={2}>
+                        <Grid item>
+                          {/*  @ts-ignore */}
+
+                          {selectedSchedule.train.status == 'ACTIVE' ? (
+                            <Avatar color="primary">
+                              <CheckCircleOutlined />
+                            </Avatar>
+                          ) : (
+                            <Avatar color="error">
+                              <CloseCircleOutlined />
+                            </Avatar>
+                          )}
+                        </Grid>
+                        <Grid item xs zeroMinWidth>
+                          <Typography align="left" variant="h5">
+                            {/*  @ts-ignore */}
+                            {selectedSchedule.train.trainName}
+                          </Typography>
+                          {/*  @ts-ignore */}
+                          <Typography align="left" variant="subheading" color="secondary">
+                            {/*  @ts-ignore */}
+                            Train Number : {selectedSchedule.train.trainNumber}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs zeroMinWidth>
+                          <Typography align="left" variant="subtitle1">
+                            {/*  @ts-ignore */}
+                            {selectedSchedule.train.totalSeats} Seat{selectedSchedule.train.totalSeats > 1 ? 's' : ''}{' '}
+                          </Typography>
+
+                          <Typography align="left" variant="caption" color="secondary">
+                            {/*  @ts-ignore */}
+                            Driver Name : {selectedSchedule.train.allocatedDriver}
+                          </Typography>
+                          <br />
+                          <Typography align="left" variant="caption" color="secondary">
+                            {/*  @ts-ignore */}
+                            Guard Name : {selectedSchedule.train.allocatedGuard}
+                          </Typography>
+                        </Grid>
+
+                        <Grid item>
+                          <Stack direction="column" spacing={0.5} alignItems="end">
+                            {/*  @ts-ignore */}
+                            {selectedSchedule.train.status == 'ACTIVE' ? (
+                              <Chip color="success" label="ACTIVE" size="small" variant="light" />
+                            ) : (
+                              <Chip color="error" label="CANCELLED" size="small" variant="light" />
+                            )}
+                          </Stack>
+                        </Grid>
+                      </Grid>
+
+                      <Divider
+                        sx={{
+                          mt: 2
+                        }}
+                      />
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </MainCard>
+            </div>
+          ) : (
+            <Alert color="warning" variant="border" icon={<WarningFilled />}>
+              <AlertTitle>No Train Selected.</AlertTitle>
+              <Typography variant="h6">You haven't selected a train to the schedule. Please select train from above list.</Typography>
+            </Alert>
+          )}
         </Grid>
         <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}></Stack>
         <ScrollX>

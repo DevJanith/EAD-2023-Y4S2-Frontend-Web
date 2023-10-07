@@ -14,7 +14,8 @@ import {
   FormControl,
   FormHelperText,
   RadioGroup,
-  Alert
+  Alert,
+  CardContent
 } from '@mui/material';
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { Grid, Typography } from '@mui/material';
@@ -30,7 +31,7 @@ import ScrollX from 'components/ScrollX';
 import { CSVExport, TablePagination } from 'components/third-party/ReactTable';
 import axios from 'axios';
 
-import { PlusCircleOutlined, WarningFilled } from '@ant-design/icons';
+import { CheckCircleOutlined, CloseCircleOutlined, PlusCircleOutlined, WarningFilled } from '@ant-design/icons';
 import { dispatch } from 'store';
 
 import MainCard from 'components/MainCard';
@@ -41,6 +42,7 @@ import { Radio } from '@mui/material';
 import { AlertTitle } from '@mui/material';
 import { useNavigate, useParams } from 'react-router';
 import moment from 'moment';
+import Avatar from 'components/@extended/Avatar';
 
 // Define a type for the data
 
@@ -500,11 +502,21 @@ const EditSchedule = () => {
 
             <Grid item xs={12} sm={6}>
               <Stack spacing={1}>
-                <InputLabel>Select Status</InputLabel>
+                <InputLabel>Select Status </InputLabel>
                 <FormControl>
-                  <RadioGroup row aria-label="color" value={formik.values.status} onChange={formik.handleChange} name="status" id="status">
+                  <RadioGroup
+                    row
+                    aria-label="color"
+                    value={formik.values.status}
+                    onChange={(e) => {
+                      formik.handleChange(e);
+                      setSelectedTrain(null);
+                    }}
+                    name="status"
+                    id="status"
+                  >
                     <FormControlLabel value="ACTIVE" control={<Radio color="success" />} label="Active" />
-                    <FormControlLabel value="CANCELLED" control={<Radio color="error" />} label="Cencelled" />
+                    <FormControlLabel value="INACTIVE" control={<Radio color="error" />} label="Inactive" />
                   </RadioGroup>
                 </FormControl>
                 {formik.errors.status && (
@@ -532,33 +544,75 @@ const EditSchedule = () => {
             <Grid item xs={12} sm={12}>
               <Stack spacing={1}>
                 {selectedTrain != null ? (
-                  <MainCard>
-                    <Stack spacing={1}>
-                      <Typography variant="h5">Selected Train: {selectedTrain.trainName}</Typography>
-                      <FormControl sx={{ width: '100%' }}>
-                        <Typography color="secondary">Train Number :{selectedTrain.trainName}</Typography>
-                        <Typography color="secondary">Train Number :{selectedTrain.allocatedDriver}</Typography>
-                        <Typography color="secondary">Train Number :{selectedTrain.allocatedGuard}</Typography>
-                        <Typography color="secondary">
-                          Train Number :
-                          {selectedTrain.status == 'ACTIVE' ? (
-                            <Chip color="success" label="ACTIVE" size="small" variant="light" />
-                          ) : (
-                            <Chip color="error" label="CANCELLED" size="small" variant="light" />
-                          )}
-                        </Typography>
-                        <Typography color="secondary">
-                          Train Number :
-                          {selectedTrain.publishStatus == 'PUBLISHED' ? (
-                            <Chip color="success" label="PUBLISHED" size="small" variant="light" />
-                          ) : (
-                            <Chip color="error" label="UNPUBLISHED" size="small" variant="light" />
-                          )}
-                        </Typography>
-                        <Typography color="secondary">Train Number :{selectedTrain.totalSeats}</Typography>
-                      </FormControl>
-                    </Stack>
-                  </MainCard>
+                  <div>
+                    <MainCard title="Selected Train" content={false}>
+                      <CardContent>
+                        <Grid container spacing={3} alignItems="center">
+                          <Grid item xs={12}>
+                            <Grid container spacing={2}>
+                              <Grid item>
+                                {/*  @ts-ignore */}
+
+                                {selectedTrain.status == 'ACTIVE' ? (
+                                  <Avatar color="primary">
+                                    <CheckCircleOutlined />
+                                  </Avatar>
+                                ) : (
+                                  <Avatar color="error">
+                                    <CloseCircleOutlined />
+                                  </Avatar>
+                                )}
+                              </Grid>
+                              <Grid item xs zeroMinWidth>
+                                <Typography align="left" variant="h5">
+                                  {/*  @ts-ignore */}
+                                  {selectedTrain.trainName}
+                                </Typography>
+                                {/*  @ts-ignore */}
+                                <Typography align="left" variant="subheading" color="secondary">
+                                  {/*  @ts-ignore */}
+                                  Train Number : {selectedTrain.trainNumber}
+                                </Typography>
+                              </Grid>
+                              <Grid item xs zeroMinWidth>
+                                <Typography align="left" variant="subtitle1">
+                                  {/*  @ts-ignore */}
+                                  {selectedTrain.totalSeats} Seat{selectedTrain.totalSeats > 1 ? 's' : ''}{' '}
+                                </Typography>
+
+                                <Typography align="left" variant="caption" color="secondary">
+                                  {/*  @ts-ignore */}
+                                  Driver Name : {selectedTrain.allocatedDriver}
+                                </Typography>
+                                <br />
+                                <Typography align="left" variant="caption" color="secondary">
+                                  {/*  @ts-ignore */}
+                                  Guard Name : {selectedTrain.allocatedGuard}
+                                </Typography>
+                              </Grid>
+
+                              <Grid item>
+                                <Stack direction="column" spacing={0.5} alignItems="end">
+                                  {/*  @ts-ignore */}
+                                  {selectedTrain.status == 'ACTIVE' ? (
+                                    <Chip color="success" label="ACTIVE" size="small" variant="light" />
+                                  ) : (
+                                    <Chip color="error" label="CANCELLED" size="small" variant="light" />
+                                  )}
+                                </Stack>
+                              </Grid>
+                            </Grid>
+
+                            <Divider
+                              sx={{
+                                mt: 2
+                              }}
+                            />
+                          </Grid>
+                        </Grid>
+                      </CardContent>
+                    </MainCard>
+                  </div>
                 ) : (
                   <Alert color="warning" variant="border" icon={<WarningFilled />}>
                     <AlertTitle>No Train Selected.</AlertTitle>

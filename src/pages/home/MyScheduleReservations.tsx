@@ -84,10 +84,15 @@ const MyScheduleReservations = () => {
       .then((response) => {
         if (response.status == 200) {
           setSelectedSchedule(response.data);
-          const filteredReservations: any = response.data.reservations.filter((reservation: any) =>
-            reservation.userId === sessionStorage.getItem('userId') ? sessionStorage.getItem('userId') : 'string'
-          );
-          setData(filteredReservations);
+
+          let reservationData: any = [];
+          response.data.reservations.forEach((item: any) => {
+            if (item.userId == 'string') {
+              reservationData.push(item);
+            }
+          });
+          // @ts-ignore
+          setData(reservationData);
         } else {
           console.log('ERROR  >>> ');
         }
@@ -308,7 +313,7 @@ const MyScheduleReservations = () => {
 
               <Slider
                 aria-label="Seats"
-                defaultValue={1}
+                defaultValue={seatCount}
                 getAriaValueText={valuetext}
                 valueLabelDisplay="auto"
                 step={1}
@@ -318,9 +323,7 @@ const MyScheduleReservations = () => {
                 sx={{ mx: 3, mt: 2 }}
               />
               <Grid item sx={{ mx: 1, mt: -2, mb: 1 }}>
-                <Typography variant="h6">
-                  <strong> Select seat count from this slider.</strong>
-                </Typography>
+                <Typography variant="h6">Select seat count from this slider.</Typography>
               </Grid>
             </Grid>
             <form onSubmit={formik.handleSubmit} id="create-scheule-form">
@@ -343,13 +346,13 @@ const MyScheduleReservations = () => {
                 </Grid>
               </Grid>
               <Divider />
-              <Grid container spacing={1.5} alignItems="center" sx={{ mt: 2 }}>
+              <Grid container spacing={0.1} alignItems="center" sx={{ mt: 4 }}>
                 <Button variant="contained" fullWidth={true} type="submit">
                   Update Reservation
                 </Button>
               </Grid>
             </form>
-            <Grid container spacing={1.5} alignItems="center" sx={{ mt: 2 }}>
+            <Grid container spacing={0.1} alignItems="center" sx={{ mt: 2 }}>
               <Button
                 variant="outlined"
                 color="error"
@@ -364,7 +367,7 @@ const MyScheduleReservations = () => {
             <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={1.5} sx={{ mt: 1.5 }}>
               <Grid item>
                 <Typography variant="h6" color="info">
-                  * You can update or cancel the reservation at least 5 days before the reservation date.
+                  * You can <strong>update</strong> or <strong>cancel</strong> the reservation at least 5 days before the reservation date.
                 </Typography>
               </Grid>
             </Stack>

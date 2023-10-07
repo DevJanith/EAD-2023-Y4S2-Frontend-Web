@@ -182,6 +182,7 @@ const CreateSchedule = () => {
               variant="outlined"
               color="primary"
               startIcon={<PlusCircleOutlined />}
+              disabled={!(row.original.status == 'ACTIVE' && row.original.publishStatus == 'PUBLISHED')}
               onClick={() => {
                 setSelectedTrain(row.original);
                 handleClose();
@@ -348,7 +349,16 @@ const CreateSchedule = () => {
       </Dialog>
 
       {/* Info Dialog */}
-      <Dialog open={open} onClose={handleClose} fullWidth={true}>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        fullWidth={true}
+        PaperProps={{
+          style: {
+            minWidth: '90%'
+          }
+        }}
+      >
         <Box sx={{ p: 1, py: 1.5 }}>
           <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
             <DialogTitle>

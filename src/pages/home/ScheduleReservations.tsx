@@ -2,7 +2,19 @@
 
 // project import
 import { useEffect, useMemo, useState } from 'react';
-import { Alert, AlertTitle, Chip, Stack, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import {
+  Alert,
+  AlertTitle,
+  Chip,
+  DialogContentText,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TextField
+} from '@mui/material';
 
 import { Grid, Typography } from '@mui/material';
 // third-party
@@ -21,8 +33,21 @@ import { ListItem } from '@mui/material';
 import { List } from '@mui/material';
 import { Divider } from '@mui/material';
 import Avatar from 'components/@extended/Avatar';
-import { CheckCircleOutlined, CloseCircleOutlined, WarningFilled } from '@ant-design/icons';
+import { CheckCircleOutlined, CloseCircleOutlined, CloseOutlined, EditOutlined, WarningFilled } from '@ant-design/icons';
 import { CardContent } from '@mui/material';
+import IconButton from 'components/@extended/IconButton';
+import { Dialog } from '@mui/material';
+import { Box } from '@mui/system';
+import { DialogTitle } from '@mui/material';
+import { DialogContent } from '@mui/material';
+import * as yup from 'yup';
+import { InputLabel } from '@mui/material';
+import { Button } from '@mui/material';
+import { dispatch } from 'store';
+import { openSnackbar } from 'store/reducers/snackbar';
+import trimFc from 'utils/trimFc';
+import { useFormik } from 'formik';
+import { Slider } from '@mui/material';
 // Define a type for the data
 type Reservation = {
   id: string;
@@ -169,44 +194,46 @@ const ScheduleReservations = () => {
               return <Chip color="info" label="PENDING" size="small" variant="light" />;
           }
         }
-      }
-      // {
-      //   Header: 'Actions',
-      //   accessor: 'progress',
-      //   className: 'cell-center',
-      //   Cell: ({ row }: { row: any }) => (
-      //     <>
-      //       <IconButton
-      //         color="primary"
-      //         size="large"
-      //         onClick={() => {
-      //           editScheduleInfo(row.original);
-      //         }}
-      //       >
-      //         <EditOutlined />
-      //       </IconButton>
-      //       <IconButton
-      //         color="inherit"
-      //         size="large"
-      //         onClick={() => {
-      //           handleClickOpenDelete(row.original);
-      //         }}
-      //       >
-      //         <DeleteOutlined />
-      //       </IconButton>
+      },
+      {
+        Header: 'Actions',
+        accessor: 'progress',
+        className: 'cell-center',
+        Cell: ({ row }: { row: any }) => (
+          <>
+            <IconButton
+              color="primary"
+              size="large"
+              disabled={!isUpdateButtonEnabled(row.original)}
+              onClick={() => {
+                handleClickOpen(row.original);
+              }}
+            >
+              <EditOutlined />
+            </IconButton>
+            {/* <IconButton
+              color="inherit"
+              size="large"
+              onClick={() => {
+                // handleClickOpenDelete(row.original);
+                console.log(row.original);
+              }}
+            >
+              <DeleteOutlined />
+            </IconButton> */}
 
-      //       <IconButton
-      //         color="inherit"
-      //         size="large"
-      //         onClick={() => {
-      //           handleClickOpen(row.original);
-      //         }}
-      //       >
-      //         <EyeOutlined />
-      //       </IconButton>
-      //     </>
-      //   )
-      // }
+            {/* <IconButton
+              color="inherit"
+              size="large"
+              onClick={() => {
+                handleClickOpen(row.original);
+              }}
+            >
+              <EyeOutlined />
+            </IconButton> */}
+          </>
+        )
+      }
     ],
     []
   );
@@ -251,64 +278,309 @@ const ScheduleReservations = () => {
         console.log(err);
       });
   };
+  const [selectedItem, setSelectedItem] = useState<any>({});
+  const [seatCount, setSeatCount] = useState(0);
+  const [open, setOpen] = useState(false);
+  function valuetext(value: number) {
+    setSeatCount(value);
+    return `${value} Seats`;
+  }
 
-  // const DeleteSchedule = (schedule: any) => {
-  //   handleCloseDelete();
-  //   if (schedule.reservations.length > 0) {
-  //     dispatch(
-  //       openSnackbar({
-  //         open: true,
-  //         message: 'Can not delete schedule with existing Reservations.',
-  //         variant: 'alert',
-  //         alert: {
-  //           color: 'error'
-  //         },
-  //         anchorOrigin: { vertical: 'top', horizontal: 'center' },
-  //         close: false
-  //       })
-  //     );
-  //   } else {
-  //     axios
-  //       .delete(`https://localhost:7051/api/Schedule/${schedule.id}`)
-  //       .then((response) => {
-  //         if (response.status == 200) {
-  //           getScheduleData();
-  //         } else {
-  //           console.log('ERROR  >>> ');
-  //         }
-  //       })
-  //       .catch((err) => {
-  //         console.log(err);
-  //       });
-  //   }
-  // };
+  const handleClickOpen = (data: any) => {
+    setSelectedItem(data);
+    setSeatCount(data.reservedCount);
+    valuetext(data.reservedCount);
 
-  // const [open, setOpen] = useState(false);
-  // const [openDelete, setOpenDelete] = useState(false);
+    formik.setValues({
+      displayName: data.displayName
+    });
+    setOpen(true);
+  };
 
-  // const handleClickOpen = (data: any) => {
-  //   setOpen(true);
-  //   setSelectedItem(data);
-  // };
+  const handleClose = () => {
+    setOpen(false);
+  };
 
-  // const handleClose = () => {
-  //   setOpen(false);
-  // };
+  const validationSchema = yup.object({
+    displayName: yup.string().required('Display Name required')
+  });
 
-  // const handleClickOpenDelete = (data: any) => {
-  //   setOpenDelete(true);
-  //   setSelectedItem(data);
-  // };
+  const formik = useFormik({
+    initialValues: {
+      displayName: ''
+    },
+    validationSchema,
+    onSubmit: async (values, { setErrors, setStatus, setSubmitting }) => {
+      // submit location
 
-  // const handleCloseDelete = () => {
-  //   setOpenDelete(false);
-  // };
+      let amount = seatCount * selectedSchedule.ticketPrice;
+      let data = {
+        id: selectedItem.id,
+        userId: sessionStorage.getItem('userId') ? sessionStorage.getItem('userId') : 'string',
+        displayName: values.displayName,
+        createdAt: moment(),
+        reservedCount: seatCount,
+        reservationDate: selectedItem.reservationDate,
+        reservationStatus: 'RESERVED',
+        amount: amount,
+        scheduleId: selectedItem.id
+      };
+      axios
+        .put(`https://localhost:7051/api/Reservation/updateReservationForSchedule/${params.id}/${selectedItem.id}`, data)
+        .then((response) => {
+          if (response.status == 200) {
+            dispatch(
+              openSnackbar({
+                open: true,
+                message: 'Reservation created succesfully.',
+                variant: 'alert',
+                alert: {
+                  color: 'success'
+                },
+                anchorOrigin: { vertical: 'top', horizontal: 'center' },
+                close: false
+              })
+            );
+
+            handleClose();
+            getScheduleData();
+          } else {
+            dispatch(
+              openSnackbar({
+                open: true,
+                message: response.data,
+                variant: 'alert',
+                alert: {
+                  color: 'error'
+                },
+                anchorOrigin: { vertical: 'top', horizontal: 'center' },
+                close: false
+              })
+            );
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          console.log(err.response);
+          dispatch(
+            openSnackbar({
+              open: true,
+              message: err.response.data,
+              variant: 'alert',
+              alert: {
+                color: 'error'
+              },
+              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+              close: false
+            })
+          );
+        });
+    }
+  });
+
+  const isUpdateButtonEnabled = (item: any) => {
+    const currentDate = moment();
+    const reservationDate = moment(item.reservationDate);
+    let daysUntilReservation = reservationDate.diff(currentDate, 'days');
+
+    return daysUntilReservation >= 5 && item.reservationStatus == 'RESERVED';
+  };
+
+  const cancelReservation = () => {
+    let data = {
+      id: selectedItem.id,
+      userId: selectedItem.userId,
+      displayName: selectedItem.displayName,
+      createdAt: selectedItem.createdAt,
+      reservedCount: selectedItem.reservedCount,
+      reservationDate: selectedItem.reservationDate,
+      reservationStatus: 'CANCELLED',
+      amount: selectedItem.amount,
+      scheduleId: selectedItem.scheduleId
+    };
+    axios
+      .put(`https://localhost:7051/api/Reservation/updateReservationForSchedule/${params.id}/${selectedItem.id}`, data)
+      .then((response) => {
+        if (response.status == 200) {
+          dispatch(
+            openSnackbar({
+              open: true,
+              message: 'Reservation cancelled succesfully.',
+              variant: 'alert',
+              alert: {
+                color: 'success'
+              },
+              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+              close: false
+            })
+          );
+
+          handleClose();
+          getScheduleData();
+        } else {
+          dispatch(
+            openSnackbar({
+              open: true,
+              message: response.data,
+              variant: 'alert',
+              alert: {
+                color: 'error'
+              },
+              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+              close: false
+            })
+          );
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        console.log(err.response);
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: err.response.data,
+            variant: 'alert',
+            alert: {
+              color: 'error'
+            },
+            anchorOrigin: { vertical: 'top', horizontal: 'center' },
+            close: false
+          })
+        );
+      });
+  };
 
   return (
     <>
       {/* Delete Dialog */}
 
       {/* Info Dialog */}
+      <Dialog open={open} onClose={handleClose}>
+        <Box sx={{ p: 1, py: 1.5 }}>
+          <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
+            <DialogTitle>
+              <Typography variant="h4">Reservation</Typography>
+            </DialogTitle>
+
+            <IconButton shape="rounded" color="error" onClick={handleClose}>
+              <CloseOutlined />
+            </IconButton>
+          </Stack>
+
+          <Divider />
+
+          <DialogContent>
+            <DialogContentText>
+              Reservation Reference : <strong> {selectedItem.id}</strong>{' '}
+            </DialogContentText>
+
+            <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={1.5} sx={{ mt: 1.5 }}>
+              <Grid item>
+                <Typography variant="h6">Reservation Date : </Typography>
+              </Grid>
+              <Grid item>
+                <Typography variant="h6">{moment(selectedItem.reservationDate).format('YYYY-MM-DD HH:mm:ss')}</Typography>
+              </Grid>
+            </Stack>
+
+            <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={1.5} sx={{ mt: 1.5 }}>
+              <Grid item>
+                <Typography variant="h6">Status : </Typography>
+              </Grid>
+              <Grid item>
+                <Typography variant="h6">
+                  {/*  @ts-ignore */}
+                  {selectedItem.reservationStatus === 'RESERVED' ? (
+                    <Chip color="success" label="RESERVED" size="small" variant="light" />
+                  ) : /*  @ts-ignore */
+                  selectedItem.reservationStatus === 'PENDING' ? (
+                    <Chip color="info" label="PENDING" size="small" variant="light" />
+                  ) : (
+                    <Chip color="error" label="CANCELLED" size="small" variant="light" />
+                  )}
+                </Typography>
+              </Grid>
+            </Stack>
+            <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={1.5} sx={{ mt: 2 }}>
+              <Typography variant="h5">Number of Seats : </Typography>
+
+              <Typography variant="h5">
+                {seatCount} Seat{seatCount > 1 ? 's' : ''}{' '}
+              </Typography>
+            </Stack>
+
+            <Grid container spacing={1.5} alignItems="center">
+              <Grid item>
+                <Typography variant="h6" color="red">
+                  * Maximum 4 seats per reservation
+                </Typography>
+              </Grid>
+
+              <Slider
+                aria-label="Seats"
+                defaultValue={seatCount}
+                getAriaValueText={valuetext}
+                valueLabelDisplay="auto"
+                step={1}
+                marks
+                min={1}
+                max={4}
+                sx={{ mx: 3, mt: 2 }}
+              />
+              <Grid item sx={{ mx: 1, mt: -2, mb: 1 }}>
+                <Typography variant="h6">
+                  <strong> Select seat count from this slider.</strong>
+                </Typography>
+              </Grid>
+            </Grid>
+            <form onSubmit={formik.handleSubmit} id="create-scheule-form">
+              <Grid container spacing={3.5}>
+                <Grid item xs={12} sm={12}>
+                  <Stack spacing={1}>
+                    <InputLabel>Display Name </InputLabel>
+                    <TextField
+                      id="displayName"
+                      name="displayName"
+                      placeholder="Enter Display Name Here"
+                      value={formik.values.displayName}
+                      onChange={trimFc(formik)}
+                      onBlur={formik.handleBlur}
+                      error={formik.touched.displayName && Boolean(formik.errors.displayName)}
+                      helperText={formik.touched.displayName && formik.errors.displayName}
+                      fullWidth
+                    />
+                  </Stack>
+                </Grid>
+              </Grid>
+              <Divider />
+              <Grid container spacing={0.1} alignItems="center" sx={{ mt: 4 }}>
+                <Button variant="contained" fullWidth={true} type="submit">
+                  Update Reservation
+                </Button>
+              </Grid>
+            </form>
+            <Grid container spacing={0.1} alignItems="center" sx={{ mt: 2 }}>
+              <Button
+                variant="outlined"
+                color="error"
+                fullWidth={true}
+                onClick={() => {
+                  cancelReservation();
+                }}
+              >
+                Cancel Reservation
+              </Button>
+            </Grid>
+            <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={1.5} sx={{ mt: 1.5 }}>
+              <Grid item>
+                <Typography variant="h6" color="info">
+                  * You can <strong>update</strong> or <strong>cancel</strong> the reservation at least 5 days before the reservation date.
+                </Typography>
+              </Grid>
+            </Stack>
+          </DialogContent>
+        </Box>
+      </Dialog>
 
       <MainCard
         content={false}

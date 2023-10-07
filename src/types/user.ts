@@ -36,9 +36,15 @@ export type Users = {
     updatedBy?: string;
 };
 
+export type UserList = {
+    users: Users[],
+    total: number
+}
+
 export interface UserStateProps {
-    users: Users[];
+    users: UserList | null;
     user: User | null;
+    currentUser: User | null
     error: object | string | null;
     success: object | string | null;
     isLoading: boolean

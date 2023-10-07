@@ -420,7 +420,23 @@ const Schedule = () => {
       <MainCard
         content={false}
         title="Schedule Data"
-        secondary={<CSVExport data={data.slice(0, 10)} filename={striped ? 'striped-table.csv' : 'basic-table.csv'} />}
+        secondary={
+          <>
+            <CSVExport data={data.slice(0, 10)} filename={striped ? 'striped-table.csv' : 'basic-table.csv'} />
+            <Button
+              size="small"
+              variant="contained"
+              sx={{
+                ml: 1
+              }}
+              onClick={() => {
+                navigate('/home/schedule-create');
+              }}
+            >
+              Create New Schedule
+            </Button>
+          </>
+        }
       >
         <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}></Stack>
         <ScrollX>

@@ -244,6 +244,33 @@ const ScheduleReservations = () => {
     getScheduleData();
   }, []);
 
+  function calculateAvailableSeats(data: any) {
+    if (!data || !data.train || !data.train.totalSeats || !data.reservations) {
+      // Handle missing or invalid data
+      return null;
+    }
+
+    const totalSeats = data.train.totalSeats;
+    const reservations = data.reservations;
+
+    if (!Array.isArray(reservations)) {
+      // Handle invalid reservations data
+      return null;
+    }
+
+    // Filter reservations where ReservationStatus is "RESERVED" and calculate the sum of reservedCount
+    const reservedCountSum = reservations
+      .filter((reservation) => reservation.reservationStatus === 'RESERVED')
+      .reduce((sum, reservation) => {
+        return sum + (reservation.reservedCount || 0);
+      }, 0);
+
+    // Calculate available seats by subtracting reservedCountSum from totalSeats
+    const availableSeats = totalSeats - reservedCountSum;
+
+    return availableSeats;
+  }
+
   // const editScheduleInfo = (schedule: any) => {
   //   if (schedule.reservations.length > 0) {
   //     dispatch(
@@ -588,7 +615,20 @@ const ScheduleReservations = () => {
         secondary={<CSVExport data={data.slice(0, 10)} filename={striped ? 'striped-table.csv' : 'basic-table.csv'} />}
       >
         <Grid item xs={12}>
-          <MainCard title={`Schedule Details : ${params.id}`}>
+          <MainCard
+            title={<h3>Schedule Details : ${params.id}</h3>}
+            secondary={
+              <Typography variant="h5">
+                {/*  @ts-ignore */}
+                {calculateAvailableSeats(selectedSchedule) <= 10 ? (
+                  <Chip color="error" label={<h3>{calculateAvailableSeats(selectedSchedule)}</h3>} size="small" variant="light" />
+                ) : (
+                  <Chip color="success" label={<h3>{calculateAvailableSeats(selectedSchedule)}</h3>} size="small" variant="light"></Chip>
+                )}
+                seats available
+              </Typography>
+            }
+          >
             <List sx={{ py: 0 }}>
               <ListItem divider>
                 <Grid container spacing={3}>

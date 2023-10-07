@@ -500,6 +500,11 @@ const ActiveSchedules = () => {
 
               <Typography variant="h5">
                 {seatCount} Seat{seatCount > 1 ? 's' : ''}{' '}
+                <strong>
+                  {' '}
+                  {'( Rs. '}
+                  {Number(seatCount * selectedItem.ticketPrice).toLocaleString()} {')'}
+                </strong>
               </Typography>
             </Stack>
 
@@ -546,7 +551,7 @@ const ActiveSchedules = () => {
                   </Stack>
                 </Grid>
               </Grid>
-              <Grid container spacing={1.5} alignItems="center" sx={{ mt: 2 }}>
+              <Grid container spacing={0.1} alignItems="center" sx={{ mt: 2 }}>
                 <Button variant="contained" fullWidth={true} type="submit" disabled={formik.isSubmitting}>
                   Make a Reservation
                 </Button>

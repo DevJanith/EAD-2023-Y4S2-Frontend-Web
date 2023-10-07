@@ -141,7 +141,7 @@ const EditSchedule = () => {
 
       {
         Header: 'Tatal Seats',
-        accessor: 'number'
+        accessor: 'totalSeats'
       },
 
       {
@@ -379,7 +379,16 @@ const EditSchedule = () => {
       </Dialog>
 
       {/* Info Dialog */}
-      <Dialog open={open} onClose={handleClose} fullWidth={true}>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        fullWidth={true}
+        PaperProps={{
+          style: {
+            minWidth: '90%'
+          }
+        }}
+      >
         <Box sx={{ p: 1, py: 1.5 }}>
           <DialogTitle>
             <Typography variant="h4">Select Train For Schedule</Typography>
@@ -536,6 +545,7 @@ const EditSchedule = () => {
                 onClick={() => {
                   handleClickOpen();
                 }}
+                disabled={formik.values.status == 'INACTIVE'}
               >
                 Add Train to Schedule
               </Button>

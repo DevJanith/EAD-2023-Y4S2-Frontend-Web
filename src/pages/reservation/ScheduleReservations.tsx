@@ -24,7 +24,7 @@ import { Cell, Column, HeaderGroup, useFilters, usePagination, useTable } from '
 
 import MainCard from 'components/MainCard';
 import ScrollX from 'components/ScrollX';
-import { CSVExport, TablePagination } from 'components/third-party/ReactTable';
+import { CSVExport, EmptyTable, TablePagination } from 'components/third-party/ReactTable';
 import axios from 'axios';
 import moment from 'moment';
 
@@ -49,6 +49,9 @@ import trimFc from 'utils/trimFc';
 import { useFormik } from 'formik';
 import { Slider } from '@mui/material';
 import useAuth from 'hooks/useAuth';
+import { DefaultColumnFilter, GlobalFilter, renderFilterTypes } from 'utils/react-table';
+import { Row } from 'react-table';
+import { useGlobalFilter } from 'react-table';
 // Define a type for the data
 type Reservation = {
   id: string;
@@ -86,7 +89,19 @@ type Reservation = {
 // };
 
 // ==============================|| Dashboard ||============================== //
-function ReactTable({ columns, data, striped }: { columns: Column[]; data: Reservation[]; striped?: boolean }) {
+function ReactTable({
+  columns,
+  data,
+  handleAddEdit
+}: {
+  columns: Column[];
+  data: Reservation[];
+  striped?: boolean;
+  handleAddEdit?: () => void;
+}) {
+  const filterTypes = useMemo(() => renderFilterTypes, []);
+  const defaultColumn = useMemo(() => ({ Filter: DefaultColumnFilter }), []);
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -95,43 +110,59 @@ function ReactTable({ columns, data, striped }: { columns: Column[]; data: Reser
     prepareRow,
     gotoPage,
     setPageSize,
-    state: { pageIndex, pageSize }
+    state: { pageIndex, pageSize },
+    preGlobalFilteredRows,
+    setGlobalFilter,
+    globalFilter,
+    page
   } = useTable(
     {
       columns,
       data,
+      defaultColumn,
+      filterTypes,
       initialState: { pageIndex: 0, pageSize: 10 }
     },
+    useGlobalFilter,
     useFilters,
     usePagination
   );
 
   return (
     <>
+      <Stack direction="row" spacing={2} justifyContent="space-between" sx={{ padding: 2 }}>
+        <GlobalFilter preGlobalFilteredRows={preGlobalFilteredRows} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <CSVExport data={rows.map((d: Row) => d.original)} filename={'filtering-table.csv'} />
+        </Stack>
+      </Stack>
       <Table {...getTableProps()}>
-        <TableHead>
-          {headerGroups.map((headerGroup: HeaderGroup<{}>) => (
+        <TableHead sx={{ borderTopWidth: 2 }}>
+          {headerGroups.map((headerGroup) => (
             <TableRow {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column: HeaderGroup<{}>) => (
+              {headerGroup.headers.map((column: HeaderGroup) => (
                 <TableCell {...column.getHeaderProps([{ className: column.className }])}>{column.render('Header')}</TableCell>
               ))}
             </TableRow>
           ))}
         </TableHead>
-        <TableBody {...getTableBodyProps()} {...(striped && { className: 'striped' })}>
-          {rows.map((row, i) => {
-            prepareRow(row);
-            return (
-              <TableRow {...row.getRowProps()}>
-                {row.cells.map((cell: Cell<{}>) => (
-                  <TableCell {...cell.getCellProps([{ className: cell.column.className }])}>{cell.render('Cell')}</TableCell>
-                ))}
-              </TableRow>
-            );
-          })}
-
+        <TableBody {...getTableBodyProps()}>
+          {page.length > 0 ? (
+            page.map((row, i) => {
+              prepareRow(row);
+              return (
+                <TableRow {...row.getRowProps()}>
+                  {row.cells.map((cell: Cell) => (
+                    <TableCell {...cell.getCellProps([{ className: cell.column.className }])}>{cell.render('Cell')}</TableCell>
+                  ))}
+                </TableRow>
+              );
+            })
+          ) : (
+            <EmptyTable msg="No Data" colSpan={12} />
+          )}
           <TableRow>
-            <TableCell sx={{ p: 2 }} colSpan={7}>
+            <TableCell sx={{ p: 2 }} colSpan={12}>
               <TablePagination gotoPage={gotoPage} rows={rows} setPageSize={setPageSize} pageIndex={pageIndex} pageSize={pageSize} />
             </TableCell>
           </TableRow>
@@ -763,7 +794,7 @@ const ScheduleReservations = () => {
         </Grid>
         <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}></Stack>
         <ScrollX>
-          <ReactTable columns={columns} data={data} striped={striped} />
+          <ReactTable columns={columns} data={data} />
         </ScrollX>
       </MainCard>
     </>

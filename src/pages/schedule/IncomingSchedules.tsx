@@ -6,19 +6,21 @@ import { Chip, Divider, Stack, Table, TableBody, TableCell, TableHead, TableRow 
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { Grid, Typography } from '@mui/material';
 // third-party
-import { Cell, Column, HeaderGroup, useFilters, usePagination, useTable } from 'react-table';
+import { Cell, Column, HeaderGroup, useFilters, useGlobalFilter, usePagination, useTable } from 'react-table';
 import { openSnackbar } from 'store/reducers/snackbar';
 // project import
 
 import MainCard from 'components/MainCard';
 import ScrollX from 'components/ScrollX';
-import { CSVExport, TablePagination } from 'components/third-party/ReactTable';
+import { CSVExport, EmptyTable, TablePagination } from 'components/third-party/ReactTable';
 import axios from 'axios';
 import moment from 'moment';
 import IconButton from 'components/@extended/IconButton';
-import { EditOutlined, DeleteOutlined, EyeOutlined, CloseOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, EyeOutlined, CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import { dispatch } from 'store';
 import { useNavigate } from 'react-router';
+import { DefaultColumnFilter, GlobalFilter, renderFilterTypes } from 'utils/react-table';
+import { Row } from 'react-table';
 // Define a type for the data
 type Reservation = {
   id: string;
@@ -56,7 +58,19 @@ type Schedule = {
 };
 
 // ==============================|| Dashboard ||============================== //
-function ReactTable({ columns, data, striped }: { columns: Column[]; data: Schedule[]; striped?: boolean }) {
+function ReactTable({
+  columns,
+  data,
+  handleAddEdit
+}: {
+  columns: Column[];
+  data: Schedule[];
+  striped?: boolean;
+  handleAddEdit: () => void;
+}) {
+  const filterTypes = useMemo(() => renderFilterTypes, []);
+  const defaultColumn = useMemo(() => ({ Filter: DefaultColumnFilter }), []);
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -65,43 +79,62 @@ function ReactTable({ columns, data, striped }: { columns: Column[]; data: Sched
     prepareRow,
     gotoPage,
     setPageSize,
-    state: { pageIndex, pageSize }
+    state: { pageIndex, pageSize },
+    preGlobalFilteredRows,
+    setGlobalFilter,
+    globalFilter,
+    page
   } = useTable(
     {
       columns,
       data,
+      defaultColumn,
+      filterTypes,
       initialState: { pageIndex: 0, pageSize: 10 }
     },
+    useGlobalFilter,
     useFilters,
     usePagination
   );
 
   return (
     <>
+      <Stack direction="row" spacing={2} justifyContent="space-between" sx={{ padding: 2 }}>
+        <GlobalFilter preGlobalFilteredRows={preGlobalFilteredRows} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <CSVExport data={rows.map((d: Row) => d.original)} filename={'filtering-table.csv'} />
+          <Button variant="contained" startIcon={<PlusOutlined />} onClick={handleAddEdit}>
+            Add New Schedule
+          </Button>
+        </Stack>
+      </Stack>
       <Table {...getTableProps()}>
-        <TableHead>
-          {headerGroups.map((headerGroup: HeaderGroup<{}>) => (
+        <TableHead sx={{ borderTopWidth: 2 }}>
+          {headerGroups.map((headerGroup) => (
             <TableRow {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column: HeaderGroup<{}>) => (
+              {headerGroup.headers.map((column: HeaderGroup) => (
                 <TableCell {...column.getHeaderProps([{ className: column.className }])}>{column.render('Header')}</TableCell>
               ))}
             </TableRow>
           ))}
         </TableHead>
-        <TableBody {...getTableBodyProps()} {...(striped && { className: 'striped' })}>
-          {rows.map((row, i) => {
-            prepareRow(row);
-            return (
-              <TableRow {...row.getRowProps()}>
-                {row.cells.map((cell: Cell<{}>) => (
-                  <TableCell {...cell.getCellProps([{ className: cell.column.className }])}>{cell.render('Cell')}</TableCell>
-                ))}
-              </TableRow>
-            );
-          })}
-
+        <TableBody {...getTableBodyProps()}>
+          {page.length > 0 ? (
+            page.map((row, i) => {
+              prepareRow(row);
+              return (
+                <TableRow {...row.getRowProps()}>
+                  {row.cells.map((cell: Cell) => (
+                    <TableCell {...cell.getCellProps([{ className: cell.column.className }])}>{cell.render('Cell')}</TableCell>
+                  ))}
+                </TableRow>
+              );
+            })
+          ) : (
+            <EmptyTable msg="No Data" colSpan={12} />
+          )}
           <TableRow>
-            <TableCell sx={{ p: 2 }} colSpan={7}>
+            <TableCell sx={{ p: 2 }} colSpan={12}>
               <TablePagination gotoPage={gotoPage} rows={rows} setPageSize={setPageSize} pageIndex={pageIndex} pageSize={pageSize} />
             </TableCell>
           </TableRow>
@@ -110,12 +143,12 @@ function ReactTable({ columns, data, striped }: { columns: Column[]; data: Sched
     </>
   );
 }
+
 const IncomingSchedules = () => {
   const [data, setData] = useState([]);
   const [selectedItem, setSelectedItem] = useState<any>({});
   const navigate = useNavigate();
 
-  const striped = true;
   const columns = useMemo(
     () => [
       {
@@ -465,30 +498,15 @@ const IncomingSchedules = () => {
           </DialogContent>
         </Box>
       </Dialog>
-      <MainCard
-        content={false}
-        title="Schedule Data"
-        secondary={
-          <>
-            <CSVExport data={data.slice(0, 10)} filename={striped ? 'striped-table.csv' : 'basic-table.csv'} />
-            <Button
-              size="small"
-              variant="contained"
-              sx={{
-                ml: 1
-              }}
-              onClick={() => {
-                navigate('/application/schedule-management/schedule-create');
-              }}
-            >
-              Create New Schedule
-            </Button>
-          </>
-        }
-      >
-        <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}></Stack>
+      <MainCard content={false}>
         <ScrollX>
-          <ReactTable columns={columns} data={data} striped={striped} />
+          <ReactTable
+            columns={columns}
+            data={data}
+            handleAddEdit={() => {
+              navigate('/application/schedule-management/schedule-create');
+            }}
+          />
         </ScrollX>
       </MainCard>
     </>

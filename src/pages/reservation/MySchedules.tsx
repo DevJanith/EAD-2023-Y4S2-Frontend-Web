@@ -13,7 +13,6 @@ import * as yup from 'yup';
 import MainCard from 'components/MainCard';
 import ScrollX from 'components/ScrollX';
 import { CSVExport, EmptyTable, TablePagination } from 'components/third-party/ReactTable';
-import axios from 'axios';
 import moment from 'moment';
 
 import { CloseOutlined, EyeFilled } from '@ant-design/icons';
@@ -29,6 +28,7 @@ import useAuth from 'hooks/useAuth';
 import { DefaultColumnFilter, GlobalFilter, renderFilterTypes } from 'utils/react-table';
 import { Row } from 'react-table';
 import { useGlobalFilter } from 'react-table';
+import { axiosServices } from 'utils/axios';
 
 // Define a type for the data
 type Reservation = {
@@ -240,9 +240,9 @@ const MySchedules = () => {
   }, []);
 
   const getScheduleData = () => {
-    axios
+    axiosServices
       // @ts-ignore
-      .get(`https://localhost:7051/api/Reservation/getSchedulesByUserId/${user.id}`)
+      .get(`/api/Reservation/getSchedulesByUserId/${user.id}`)
       .then((response) => {
         if (response.status === 200) {
           setData(response.data);
@@ -255,7 +255,7 @@ const MySchedules = () => {
               alert: {
                 color: 'error'
               },
-              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+              anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
               close: false
             })
           );
@@ -271,7 +271,7 @@ const MySchedules = () => {
             alert: {
               color: 'error'
             },
-            anchorOrigin: { vertical: 'top', horizontal: 'center' },
+            anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
             close: false
           })
         );
@@ -290,13 +290,13 @@ const MySchedules = () => {
           alert: {
             color: 'error'
           },
-          anchorOrigin: { vertical: 'top', horizontal: 'center' },
+          anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
           close: false
         })
       );
     } else {
-      axios
-        .delete(`https://localhost:7051/api/Schedule/${schedule.id}`)
+      axiosServices
+        .delete(`/api/Schedule/${schedule.id}`)
         .then((response) => {
           if (response.status == 200) {
             getScheduleData();
@@ -383,8 +383,8 @@ const MySchedules = () => {
         amount: amount,
         scheduleId: selectedItem.id
       };
-      axios
-        .post(`https://localhost:7051/api/Reservation/createForSchedule/${selectedItem.id}`, data)
+      axiosServices
+        .post(`/api/Reservation/createForSchedule/${selectedItem.id}`, data)
         .then((response) => {
           if (response.status == 201) {
             alert(response.status);
@@ -397,7 +397,7 @@ const MySchedules = () => {
                 alert: {
                   color: 'success'
                 },
-                anchorOrigin: { vertical: 'top', horizontal: 'center' },
+                anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
                 close: false
               })
             );
@@ -414,7 +414,7 @@ const MySchedules = () => {
                 alert: {
                   color: 'error'
                 },
-                anchorOrigin: { vertical: 'top', horizontal: 'center' },
+                anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
                 close: false
               })
             );
@@ -431,7 +431,7 @@ const MySchedules = () => {
               alert: {
                 color: 'error'
               },
-              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+              anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
               close: false
             })
           );

@@ -13,7 +13,6 @@ import { openSnackbar } from 'store/reducers/snackbar';
 import MainCard from 'components/MainCard';
 import ScrollX from 'components/ScrollX';
 import { CSVExport, EmptyTable, TablePagination } from 'components/third-party/ReactTable';
-import axios from 'axios';
 import moment from 'moment';
 import IconButton from 'components/@extended/IconButton';
 import { EditOutlined, DeleteOutlined, EyeOutlined, CloseOutlined, PlusOutlined } from '@ant-design/icons';
@@ -21,6 +20,7 @@ import { dispatch } from 'store';
 import { useNavigate } from 'react-router';
 import { DefaultColumnFilter, GlobalFilter, renderFilterTypes } from 'utils/react-table';
 import { Row } from 'react-table';
+import { axiosServices } from 'utils/axios';
 // Define a type for the data
 type Reservation = {
   id: string;
@@ -259,7 +259,7 @@ const IncomingSchedules = () => {
           alert: {
             color: 'error'
           },
-          anchorOrigin: { vertical: 'top', horizontal: 'center' },
+          anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
           close: false
         })
       );
@@ -269,8 +269,8 @@ const IncomingSchedules = () => {
   };
 
   const getScheduleData = () => {
-    axios
-      .get('https://localhost:7051/api/Schedule/getIncomingSchedules')
+    axiosServices
+      .get('/api/Schedule/getIncomingSchedules')
       .then((response) => {
         if (response.status == 200) {
           setData(response.data);
@@ -284,7 +284,7 @@ const IncomingSchedules = () => {
               alert: {
                 color: 'error'
               },
-              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+              anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
               close: false
             })
           );
@@ -300,7 +300,7 @@ const IncomingSchedules = () => {
             alert: {
               color: 'error'
             },
-            anchorOrigin: { vertical: 'top', horizontal: 'center' },
+            anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
             close: false
           })
         );
@@ -318,13 +318,13 @@ const IncomingSchedules = () => {
           alert: {
             color: 'error'
           },
-          anchorOrigin: { vertical: 'top', horizontal: 'center' },
+          anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
           close: false
         })
       );
     } else {
-      axios
-        .delete(`https://localhost:7051/api/Schedule/${schedule.id}`)
+      axiosServices
+        .delete(`/api/Schedule/${schedule.id}`)
         .then((response) => {
           if (response.status == 200) {
             dispatch(
@@ -335,7 +335,7 @@ const IncomingSchedules = () => {
                 alert: {
                   color: 'success'
                 },
-                anchorOrigin: { vertical: 'top', horizontal: 'center' },
+                anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
                 close: false
               })
             );
@@ -349,7 +349,7 @@ const IncomingSchedules = () => {
                 alert: {
                   color: 'error'
                 },
-                anchorOrigin: { vertical: 'top', horizontal: 'center' },
+                anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
                 close: false
               })
             );

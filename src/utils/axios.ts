@@ -3,14 +3,13 @@ import axios from 'axios';
 const axiosServices_Mock = axios.create({ baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3010/' });
 
 // Local Server
-const axiosServices = axios.create({ baseURL: 'https://localhost:7051/' }); 
+const axiosServices = axios.create({ baseURL: 'https://localhost:7051/' });
 
 // IIS Server
-// const axiosServices = axios.create({ baseURL: 'https://192.168.1.3:8082/' }); 
+// const axiosServices = axios.create({ baseURL: 'https://192.168.1.3:8082/' });
 
 // Azure Server
-// const axiosServices = axios.create({ baseURL: 'https://restapi.azurewebsites.net/' }); 
-
+// const axiosServices = axios.create({ baseURL: 'https://restapi.azurewebsites.net/' });
 
 // ==============================|| AXIOS - FOR MOCK SERVICES ||============================== //
 

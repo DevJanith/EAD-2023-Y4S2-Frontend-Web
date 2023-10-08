@@ -25,7 +25,7 @@ import { Cell, Column, HeaderGroup, useFilters, usePagination, useTable } from '
 import MainCard from 'components/MainCard';
 import ScrollX from 'components/ScrollX';
 import { CSVExport, EmptyTable, TablePagination } from 'components/third-party/ReactTable';
-import axios from 'axios';
+
 import moment from 'moment';
 
 import { useParams } from 'react-router';
@@ -52,6 +52,7 @@ import useAuth from 'hooks/useAuth';
 import { DefaultColumnFilter, GlobalFilter, renderFilterTypes } from 'utils/react-table';
 import { Row } from 'react-table';
 import { useGlobalFilter } from 'react-table';
+import { axiosServices } from 'utils/axios';
 // Define a type for the data
 type Reservation = {
   id: string;
@@ -313,7 +314,7 @@ const ScheduleReservations = () => {
   //         alert: {
   //           color: 'error'
   //         },
-  //         anchorOrigin: { vertical: 'top', horizontal: 'center' },
+  //         anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
   //         close: false
   //       })
   //     );
@@ -323,8 +324,8 @@ const ScheduleReservations = () => {
   // };
 
   const getScheduleData = () => {
-    axios
-      .get(`https://localhost:7051/api/Schedule/${params.id}`)
+    axiosServices
+      .get(`/api/Schedule/${params.id}`)
       .then((response) => {
         if (response.status == 200) {
           setSelectedSchedule(response.data);
@@ -385,8 +386,8 @@ const ScheduleReservations = () => {
         amount: amount,
         scheduleId: selectedItem.id
       };
-      axios
-        .put(`https://localhost:7051/api/Reservation/updateReservationForSchedule/${params.id}/${selectedItem.id}`, data)
+      axiosServices
+        .put(`/api/Reservation/updateReservationForSchedule/${params.id}/${selectedItem.id}`, data)
         .then((response) => {
           if (response.status == 200) {
             dispatch(
@@ -397,7 +398,7 @@ const ScheduleReservations = () => {
                 alert: {
                   color: 'success'
                 },
-                anchorOrigin: { vertical: 'top', horizontal: 'center' },
+                anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
                 close: false
               })
             );
@@ -413,7 +414,7 @@ const ScheduleReservations = () => {
                 alert: {
                   color: 'error'
                 },
-                anchorOrigin: { vertical: 'top', horizontal: 'center' },
+                anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
                 close: false
               })
             );
@@ -430,7 +431,7 @@ const ScheduleReservations = () => {
               alert: {
                 color: 'error'
               },
-              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+              anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
               close: false
             })
           );
@@ -458,8 +459,8 @@ const ScheduleReservations = () => {
       amount: selectedItem.amount,
       scheduleId: selectedItem.scheduleId
     };
-    axios
-      .put(`https://localhost:7051/api/Reservation/updateReservationForSchedule/${params.id}/${selectedItem.id}`, data)
+    axiosServices
+      .put(`/api/Reservation/updateReservationForSchedule/${params.id}/${selectedItem.id}`, data)
       .then((response) => {
         if (response.status == 200) {
           dispatch(
@@ -470,7 +471,7 @@ const ScheduleReservations = () => {
               alert: {
                 color: 'success'
               },
-              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+              anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
               close: false
             })
           );
@@ -486,7 +487,7 @@ const ScheduleReservations = () => {
               alert: {
                 color: 'error'
               },
-              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+              anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
               close: false
             })
           );
@@ -503,7 +504,7 @@ const ScheduleReservations = () => {
             alert: {
               color: 'error'
             },
-            anchorOrigin: { vertical: 'top', horizontal: 'center' },
+            anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
             close: false
           })
         );

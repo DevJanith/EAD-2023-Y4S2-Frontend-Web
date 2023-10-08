@@ -27,7 +27,6 @@ import { openSnackbar } from 'store/reducers/snackbar';
 // project import
 
 import { CloseOutlined, DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons';
-import axios from 'axios';
 import IconButton from 'components/@extended/IconButton';
 import MainCard from 'components/MainCard';
 import ScrollX from 'components/ScrollX';
@@ -36,6 +35,7 @@ import moment from 'moment';
 import { useNavigate } from 'react-router';
 import { dispatch } from 'store';
 import { DefaultColumnFilter, GlobalFilter, renderFilterTypes } from 'utils/react-table';
+import { axiosServices } from 'utils/axios';
 // Define a type for the data
 type Reservation = {
   id: string;
@@ -275,7 +275,7 @@ const Schedule = () => {
           alert: {
             color: 'error'
           },
-          anchorOrigin: { vertical: 'top', horizontal: 'center' },
+          anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
           close: false
         })
       );
@@ -285,8 +285,8 @@ const Schedule = () => {
   };
 
   const getScheduleData = () => {
-    axios
-      .get('https://localhost:7051/api/Schedule')
+    axiosServices
+      .get('/api/Schedule')
       .then((response) => {
         if (response.status == 200) {
           setData(response.data);
@@ -300,7 +300,7 @@ const Schedule = () => {
               alert: {
                 color: 'error'
               },
-              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+              anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
               close: false
             })
           );
@@ -316,7 +316,7 @@ const Schedule = () => {
             alert: {
               color: 'error'
             },
-            anchorOrigin: { vertical: 'top', horizontal: 'center' },
+            anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
             close: false
           })
         );
@@ -334,13 +334,13 @@ const Schedule = () => {
           alert: {
             color: 'error'
           },
-          anchorOrigin: { vertical: 'top', horizontal: 'center' },
+          anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
           close: false
         })
       );
     } else {
-      axios
-        .delete(`https://localhost:7051/api/Schedule/${schedule.id}`)
+      axiosServices
+        .delete(`/api/Schedule/${schedule.id}`)
         .then((response) => {
           if (response.status == 200) {
             dispatch(
@@ -351,7 +351,7 @@ const Schedule = () => {
                 alert: {
                   color: 'success'
                 },
-                anchorOrigin: { vertical: 'top', horizontal: 'center' },
+                anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
                 close: false
               })
             );
@@ -370,7 +370,7 @@ const Schedule = () => {
               alert: {
                 color: 'error'
               },
-              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+              anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
               close: false
             })
           );

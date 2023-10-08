@@ -5,13 +5,13 @@ import Loadable from 'components/Loadable';
 import CommonLayout from 'layout/CommonLayout';
 import MainLayout from 'layout/MainLayout';
 import AuthGuard from 'utils/route-guard/AuthGuard';
-import Schedule from 'pages/home/schedule';
-import EditSchedule from 'pages/home/EditSchedule';
-import CreateSchedule from 'pages/home/CreateSchedule';
-import ScheduleReservations from 'pages/home/ScheduleReservations';
-import ActiveSchedules from 'pages/home/ActiveSchedules';
-import MySchedules from 'pages/home/MySchedules';
-import MyScheduleReservations from 'pages/home/MyScheduleReservations';
+import Schedule from 'pages/schedule/schedule';
+import EditSchedule from 'pages/schedule/EditSchedule';
+import CreateSchedule from 'pages/schedule/CreateSchedule';
+import ScheduleReservations from 'pages/reservation/ScheduleReservations';
+import ActiveSchedules from 'pages/schedule/ActiveSchedules';
+import MySchedules from 'pages/reservation/MySchedules';
+import MyScheduleReservations from 'pages/reservation/MyScheduleReservations';
 
 // pages routing
 const AuthLogin = Loadable(lazy(() => import('pages/auth/login')));

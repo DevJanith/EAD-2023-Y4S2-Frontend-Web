@@ -118,7 +118,7 @@ const application: NavItemType = {
     },
     {
       id: 'reservation-management',
-      title: <FormattedMessage id="reservation-management" />,
+      title: <FormattedMessage id="ticket-booking" />,
       type: 'collapse',
       icon: icons.ControlOutlined,
       children: [

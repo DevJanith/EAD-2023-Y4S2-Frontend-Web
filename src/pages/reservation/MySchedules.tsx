@@ -111,7 +111,7 @@ function ReactTable({
       <Stack direction="row" spacing={2} justifyContent="space-between" sx={{ padding: 2 }}>
         <GlobalFilter preGlobalFilteredRows={preGlobalFilteredRows} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
         <Stack direction="row" alignItems="center" spacing={1}>
-          <CSVExport data={rows.map((d: Row) => d.original)} filename={'filtering-table.csv'} />
+          <CSVExport data={rows.map((d: Row) => d.original)} filename={'my-schedules.csv'} />
         </Stack>
       </Stack>
       <Table {...getTableProps()}>

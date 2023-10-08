@@ -1,7 +1,25 @@
 // material-ui
 
 // project import
-import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Grid, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Divider,
+  Grid,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Typography
+} from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 // third-party
 import { Cell, Column, HeaderGroup, Row, useFilters, useGlobalFilter, usePagination, useTable } from 'react-table';
@@ -55,7 +73,16 @@ type Schedule = {
 };
 
 // ==============================|| REACT TABLE ||============================== //
-function ReactTable({ columns, data, handleAddEdit }: { columns: Column[]; data: Schedule[]; striped?: boolean, handleAddEdit: () => void }) {
+function ReactTable({
+  columns,
+  data,
+  handleAddEdit
+}: {
+  columns: Column[];
+  data: Schedule[];
+  striped?: boolean;
+  handleAddEdit: () => void;
+}) {
   const filterTypes = useMemo(() => renderFilterTypes, []);
   const defaultColumn = useMemo(() => ({ Filter: DefaultColumnFilter }), []);
 
@@ -71,14 +98,14 @@ function ReactTable({ columns, data, handleAddEdit }: { columns: Column[]; data:
     preGlobalFilteredRows,
     setGlobalFilter,
     globalFilter,
-    page,
+    page
   } = useTable(
     {
       columns,
       data,
       defaultColumn,
       filterTypes,
-      initialState: { pageIndex: 0, pageSize: 10 },
+      initialState: { pageIndex: 0, pageSize: 10 }
     },
     useGlobalFilter,
     useFilters,
@@ -90,7 +117,7 @@ function ReactTable({ columns, data, handleAddEdit }: { columns: Column[]; data:
       <Stack direction="row" spacing={2} justifyContent="space-between" sx={{ padding: 2 }}>
         <GlobalFilter preGlobalFilteredRows={preGlobalFilteredRows} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
         <Stack direction="row" alignItems="center" spacing={1}>
-          <CSVExport data={rows.map((d: Row) => d.original)} filename={'filtering-table.csv'} />
+          <CSVExport data={rows.map((d: Row) => d.original)} filename={'all-schedules.csv'} />
           <Button variant="contained" startIcon={<PlusOutlined />} onClick={handleAddEdit}>
             Add New Schedule
           </Button>
@@ -489,7 +516,13 @@ const Schedule = () => {
       </Dialog>
       <MainCard content={false}>
         <ScrollX>
-          <ReactTable columns={columns} data={data} handleAddEdit={() => { navigate('/application/schedule-management/schedule-create'); }} />
+          <ReactTable
+            columns={columns}
+            data={data}
+            handleAddEdit={() => {
+              navigate('/application/schedule-management/schedule-create');
+            }}
+          />
         </ScrollX>
       </MainCard>
     </>

@@ -8,34 +8,37 @@ import {
   FormControlLabel,
   FormHelperText,
   Grid,
-  Link,
   InputAdornment,
   InputLabel,
+  Link,
   OutlinedInput,
   Stack,
   Typography
 } from '@mui/material';
 
 // third party
-import * as Yup from 'yup';
 import { Formik } from 'formik';
+import * as Yup from 'yup';
 
 // project import
-import IconButton from 'components/@extended/IconButton';
 import AnimateButton from 'components/@extended/AnimateButton';
+import IconButton from 'components/@extended/IconButton';
 
 import useAuth from 'hooks/useAuth';
 import useScriptRef from 'hooks/useScriptRef';
 
 // assets
-import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
+import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
+
+// regex
+const nicRegex = /^[0-9]{9}(V|X)?|[0-9]{12}$/i;
 
 // ============================|| JWT - LOGIN ||============================ //
 
 const AuthLogin = ({ isDemo = false }: { isDemo?: boolean }) => {
   const [checked, setChecked] = React.useState(false);
 
-  const { login } = useAuth();
+  const { signIn } = useAuth();
   const scriptedRef = useScriptRef();
 
   const [showPassword, setShowPassword] = React.useState(false);
@@ -51,17 +54,19 @@ const AuthLogin = ({ isDemo = false }: { isDemo?: boolean }) => {
     <>
       <Formik
         initialValues={{
-          email: 'info@codedthemes.com',
-          password: '123456',
+          nic: '200102402806',
+          password: 'janith',
           submit: null
         }}
         validationSchema={Yup.object().shape({
-          email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
+          nic: Yup.string()
+          .matches(nicRegex, 'NIC must be 9 or 12 digits and may end with V or X (case insensitive)')
+          .required('NIC is required'),
           password: Yup.string().max(255).required('Password is required')
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
-            await login(values.email, values.password);
+            await signIn(values.nic, values.password);
             if (scriptedRef.current) {
               setStatus({ success: true });
               setSubmitting(false);
@@ -81,21 +86,21 @@ const AuthLogin = ({ isDemo = false }: { isDemo?: boolean }) => {
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <Stack spacing={1}>
-                  <InputLabel htmlFor="email-login">Email Address</InputLabel>
+                  <InputLabel htmlFor="nic-login">NIC</InputLabel>
                   <OutlinedInput
-                    id="email-login"
-                    type="email"
-                    value={values.email}
-                    name="email"
+                    id="nic-login"
+                    type="nic"
+                    value={values.nic}
+                    name="nic"
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    placeholder="Enter email address"
+                    placeholder="Enter nic address"
                     fullWidth
-                    error={Boolean(touched.email && errors.email)}
+                    error={Boolean(touched.nic && errors.nic)}
                   />
-                  {touched.email && errors.email && (
-                    <FormHelperText error id="standard-weight-helper-text-email-login">
-                      {errors.email}
+                  {touched.nic && errors.nic && (
+                    <FormHelperText error id="standard-weight-helper-text-nic-login">
+                      {errors.nic}
                     </FormHelperText>
                   )}
                 </Stack>

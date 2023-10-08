@@ -1,22 +1,21 @@
-import { useRef, useState, ReactNode, SyntheticEvent } from 'react';
+import { ReactNode, SyntheticEvent, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 
 // material-ui
-import { useTheme } from '@mui/material/styles';
 import { Box, ButtonBase, CardContent, ClickAwayListener, Grid, Paper, Popper, Stack, Tab, Tabs, Tooltip, Typography } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 
 // project import
-import ProfileTab from './ProfileTab';
-import SettingTab from './SettingTab';
 import Avatar from 'components/@extended/Avatar';
-import MainCard from 'components/MainCard';
-import Transitions from 'components/@extended/Transitions';
 import IconButton from 'components/@extended/IconButton';
+import Transitions from 'components/@extended/Transitions';
+import MainCard from 'components/MainCard';
 import useAuth from 'hooks/useAuth';
+import ProfileTab from './ProfileTab';
 
 // assets
+import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import avatar1 from 'assets/images/users/avatar-1.png';
-import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 
 // types
 import { ThemeMode } from 'types/config';
@@ -153,7 +152,7 @@ const Profile = () => {
                           <Stack>
                             <Typography variant="h6">{user?.name}</Typography>
                             <Typography variant="body2" color="textSecondary">
-                              UI/UX Designer
+                              {user?.role}
                             </Typography>
                           </Stack>
                         </Stack>
@@ -182,7 +181,7 @@ const Profile = () => {
                         label="Profile"
                         {...a11yProps(0)}
                       />
-                      <Tab
+                      {/* <Tab
                         sx={{
                           display: 'flex',
                           flexDirection: 'row',
@@ -193,15 +192,15 @@ const Profile = () => {
                         icon={<SettingOutlined style={{ marginBottom: 0, marginRight: '10px' }} />}
                         label="Setting"
                         {...a11yProps(1)}
-                      />
+                      /> */}
                     </Tabs>
                   </Box>
                   <TabPanel value={value} index={0} dir={theme.direction}>
                     <ProfileTab handleLogout={handleLogout} />
                   </TabPanel>
-                  <TabPanel value={value} index={1} dir={theme.direction}>
+                  {/* <TabPanel value={value} index={1} dir={theme.direction}>
                     <SettingTab />
-                  </TabPanel>
+                  </TabPanel> */}
                 </MainCard>
               </ClickAwayListener>
             </Paper>

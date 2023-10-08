@@ -307,7 +307,7 @@ const EditSchedule = () => {
                 close: false
               })
             );
-            navigate(`/home/schedule`);
+            navigate(`/application/schedule-management/schedule`);
           } else {
             dispatch(
               openSnackbar({

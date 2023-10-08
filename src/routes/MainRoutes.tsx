@@ -4,15 +4,15 @@ import { lazy } from 'react';
 import Loadable from 'components/Loadable';
 import CommonLayout from 'layout/CommonLayout';
 import MainLayout from 'layout/MainLayout';
-import AuthGuard from 'utils/route-guard/AuthGuard';
-import Schedule from 'pages/schedule/schedule';
-import EditSchedule from 'pages/schedule/EditSchedule';
-import CreateSchedule from 'pages/schedule/CreateSchedule';
+import MyScheduleReservations from 'pages/reservation/MyScheduleReservations';
+import MySchedules from 'pages/reservation/MySchedules';
 import ScheduleReservations from 'pages/reservation/ScheduleReservations';
 import ActiveSchedules from 'pages/schedule/ActiveSchedules';
-import MySchedules from 'pages/reservation/MySchedules';
-import MyScheduleReservations from 'pages/reservation/MyScheduleReservations';
+import CreateSchedule from 'pages/schedule/CreateSchedule';
+import EditSchedule from 'pages/schedule/EditSchedule';
 import IncomingSchedules from 'pages/schedule/IncomingSchedules';
+import Schedule from 'pages/schedule/schedule';
+import AuthGuard from 'utils/route-guard/AuthGuard';
 
 // pages routing
 const AuthLogin = Loadable(lazy(() => import('pages/auth/login')));
@@ -29,6 +29,14 @@ const MaintenanceComingSoon = Loadable(lazy(() => import('pages/maintenance/comi
 
 // render - home page
 const Dashboard = Loadable(lazy(() => import('pages/home/dashboard')));
+
+// render - application page
+const UserList = Loadable(lazy(() => import('pages/application/user-management/list/list')))
+const UserProfile = Loadable(lazy(() => import('pages/application/user-management/profile/profile')))
+
+// render - hr page
+const EmployeeList = Loadable(lazy(() => import('pages/hr/employee-management/list/list')))
+const EmployeeProfile = Loadable(lazy(() => import('pages/hr/employee-management/profile/profile')))
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -51,64 +59,126 @@ const MainRoutes = {
               element: <Dashboard />
             },
             {
-              path: 'schedule',
-              element: <Schedule />
-            },
-            {
-              path: 'incoming-schedules',
-              element: <IncomingSchedules />
-            },
-            {
               path: 'schedule/:id',
               element: <EditSchedule />
             },
             {
-              path: 'schedule-create',
-              element: <CreateSchedule />
-            },
-            {
               path: 'schedule/reservations/:id',
               element: <ScheduleReservations />
-            }
-          ]
-        },
-        {
-          path: 'home',
-          children: [
-            {
-              path: 'dashboard',
-              element: <Dashboard />
-            },
-            {
-              path: 'schedule',
-              element: <Schedule />
-            },
-            {
-              path: 'schedule/:id',
-              element: <EditSchedule />
-            },
-            {
-              path: 'schedule-create',
-              element: <CreateSchedule />
-            },
-            {
-              path: 'schedule/reservations/:id',
-              element: <ScheduleReservations />
-            },
-            {
-              path: 'active-schedules',
-              element: <ActiveSchedules />
-            },
-            {
-              path: 'my-schedules',
-              element: <MySchedules />
             },
             {
               path: 'my-schedule/reservations/:id',
               element: <MyScheduleReservations />
             }
+            // {
+            //   path: 'schedule',
+            //   element: <Schedule />
+            // },
+            // {
+            //   path: 'incoming-schedules',
+            //   element: <IncomingSchedules />
+            // }, 
+            // {
+            //   path: 'schedule-create',
+            //   element: <CreateSchedule />
+            // },
+          
+            // {
+            //   path: 'dashboard',
+            //   element: <Dashboard />
+            // },
+            // {
+            //   path: 'schedule',
+            //   element: <Schedule />
+            // },
+            // {
+            //   path: 'schedule/:id',
+            //   element: <EditSchedule />
+            // },
+            // {
+            //   path: 'schedule-create',
+            //   element: <CreateSchedule />
+            // },
+            // {
+            //   path: 'schedule/reservations/:id',
+            //   element: <ScheduleReservations />
+            // },
+            // {
+            //   path: 'active-schedules',
+            //   element: <ActiveSchedules />
+            // },
+            // {
+            //   path: 'my-schedules',
+            //   element: <MySchedules />
+            // }, 
           ]
-        }
+        },
+        {
+          path: 'application',
+          children: [
+            {
+              path: 'user-management',
+              children: [
+                {
+                  path: 'list',
+                  element: <UserList />
+                },
+                {
+                  path: 'profile',
+                  element: <UserProfile />
+                }
+              ]
+            },
+            {
+              path: 'schedule-management',
+              children: [
+                {
+                  path: 'schedule',
+                  element: <Schedule />
+                },
+                {
+                  path: 'incoming-schedules',
+                  element: <IncomingSchedules />
+                },
+                {
+                  path: 'schedule-create',
+                  element: <CreateSchedule />
+                },
+              ]
+            },
+            {
+              path: 'reservation-management',
+              children: [
+                {
+                  path: 'active-schedules',
+                  element: <ActiveSchedules />
+                },
+                {
+                  path: 'my-schedules',
+                  element: <MySchedules />
+                },
+              ]
+            },
+          ]
+        },
+        {
+          path: 'hr',
+          children: [
+            {
+              path: 'employee-management',
+              children: [
+                {
+                  path: 'list',
+                  element: <EmployeeList />
+                },
+                {
+                  path: 'profile',
+                  element: <EmployeeProfile />
+                }
+              ]
+            }
+          ]
+        },
       ]
     },
     {

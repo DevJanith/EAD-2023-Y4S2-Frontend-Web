@@ -24,41 +24,41 @@ const home: NavItemType = {
       url: '/home/dashboard',
       icon: icons.DashboardOutlined
     },
-    {
-      id: 'schedule',
-      title: <FormattedMessage id="All Train Schedules" />,
-      type: 'item',
-      url: '/home/schedule',
-      icon: icons.DashboardOutlined
-    },
-    {
-      id: 'incoming schedules',
-      title: <FormattedMessage id="Incoming Schedules" />,
-      type: 'item',
-      url: '/home/incoming-schedules',
-      icon: icons.DashboardOutlined
-    },
-    {
-      id: 'schedule create',
-      title: <FormattedMessage id="Create Train Schedule" />,
-      type: 'item',
-      url: '/home/schedule-create',
-      icon: icons.DashboardOutlined
-    },
-    {
-      id: 'active schedules',
-      title: <FormattedMessage id="Active Schedules" />,
-      type: 'item',
-      url: '/home/active-schedules',
-      icon: icons.DashboardOutlined
-    },
-    {
-      id: 'my schedules',
-      title: <FormattedMessage id="My Schedules" />,
-      type: 'item',
-      url: '/home/my-schedules',
-      icon: icons.DashboardOutlined
-    }
+    // {
+    //   id: 'schedule',
+    //   title: <FormattedMessage id="All Train Schedules" />,
+    //   type: 'item',
+    //   url: '/home/schedule', ///application/schedule-management/list
+    //   icon: icons.DashboardOutlined
+    // },
+    // {
+    //   id: 'incoming schedules',
+    //   title: <FormattedMessage id="Incoming Schedules" />,
+    //   type: 'item',
+    //   url: '/home/incoming-schedules',
+    //   icon: icons.DashboardOutlined
+    // },
+    // {
+    //   id: 'schedule create',
+    //   title: <FormattedMessage id="Create Train Schedule" />,
+    //   type: 'item',
+    //   url: '/home/schedule-create',
+    //   icon: icons.DashboardOutlined
+    // },
+    // {
+    //   id: 'active schedules',
+    //   title: <FormattedMessage id="Active Schedules" />,
+    //   type: 'item',
+    //   url: '/home/active-schedules',
+    //   icon: icons.DashboardOutlined
+    // },
+    // {
+    //   id: 'my schedules',
+    //   title: <FormattedMessage id="My Schedules" />,
+    //   type: 'item',
+    //   url: '/home/my-schedules',
+    //   icon: icons.DashboardOutlined
+    // }
   ]
 };
 

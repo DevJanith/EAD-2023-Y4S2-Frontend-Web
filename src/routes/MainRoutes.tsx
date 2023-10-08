@@ -4,15 +4,15 @@ import { lazy } from 'react';
 import Loadable from 'components/Loadable';
 import CommonLayout from 'layout/CommonLayout';
 import MainLayout from 'layout/MainLayout';
-import AuthGuard from 'utils/route-guard/AuthGuard';
-import Schedule from 'pages/schedule/schedule';
-import EditSchedule from 'pages/schedule/EditSchedule';
-import CreateSchedule from 'pages/schedule/CreateSchedule';
+import MyScheduleReservations from 'pages/reservation/MyScheduleReservations';
+import MySchedules from 'pages/reservation/MySchedules';
 import ScheduleReservations from 'pages/reservation/ScheduleReservations';
 import ActiveSchedules from 'pages/schedule/ActiveSchedules';
-import MySchedules from 'pages/reservation/MySchedules';
-import MyScheduleReservations from 'pages/reservation/MyScheduleReservations';
+import CreateSchedule from 'pages/schedule/CreateSchedule';
+import EditSchedule from 'pages/schedule/EditSchedule';
 import IncomingSchedules from 'pages/schedule/IncomingSchedules';
+import Schedule from 'pages/schedule/schedule';
+import AuthGuard from 'utils/route-guard/AuthGuard';
 
 // pages routing
 const AuthLogin = Loadable(lazy(() => import('pages/auth/login')));
@@ -59,25 +59,30 @@ const MainRoutes = {
               element: <Dashboard />
             },
             {
-              path: 'schedule',
-              element: <Schedule />
-            },
-            {
-              path: 'incoming-schedules',
-              element: <IncomingSchedules />
-            },
-            {
               path: 'schedule/:id',
               element: <EditSchedule />
-            },
-            {
-              path: 'schedule-create',
-              element: <CreateSchedule />
             },
             {
               path: 'schedule/reservations/:id',
               element: <ScheduleReservations />
             },
+            {
+              path: 'my-schedule/reservations/:id',
+              element: <MyScheduleReservations />
+            }
+            // {
+            //   path: 'schedule',
+            //   element: <Schedule />
+            // },
+            // {
+            //   path: 'incoming-schedules',
+            //   element: <IncomingSchedules />
+            // }, 
+            // {
+            //   path: 'schedule-create',
+            //   element: <CreateSchedule />
+            // },
+          
             // {
             //   path: 'dashboard',
             //   element: <Dashboard />
@@ -98,20 +103,16 @@ const MainRoutes = {
             //   path: 'schedule/reservations/:id',
             //   element: <ScheduleReservations />
             // },
-            {
-              path: 'active-schedules',
-              element: <ActiveSchedules />
-            },
-            {
-              path: 'my-schedules',
-              element: <MySchedules />
-            },
-            {
-              path: 'my-schedule/reservations/:id',
-              element: <MyScheduleReservations />
-            }
+            // {
+            //   path: 'active-schedules',
+            //   element: <ActiveSchedules />
+            // },
+            // {
+            //   path: 'my-schedules',
+            //   element: <MySchedules />
+            // }, 
           ]
-        }, 
+        },
         {
           path: 'application',
           children: [
@@ -127,7 +128,37 @@ const MainRoutes = {
                   element: <UserProfile />
                 }
               ]
-            }
+            },
+            {
+              path: 'schedule-management',
+              children: [
+                {
+                  path: 'schedule',
+                  element: <Schedule />
+                },
+                {
+                  path: 'incoming-schedules',
+                  element: <IncomingSchedules />
+                },
+                {
+                  path: 'schedule-create',
+                  element: <CreateSchedule />
+                },
+              ]
+            },
+            {
+              path: 'reservation-management',
+              children: [
+                {
+                  path: 'active-schedules',
+                  element: <ActiveSchedules />
+                },
+                {
+                  path: 'my-schedules',
+                  element: <MySchedules />
+                },
+              ]
+            },
           ]
         },
         {

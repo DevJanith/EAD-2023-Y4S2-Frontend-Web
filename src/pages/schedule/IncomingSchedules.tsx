@@ -478,7 +478,7 @@ const IncomingSchedules = () => {
                 ml: 1
               }}
               onClick={() => {
-                navigate('/home/schedule-create');
+                navigate('/application/schedule-management/schedule-create');
               }}
             >
               Create New Schedule

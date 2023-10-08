@@ -1,24 +1,22 @@
 // material-ui
 
 // project import
+import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Grid, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
-import { Chip, Divider, Stack, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
-import { Grid, Typography } from '@mui/material';
 // third-party
 import { Cell, Column, HeaderGroup, useFilters, usePagination, useTable } from 'react-table';
 import { openSnackbar } from 'store/reducers/snackbar';
 // project import
 
+import { CloseOutlined, DeleteOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
+import axios from 'axios';
+import IconButton from 'components/@extended/IconButton';
 import MainCard from 'components/MainCard';
 import ScrollX from 'components/ScrollX';
 import { CSVExport, TablePagination } from 'components/third-party/ReactTable';
-import axios from 'axios';
 import moment from 'moment';
-import IconButton from 'components/@extended/IconButton';
-import { EditOutlined, DeleteOutlined, EyeOutlined, CloseOutlined } from '@ant-design/icons';
-import { dispatch } from 'store';
 import { useNavigate } from 'react-router';
+import { dispatch } from 'store';
 // Define a type for the data
 type Reservation = {
   id: string;
@@ -101,7 +99,7 @@ function ReactTable({ columns, data, striped }: { columns: Column[]; data: Sched
           })}
 
           <TableRow>
-            <TableCell sx={{ p: 2 }} colSpan={7}>
+            <TableCell sx={{ p: 2 }} colSpan={10}>
               <TablePagination gotoPage={gotoPage} rows={rows} setPageSize={setPageSize} pageIndex={pageIndex} pageSize={pageSize} />
             </TableCell>
           </TableRow>
@@ -478,7 +476,7 @@ const Schedule = () => {
                 ml: 1
               }}
               onClick={() => {
-                navigate('/home/schedule-create');
+                navigate('/application/schedule-management/schedule-create');
               }}
             >
               Create New Schedule

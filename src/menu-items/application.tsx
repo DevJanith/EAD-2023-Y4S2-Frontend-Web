@@ -103,7 +103,7 @@ const application: NavItemType = {
           id: 'schedule create',
           title: <FormattedMessage id="Create Train Schedule" />,
           type: 'item',
-          url: '/application/schedule-management/create',
+          url: '/application/schedule-management/schedule-create',
           icon: icons.DashboardOutlined
         },
       ]

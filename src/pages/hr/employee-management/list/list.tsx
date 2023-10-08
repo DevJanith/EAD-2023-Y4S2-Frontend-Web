@@ -73,7 +73,6 @@ function ReactTable({ columns, data, handleAddEdit }: ReactTableProps) {
             data,
             defaultColumn,
             filterTypes,
-
             initialState: { pageIndex: 0, pageSize: 10 }
         },
         useGlobalFilter,

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // material-ui
 import {
@@ -30,15 +30,16 @@ import * as Yup from 'yup';
 import IconButton from 'components/@extended/IconButton';
 
 // assets
-import { DeleteFilled } from '@ant-design/icons';
+import { CopyOutlined, DeleteFilled, EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
 import { Switch } from '@mui/material';
 import salutations, { SalutationsType } from 'data/salutations';
 import statuses, { StatusesType } from 'data/statuses';
 import userTypes, { UserTypesType } from 'data/userTypes';
-import { User } from 'types/user';
-import AlertEmployeeDelete from './AlertEmployeeDelete';
-import { addUser, updateUser } from 'store/reducers/user';
 import { dispatch } from 'store';
+import { addUser, updateUser } from 'store/reducers/user';
+import { User } from 'types/user';
+import { generatePassword } from 'utils/system-generated-password';
+import AlertEmployeeDelete from './AlertEmployeeDelete';
 
 // types
 
@@ -55,7 +56,8 @@ const getInitialValues = (employee: FormikValues | null) => {
         nic: "",
         userType: undefined,
         status: undefined,
-        isActive: false
+        isActive: false,
+        password: "",
     }
 
     if (employee) {
@@ -132,6 +134,7 @@ const AddEditEmployee = ({ employee, onCancel }: Props) => {
                         userType: values.userType,
                         status: values.status,
                         isActive: values.isActive,
+                        password: values.password
                     }));
                 }
                 resetForm()
@@ -145,6 +148,26 @@ const AddEditEmployee = ({ employee, onCancel }: Props) => {
 
     const { errors, touched, handleSubmit, isSubmitting, getFieldProps } = formik;
 
+    const [generatedPassword, setGeneratedPassword] = useState('');
+    const [isPassword, setIsPassword] = useState(true);
+
+    useEffect(() => {
+        // Generate and set the initial password when the component mounts
+        const newPassword = generatePassword();
+        formik.setFieldValue('password', newPassword);
+        setGeneratedPassword(newPassword);
+    }, [])
+
+    const togglePasswordVisibility = () => {
+        setIsPassword(!isPassword);
+    };
+
+    const copyPassword = () => {
+        // You can use the Clipboard API or a library like `clipboard-copy` to copy the password to the clipboard.
+        // Example using Clipboard API:
+        navigator.clipboard.writeText(generatedPassword);
+        // You may want to provide user feedback upon successful copy.
+    };
     return (
         <>
             <FormikProvider value={formik}>
@@ -328,6 +351,40 @@ const AddEditEmployee = ({ employee, onCancel }: Props) => {
                                     </Stack>
                                     <Divider sx={{ my: 2 }} />
                                 </Grid>
+                                {!employee && <Grid item xs={12} sm={12}>
+                                    <Stack spacing={1.25}>
+                                        <InputLabel htmlFor="password">Password <span style={{ color: "red" }}>(System Generated Password)</span></InputLabel>
+                                        <TextField
+                                            fullWidth
+                                            id='password'
+                                            type={isPassword ? "password" : "text"}
+                                            placeholder="Enter Password"
+                                            disabled={true}
+                                            {...getFieldProps('password')}
+                                            error={Boolean(touched.password && errors.password)}
+                                            helperText={touched.password && errors.password}
+                                            InputProps={{
+                                                endAdornment: (
+                                                    <React.Fragment>
+                                                        <IconButton
+                                                            edge="end"
+                                                            onClick={togglePasswordVisibility}
+                                                        >
+                                                            {isPassword ? <EyeOutlined /> : <EyeInvisibleOutlined />}
+                                                        </IconButton>
+                                                        <IconButton
+                                                            edge="end"
+                                                            onClick={copyPassword}
+                                                            disabled={!generatedPassword} // Disable copy button if no password
+                                                        >
+                                                            <CopyOutlined />
+                                                        </IconButton>
+                                                    </React.Fragment>
+                                                ),
+                                            }}
+                                        />
+                                    </Stack>
+                                </Grid>}
                             </Grid>
                         </DialogContent>
                         <Divider />

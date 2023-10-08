@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // material-ui
 import {
@@ -8,10 +8,12 @@ import {
     DialogContent,
     DialogTitle,
     Divider,
+    FormControlLabel,
     FormHelperText,
     Grid,
     InputLabel,
     Stack,
+    Switch,
     TextField,
     Tooltip
 } from '@mui/material';
@@ -28,14 +30,15 @@ import * as Yup from 'yup';
 import IconButton from 'components/@extended/IconButton';
 
 // assets
-import { DeleteFilled } from '@ant-design/icons';
-import isActives, { IsActivesTypes } from 'data/isActives';
+import { CopyOutlined, DeleteFilled, EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
+import { Typography } from '@mui/material';
 import salutations, { SalutationsType } from 'data/salutations';
 import statuses, { StatusesType } from 'data/statuses';
 import userTypes, { UserTypesType } from 'data/userTypes';
 import { dispatch } from 'store';
 import { addUser, updateUser } from 'store/reducers/user';
 import { User } from 'types/user';
+import { generatePassword } from 'utils/system-generated-password';
 import AlertUserDelete from './AlertUserDelete';
 
 // types
@@ -53,7 +56,8 @@ const getInitialValues = (user: FormikValues | null) => {
         nic: "",
         userType: undefined,
         status: undefined,
-        isActive: undefined
+        isActive: false,
+        password: "",
     }
 
     if (user) {
@@ -87,7 +91,7 @@ const AddEditUser = ({ user, onCancel }: Props) => {
             .required("NIC is required"),
         userType: Yup.number().required("User Type is required"),
         status: Yup.string().required("Status is required"),
-        isActive: Yup.boolean().required("Is Active is required"),
+        isActive: Yup.boolean().required("Is Active is required"), 
     });
 
     const [openAlert, setOpenAlert] = useState(false);
@@ -115,7 +119,7 @@ const AddEditUser = ({ user, onCancel }: Props) => {
                         nic: values.nic,
                         userType: values.userType,
                         status: values.status,
-                        isActive: values.isActive,
+                        isActive: values.isActive
                     }));
                 } else {
                     // POST API
@@ -130,6 +134,7 @@ const AddEditUser = ({ user, onCancel }: Props) => {
                         userType: values.userType,
                         status: values.status,
                         isActive: values.isActive,
+                        password: values.password
                     }));
                 }
                 resetForm()
@@ -143,6 +148,27 @@ const AddEditUser = ({ user, onCancel }: Props) => {
 
     const { errors, touched, handleSubmit, isSubmitting, getFieldProps } = formik;
 
+    const [generatedPassword, setGeneratedPassword] = useState('');
+    const [isPassword, setIsPassword] = useState(true);
+
+    useEffect(() => {
+        // Generate and set the initial password when the component mounts
+        const newPassword = generatePassword();
+        formik.setFieldValue('password', newPassword);
+        setGeneratedPassword(newPassword);
+    }, [])
+
+    const togglePasswordVisibility = () => {
+        setIsPassword(!isPassword);
+    };
+
+    const copyPassword = () => {
+        // You can use the Clipboard API or a library like `clipboard-copy` to copy the password to the clipboard.
+        // Example using Clipboard API:
+        navigator.clipboard.writeText(generatedPassword);
+        // You may want to provide user feedback upon successful copy.
+    };
+
     return (
         <>
             <FormikProvider value={formik}>
@@ -152,34 +178,7 @@ const AddEditUser = ({ user, onCancel }: Props) => {
                         <Divider />
                         <DialogContent sx={{ p: 2.5 }}>
                             <Grid container spacing={3}>
-                                <Grid item xs={12} sm={2}>
-                                    <Stack spacing={1.25}>
-                                        <InputLabel htmlFor="isActive">Is Active</InputLabel>
-                                        <Autocomplete
-                                            fullWidth
-                                            id="isActive"
-                                            value={isActives.find((option) => option.id === formik.values.isActive) || null}
-                                            onChange={(event: any, newValue: IsActivesTypes | null) => {
-                                                formik.setFieldValue('isActive', newValue?.id);
-                                            }}
-                                            options={isActives}
-                                            getOptionLabel={(item) => `${item.description}`}
-                                            renderInput={(params) => (
-                                                <TextField
-                                                    {...params}
-                                                    placeholder="Select Salutation"
-                                                    sx={{ '& .MuiAutocomplete-input.Mui-disabled': { WebkitTextFillColor: theme.palette.text.primary } }}
-                                                />
-                                            )}
-                                        />
-                                        {formik.touched.isActive && formik.errors.isActive && (
-                                            <FormHelperText error id="helper-text-isActive">
-                                                {formik.errors.isActive}
-                                            </FormHelperText>
-                                        )}
-                                    </Stack>
-                                </Grid>
-                                <Grid item xs={12} sm={10}>
+                                <Grid item xs={12} sm={12}>
                                     <Stack spacing={1.25}>
                                         <InputLabel htmlFor="nic">NIC</InputLabel>
                                         <TextField
@@ -282,7 +281,7 @@ const AddEditUser = ({ user, onCancel }: Props) => {
                                             onChange={(event: any, newValue: UserTypesType | null) => {
                                                 formik.setFieldValue('userType', newValue?.id);
                                             }}
-                                            options={userTypes}
+                                            options={userTypes.filter((option) => option.id === 2 || option.id === 3)}
                                             getOptionLabel={(item) => `${item.description}`}
                                             renderInput={(params) => (
                                                 <TextField
@@ -326,6 +325,67 @@ const AddEditUser = ({ user, onCancel }: Props) => {
                                         )}
                                     </Stack>
                                 </Grid>
+                                <Grid item xs={12}>
+                                    <Divider sx={{ my: 2 }} />
+                                    <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+                                        <Stack spacing={0.5}>
+                                            <Typography variant="subtitle1">Make User Active / In Active</Typography>
+                                            <Typography variant="caption" color="textSecondary">
+                                                description here ....
+                                            </Typography>
+                                        </Stack>
+                                        <FormControlLabel
+                                            control={
+                                                <Switch
+                                                    {...getFieldProps('isActive')}
+                                                    checked={formik.values.isActive}
+                                                    sx={{ mt: 0 }}
+                                                // onError={formik.touched.isActive && Boolean(formik.errors.isActive)}
+                                                />
+                                            }
+                                            label=""
+                                            labelPlacement="start"
+                                        />
+                                        {/* {formik.touched.isActive && formik.errors.isActive && (
+                                            <FormHelperText error>{formik.errors.isActive}</FormHelperText>
+                                        )}  */}
+                                    </Stack>
+                                    <Divider sx={{ my: 2 }} />
+                                </Grid>
+                                {!user && <Grid item xs={12} sm={12}>
+                                    <Stack spacing={1.25}>
+                                        <InputLabel htmlFor="password">Password <span style={{ color: "red" }}>(System Generated Password)</span></InputLabel>
+                                        <TextField
+                                            fullWidth
+                                            id='password'
+                                            type={isPassword ? "password" : "text"}
+                                            placeholder="Enter Password"
+                                            disabled={true}
+                                            {...getFieldProps('password')}
+                                            error={Boolean(touched.password && errors.password)}
+                                            helperText={touched.password && errors.password}
+                                            InputProps={{
+                                                endAdornment: (
+                                                    <React.Fragment>
+                                                        <IconButton
+                                                            edge="end"
+                                                            onClick={togglePasswordVisibility}
+                                                        >
+                                                            {isPassword ? <EyeOutlined /> : <EyeInvisibleOutlined />}
+                                                        </IconButton>
+                                                        <IconButton
+                                                            edge="end"
+                                                            onClick={copyPassword}
+                                                            disabled={!generatedPassword} // Disable copy button if no password
+                                                        >
+                                                            <CopyOutlined />
+                                                        </IconButton>
+                                                    </React.Fragment>
+                                                ),
+                                            }}
+                                        />
+                                    </Stack>
+                                </Grid>}
                             </Grid>
                         </DialogContent>
                         <Divider />

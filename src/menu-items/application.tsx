@@ -9,7 +9,8 @@ import {
   ScheduleOutlined,
   UserOutlined,
   UsergroupAddOutlined,
-  MessageOutlined
+  MessageOutlined,
+  DashboardOutlined
 } from '@ant-design/icons';
 
 // type
@@ -23,7 +24,8 @@ const icons = {
   OrderedListOutlined,
   ScheduleOutlined,
   UsergroupAddOutlined,
-  MessageOutlined
+  MessageOutlined,
+  DashboardOutlined
 };
 
 // ==============================|| MENU ITEMS - SUPPORT ||============================== //
@@ -76,12 +78,33 @@ const application: NavItemType = {
       type: 'collapse',
       icon: icons.ScheduleOutlined,
       children: [
+        // {
+        //   id: 'schedule-list',
+        //   title: <FormattedMessage id="schedule-list" />,
+        //   type: 'item',
+        //   icon: icons.OrderedListOutlined,
+        //   url: '/application/schedule-management/list',
+        // },
         {
-          id: 'schedule-list',
-          title: <FormattedMessage id="schedule-list" />,
+          id: 'schedule',
+          title: <FormattedMessage id="All Train Schedules" />,
           type: 'item',
-          icon: icons.OrderedListOutlined,
-          url: '/application/schedule-management/list',
+          url: '/application/schedule-management/schedule',  
+          icon: icons.DashboardOutlined
+        }, 
+        {
+          id: 'incoming schedules',
+          title: <FormattedMessage id="Incoming Schedules" />,
+          type: 'item',
+          url: '/application/schedule-management/incoming-schedules',
+          icon: icons.DashboardOutlined
+        },
+        {
+          id: 'schedule create',
+          title: <FormattedMessage id="Create Train Schedule" />,
+          type: 'item',
+          url: '/application/schedule-management/create',
+          icon: icons.DashboardOutlined
         },
       ]
     },
@@ -91,13 +114,27 @@ const application: NavItemType = {
       type: 'collapse',
       icon: icons.ControlOutlined,
       children: [
+        // {
+        //   id: 'reservation-list',
+        //   title: <FormattedMessage id="reservation-list" />,
+        //   type: 'item',
+        //   icon: icons.OrderedListOutlined,
+        //   url: '/application/reservation-management/list',
+        // },
         {
-          id: 'reservation-list',
-          title: <FormattedMessage id="reservation-list" />,
+          id: 'active schedules',
+          title: <FormattedMessage id="Active Schedules" />,
           type: 'item',
-          icon: icons.OrderedListOutlined,
-          url: '/application/reservation-management/list',
+          url: '/application/reservation-management/active-schedules',
+          icon: icons.DashboardOutlined
         },
+        {
+          id: 'my schedules',
+          title: <FormattedMessage id="My Schedules" />,
+          type: 'item',
+          url: '/application/reservation-management/my-schedules',
+          icon: icons.DashboardOutlined
+        }
       ]
     },
   ]

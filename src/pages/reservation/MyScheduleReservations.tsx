@@ -94,10 +94,34 @@ const MyScheduleReservations = () => {
           // @ts-ignore
           setData(reservationData);
         } else {
+          dispatch(
+            openSnackbar({
+              open: true,
+              message: 'Something went wrong!',
+              variant: 'alert',
+              alert: {
+                color: 'error'
+              },
+              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+              close: false
+            })
+          );
           console.log('ERROR  >>> ');
         }
       })
       .catch((err) => {
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: 'Something went wrong!',
+            variant: 'alert',
+            alert: {
+              color: 'error'
+            },
+            anchorOrigin: { vertical: 'top', horizontal: 'center' },
+            close: false
+          })
+        );
         console.log(err);
       });
   };
@@ -137,7 +161,7 @@ const MyScheduleReservations = () => {
             dispatch(
               openSnackbar({
                 open: true,
-                message: 'Reservation created succesfully.',
+                message: 'Reservation updated succesfully.',
                 variant: 'alert',
                 alert: {
                   color: 'success'

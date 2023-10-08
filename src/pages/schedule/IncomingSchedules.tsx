@@ -2,29 +2,23 @@
 
 // project import
 import { useEffect, useMemo, useState } from 'react';
-import { Chip, Divider, InputLabel, Stack, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import { Chip, Divider, Stack, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { Grid, Typography } from '@mui/material';
 // third-party
 import { Cell, Column, HeaderGroup, useFilters, usePagination, useTable } from 'react-table';
 import { openSnackbar } from 'store/reducers/snackbar';
 // project import
-import * as yup from 'yup';
+
 import MainCard from 'components/MainCard';
 import ScrollX from 'components/ScrollX';
 import { CSVExport, TablePagination } from 'components/third-party/ReactTable';
 import axios from 'axios';
 import moment from 'moment';
-
-import { CloseOutlined, PlusCircleOutlined } from '@ant-design/icons';
-import { dispatch } from 'store';
-
-import { Slider } from '@mui/material';
 import IconButton from 'components/@extended/IconButton';
-import { useFormik } from 'formik';
-import { TextField } from '@mui/material';
-import trimFc from 'utils/trimFc';
-
+import { EditOutlined, DeleteOutlined, EyeOutlined, CloseOutlined } from '@ant-design/icons';
+import { dispatch } from 'store';
+import { useNavigate } from 'react-router';
 // Define a type for the data
 type Reservation = {
   id: string;
@@ -116,9 +110,10 @@ function ReactTable({ columns, data, striped }: { columns: Column[]; data: Sched
     </>
   );
 }
-const ActiveSchedules = () => {
+const IncomingSchedules = () => {
   const [data, setData] = useState([]);
   const [selectedItem, setSelectedItem] = useState<any>({});
+  const navigate = useNavigate();
 
   const striped = true;
   const columns = useMemo(
@@ -175,16 +170,34 @@ const ActiveSchedules = () => {
         className: 'cell-center',
         Cell: ({ row }: { row: any }) => (
           <>
-            <Button
-              variant="outlined"
+            <IconButton
               color="primary"
-              startIcon={<PlusCircleOutlined />}
+              size="large"
+              onClick={() => {
+                editScheduleInfo(row.original);
+              }}
+            >
+              <EditOutlined />
+            </IconButton>
+            <IconButton
+              color="inherit"
+              size="large"
+              onClick={() => {
+                handleClickOpenDelete(row.original);
+              }}
+            >
+              <DeleteOutlined />
+            </IconButton>
+
+            <IconButton
+              color="inherit"
+              size="large"
               onClick={() => {
                 handleClickOpen(row.original);
               }}
             >
-              Make Reservation
-            </Button>
+              <EyeOutlined />
+            </IconButton>
           </>
         )
       }
@@ -203,18 +216,61 @@ const ActiveSchedules = () => {
     getScheduleData();
   }, []);
 
+  const editScheduleInfo = (schedule: any) => {
+    if (schedule.reservations.length > 0) {
+      dispatch(
+        openSnackbar({
+          open: true,
+          message: 'Can not edit schedule with existing Reservations.',
+          variant: 'alert',
+          alert: {
+            color: 'error'
+          },
+          anchorOrigin: { vertical: 'top', horizontal: 'center' },
+          close: false
+        })
+      );
+    } else {
+      navigate(`/home/schedule/${schedule.id}`);
+    }
+  };
+
   const getScheduleData = () => {
     axios
-      .get('https://localhost:7051/api/Schedule/getSchedulesByStatus/ACTIVE')
+      .get('https://localhost:7051/api/Schedule/getIncomingSchedules')
       .then((response) => {
-        if (response.status === 200) {
+        if (response.status == 200) {
           setData(response.data);
         } else {
           console.log('ERROR  >>> ');
+          dispatch(
+            openSnackbar({
+              open: true,
+              message: 'Something went wrong!',
+              variant: 'alert',
+              alert: {
+                color: 'error'
+              },
+              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+              close: false
+            })
+          );
         }
       })
       .catch((err) => {
         console.log(err);
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: 'Something went wrong!',
+            variant: 'alert',
+            alert: {
+              color: 'error'
+            },
+            anchorOrigin: { vertical: 'top', horizontal: 'center' },
+            close: false
+          })
+        );
       });
   };
 
@@ -238,8 +294,32 @@ const ActiveSchedules = () => {
         .delete(`https://localhost:7051/api/Schedule/${schedule.id}`)
         .then((response) => {
           if (response.status == 200) {
+            dispatch(
+              openSnackbar({
+                open: true,
+                message: 'Schedule deleted succesfully.',
+                variant: 'alert',
+                alert: {
+                  color: 'success'
+                },
+                anchorOrigin: { vertical: 'top', horizontal: 'center' },
+                close: false
+              })
+            );
             getScheduleData();
           } else {
+            dispatch(
+              openSnackbar({
+                open: true,
+                message: 'Something went wrong!',
+                variant: 'alert',
+                alert: {
+                  color: 'error'
+                },
+                anchorOrigin: { vertical: 'top', horizontal: 'center' },
+                close: false
+              })
+            );
             console.log('ERROR  >>> ');
           }
         })
@@ -261,122 +341,14 @@ const ActiveSchedules = () => {
     setOpen(false);
   };
 
-  // const handleClickOpenDelete = (data: any) => {
-  //   setOpenDelete(true);
-  //   setSelectedItem(data);
-  // };
+  const handleClickOpenDelete = (data: any) => {
+    setOpenDelete(true);
+    setSelectedItem(data);
+  };
 
   const handleCloseDelete = () => {
     setOpenDelete(false);
   };
-  const [seatCount, setSeatCount] = useState(0);
-  function valuetext(value: number) {
-    setSeatCount(value);
-    return `${value} Seats`;
-  }
-  function calculateAvailableSeats(data: any) {
-    if (!data || !data.train || !data.train.totalSeats || !data.reservations) {
-      // Handle missing or invalid data
-      return null;
-    }
-
-    const totalSeats = data.train.totalSeats;
-    const reservations = data.reservations;
-
-    if (!Array.isArray(reservations)) {
-      // Handle invalid reservations data
-      return null;
-    }
-
-    // Filter reservations where ReservationStatus is "RESERVED" and calculate the sum of reservedCount
-    const reservedCountSum = reservations
-      .filter((reservation) => reservation.reservationStatus === 'RESERVED')
-      .reduce((sum, reservation) => {
-        return sum + (reservation.reservedCount || 0);
-      }, 0);
-
-    // Calculate available seats by subtracting reservedCountSum from totalSeats
-    const availableSeats = totalSeats - reservedCountSum;
-
-    return availableSeats;
-  }
-
-  const validationSchema = yup.object({
-    displayName: yup.string().required('Display Name required')
-  });
-
-  const formik = useFormik({
-    initialValues: {
-      displayName: ''
-    },
-    validationSchema,
-    onSubmit: async (values, { setErrors, setStatus, setSubmitting }) => {
-      // submit location
-
-      let amount = seatCount * selectedItem.ticketPrice;
-      let data = {
-        userId: sessionStorage.getItem('userId') ? sessionStorage.getItem('userId') : 'string',
-        displayName: values.displayName,
-        createdAt: moment(),
-        reservedCount: seatCount,
-        reservationDate: selectedItem.startDatetime,
-        reservationStatus: 'RESERVED',
-        amount: amount,
-        scheduleId: selectedItem.id
-      };
-      axios
-        .post(`https://localhost:7051/api/Reservation/createForSchedule/${selectedItem.id}`, data)
-        .then((response) => {
-          if (response.status == 201) {
-            dispatch(
-              openSnackbar({
-                open: true,
-                message: 'Reservation created succesfully.',
-                variant: 'alert',
-                alert: {
-                  color: 'success'
-                },
-                anchorOrigin: { vertical: 'top', horizontal: 'center' },
-                close: false
-              })
-            );
-
-            handleClose();
-
-            getScheduleData();
-          } else {
-            dispatch(
-              openSnackbar({
-                open: true,
-                message: response.data,
-                variant: 'alert',
-                alert: {
-                  color: 'error'
-                },
-                anchorOrigin: { vertical: 'top', horizontal: 'center' },
-                close: false
-              })
-            );
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-          console.log(err.response);
-          dispatch(
-            openSnackbar({
-              open: true,
-              message: err.response.data,
-              variant: 'alert',
-              alert: {
-                color: 'error'
-              },
-              anchorOrigin: { vertical: 'top', horizontal: 'center' },
-              close: false
-            })
-          );
-        });
-    }
-  });
 
   return (
     <>
@@ -414,7 +386,7 @@ const ActiveSchedules = () => {
         <Box sx={{ p: 1, py: 1.5 }}>
           <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
             <DialogTitle>
-              <Typography variant="h4">Reservation</Typography>
+              <Typography variant="h4">Schedule Details</Typography>
             </DialogTitle>
 
             <IconButton shape="rounded" color="error" onClick={handleClose}>
@@ -426,8 +398,9 @@ const ActiveSchedules = () => {
 
           <DialogContent>
             <DialogContentText>
-              Schedule Details for ID - <strong> {selectedItem.id}</strong>{' '}
+              Schedule Details for ID : <strong> {selectedItem.id}</strong>{' '}
             </DialogContentText>
+
             <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={1.5} sx={{ mt: 1.5 }}>
               <Grid item>
                 <Typography variant="h6">Start Location : </Typography>
@@ -436,6 +409,7 @@ const ActiveSchedules = () => {
                 <Typography variant="h6">{selectedItem.fromLocation}</Typography>
               </Grid>
             </Stack>
+
             <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={1.5} sx={{ mt: 1.5 }}>
               <Grid item>
                 <Typography variant="h6">End Location : </Typography>
@@ -471,94 +445,46 @@ const ActiveSchedules = () => {
                   {selectedItem.status == 'ACTIVE' ? (
                     <Chip color="success" label="ACTIVE" size="small" variant="light" />
                   ) : (
-                    <Chip color="error" label="CANCELLED" size="small" variant="light" />
+                    <Chip color="error" label="INACTIVE" size="small" variant="light" />
                   )}
                 </Typography>
               </Grid>
             </Stack>
-
-            <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={1.5} sx={{ mt: 1.5 }}>
-              <Grid item>
-                <Typography variant="h6">Available Seat Count : </Typography>
-              </Grid>
-              <Grid item>
-                <Typography variant="h6">
-                  {/*  @ts-ignore */}
-                  {calculateAvailableSeats(selectedItem) <= 10 ? (
-                    <Chip color="error" label={calculateAvailableSeats(selectedItem)} size="small" variant="light" />
-                  ) : (
-                    <Chip color="success" label={calculateAvailableSeats(selectedItem)} size="small" variant="light" />
-                  )}
-                </Typography>
-              </Grid>
-            </Stack>
-
-            <Divider sx={{ my: 2 }} />
-
-            <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={1.5} sx={{ mt: 2 }}>
-              <Typography variant="h5">Number of Seats : </Typography>
-
-              <Typography variant="h5">
-                {seatCount} Seat{seatCount > 1 ? 's' : ''}{' '}
-              </Typography>
-            </Stack>
-
-            <Grid container spacing={1.5} alignItems="center">
-              <Grid item>
-                <Typography variant="h6" color="red">
-                  <strong> * Maximum 4 seats per reservation</strong>
-                </Typography>
-              </Grid>
-
-              <Slider
-                aria-label="Seats"
-                defaultValue={1}
-                getAriaValueText={valuetext}
-                valueLabelDisplay="auto"
-                step={1}
-                marks
-                min={1}
-                max={4}
-                sx={{ mx: 3, mt: 2 }}
-              />
-              <Grid item sx={{ mx: 1, mt: -2, mb: 1 }}>
-                <Typography variant="h6">
-                  <strong> Select seat count from this slider.</strong>
-                </Typography>
-              </Grid>
+            <Divider />
+            <Grid container spacing={1.5} alignItems="center" sx={{ mt: 2 }}>
+              <Button
+                variant="contained"
+                fullWidth={true}
+                onClick={() => {
+                  navigate(`/home/schedule/reservations/${selectedItem.id}`);
+                }}
+              >
+                View Reservations
+              </Button>
             </Grid>
-            <form onSubmit={formik.handleSubmit} id="create-scheule-form">
-              <Grid container spacing={3.5}>
-                <Grid item xs={12} sm={12}>
-                  <Stack spacing={1}>
-                    <InputLabel>Display Name </InputLabel>
-                    <TextField
-                      id="displayName"
-                      name="displayName"
-                      placeholder="Enter Display Name Here"
-                      value={formik.values.displayName}
-                      onChange={trimFc(formik)}
-                      onBlur={formik.handleBlur}
-                      error={formik.touched.displayName && Boolean(formik.errors.displayName)}
-                      helperText={formik.touched.displayName && formik.errors.displayName}
-                      fullWidth
-                    />
-                  </Stack>
-                </Grid>
-              </Grid>
-              <Grid container spacing={1.5} alignItems="center" sx={{ mt: 2 }}>
-                <Button variant="contained" fullWidth={true} type="submit" disabled={formik.isSubmitting}>
-                  Make a Reservation
-                </Button>
-              </Grid>
-            </form>
           </DialogContent>
         </Box>
       </Dialog>
       <MainCard
         content={false}
         title="Schedule Data"
-        secondary={<CSVExport data={data.slice(0, 10)} filename={striped ? 'striped-table.csv' : 'basic-table.csv'} />}
+        secondary={
+          <>
+            <CSVExport data={data.slice(0, 10)} filename={striped ? 'striped-table.csv' : 'basic-table.csv'} />
+            <Button
+              size="small"
+              variant="contained"
+              sx={{
+                ml: 1
+              }}
+              onClick={() => {
+                navigate('/home/schedule-create');
+              }}
+            >
+              Create New Schedule
+            </Button>
+          </>
+        }
       >
         <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}></Stack>
         <ScrollX>
@@ -569,4 +495,4 @@ const ActiveSchedules = () => {
   );
 };
 
-export default ActiveSchedules;
+export default IncomingSchedules;

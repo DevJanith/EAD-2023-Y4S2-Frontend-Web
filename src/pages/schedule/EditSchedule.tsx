@@ -141,7 +141,7 @@ const EditSchedule = () => {
 
       {
         Header: 'Tatal Seats',
-        accessor: 'number'
+        accessor: 'totalSeats'
       },
 
       {
@@ -211,10 +211,34 @@ const EditSchedule = () => {
         if (response.status == 200) {
           setData(response.data);
         } else {
+          dispatch(
+            openSnackbar({
+              open: true,
+              message: 'Something went wrong!',
+              variant: 'alert',
+              alert: {
+                color: 'error'
+              },
+              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+              close: false
+            })
+          );
           console.log('ERROR  >>> ');
         }
       })
       .catch((err) => {
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: 'Something went wrong!',
+            variant: 'alert',
+            alert: {
+              color: 'error'
+            },
+            anchorOrigin: { vertical: 'top', horizontal: 'center' },
+            close: false
+          })
+        );
         console.log(err);
       });
   };
@@ -379,7 +403,16 @@ const EditSchedule = () => {
       </Dialog>
 
       {/* Info Dialog */}
-      <Dialog open={open} onClose={handleClose} fullWidth={true}>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        fullWidth={true}
+        PaperProps={{
+          style: {
+            minWidth: '90%'
+          }
+        }}
+      >
         <Box sx={{ p: 1, py: 1.5 }}>
           <DialogTitle>
             <Typography variant="h4">Select Train For Schedule</Typography>
@@ -516,7 +549,7 @@ const EditSchedule = () => {
                     id="status"
                   >
                     <FormControlLabel value="ACTIVE" control={<Radio color="success" />} label="Active" />
-                    <FormControlLabel value="INACTIVE" control={<Radio color="error" />} label="Inactive" />
+                    <FormControlLabel value="CANCELLED" control={<Radio color="error" />} label="Cancelled" />
                   </RadioGroup>
                 </FormControl>
                 {formik.errors.status && (
@@ -536,6 +569,7 @@ const EditSchedule = () => {
                 onClick={() => {
                   handleClickOpen();
                 }}
+                disabled={formik.values.status == 'INACTIVE'}
               >
                 Add Train to Schedule
               </Button>

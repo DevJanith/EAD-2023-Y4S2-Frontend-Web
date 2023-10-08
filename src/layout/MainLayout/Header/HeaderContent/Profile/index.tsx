@@ -180,27 +180,12 @@ const Profile = () => {
                         icon={<UserOutlined style={{ marginBottom: 0, marginRight: '10px' }} />}
                         label="Profile"
                         {...a11yProps(0)}
-                      />
-                      {/* <Tab
-                        sx={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          textTransform: 'capitalize'
-                        }}
-                        icon={<SettingOutlined style={{ marginBottom: 0, marginRight: '10px' }} />}
-                        label="Setting"
-                        {...a11yProps(1)}
-                      /> */}
+                      /> 
                     </Tabs>
                   </Box>
                   <TabPanel value={value} index={0} dir={theme.direction}>
                     <ProfileTab handleLogout={handleLogout} />
-                  </TabPanel>
-                  {/* <TabPanel value={value} index={1} dir={theme.direction}>
-                    <SettingTab />
-                  </TabPanel> */}
+                  </TabPanel> 
                 </MainCard>
               </ClickAwayListener>
             </Paper>

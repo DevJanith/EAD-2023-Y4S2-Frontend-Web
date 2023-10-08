@@ -359,7 +359,7 @@ const ScheduleReservations = () => {
             dispatch(
               openSnackbar({
                 open: true,
-                message: 'Reservation created succesfully.',
+                message: 'Reservation updated succesfully.',
                 variant: 'alert',
                 alert: {
                   color: 'success'

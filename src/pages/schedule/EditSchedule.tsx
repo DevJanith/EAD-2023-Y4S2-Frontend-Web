@@ -211,10 +211,34 @@ const EditSchedule = () => {
         if (response.status == 200) {
           setData(response.data);
         } else {
+          dispatch(
+            openSnackbar({
+              open: true,
+              message: 'Something went wrong!',
+              variant: 'alert',
+              alert: {
+                color: 'error'
+              },
+              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+              close: false
+            })
+          );
           console.log('ERROR  >>> ');
         }
       })
       .catch((err) => {
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: 'Something went wrong!',
+            variant: 'alert',
+            alert: {
+              color: 'error'
+            },
+            anchorOrigin: { vertical: 'top', horizontal: 'center' },
+            close: false
+          })
+        );
         console.log(err);
       });
   };

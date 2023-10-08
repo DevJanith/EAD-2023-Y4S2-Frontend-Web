@@ -26,9 +26,16 @@ const home: NavItemType = {
     },
     {
       id: 'schedule',
-      title: <FormattedMessage id="Train Schedules" />,
+      title: <FormattedMessage id="All Train Schedules" />,
       type: 'item',
       url: '/home/schedule',
+      icon: icons.DashboardOutlined
+    },
+    {
+      id: 'incoming schedules',
+      title: <FormattedMessage id="Incoming Schedules" />,
+      type: 'item',
+      url: '/home/incoming-schedules',
       icon: icons.DashboardOutlined
     },
     {

@@ -243,10 +243,34 @@ const Schedule = () => {
           setData(response.data);
         } else {
           console.log('ERROR  >>> ');
+          dispatch(
+            openSnackbar({
+              open: true,
+              message: 'Something went wrong!',
+              variant: 'alert',
+              alert: {
+                color: 'error'
+              },
+              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+              close: false
+            })
+          );
         }
       })
       .catch((err) => {
         console.log(err);
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: 'Something went wrong!',
+            variant: 'alert',
+            alert: {
+              color: 'error'
+            },
+            anchorOrigin: { vertical: 'top', horizontal: 'center' },
+            close: false
+          })
+        );
       });
   };
 
@@ -270,6 +294,18 @@ const Schedule = () => {
         .delete(`https://localhost:7051/api/Schedule/${schedule.id}`)
         .then((response) => {
           if (response.status == 200) {
+            dispatch(
+              openSnackbar({
+                open: true,
+                message: 'Schedule deleted succesfully.',
+                variant: 'alert',
+                alert: {
+                  color: 'success'
+                },
+                anchorOrigin: { vertical: 'top', horizontal: 'center' },
+                close: false
+              })
+            );
             getScheduleData();
           } else {
             console.log('ERROR  >>> ');
@@ -277,6 +313,18 @@ const Schedule = () => {
         })
         .catch((err) => {
           console.log(err);
+          dispatch(
+            openSnackbar({
+              open: true,
+              message: 'Something went wrong!',
+              variant: 'alert',
+              alert: {
+                color: 'error'
+              },
+              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+              close: false
+            })
+          );
         });
     }
   };

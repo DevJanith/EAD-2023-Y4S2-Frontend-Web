@@ -304,7 +304,7 @@ const CreateSchedule = () => {
           dispatch(
             openSnackbar({
               open: true,
-              message: 'Something went wrong.',
+              message: 'Something went wrong!',
               variant: 'alert',
               alert: {
                 color: 'error'

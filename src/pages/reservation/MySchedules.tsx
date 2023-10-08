@@ -12,8 +12,7 @@ import { openSnackbar } from 'store/reducers/snackbar';
 import * as yup from 'yup';
 import MainCard from 'components/MainCard';
 import ScrollX from 'components/ScrollX';
-import { CSVExport, TablePagination } from 'components/third-party/ReactTable';
-import axios from 'axios';
+import { CSVExport, EmptyTable, TablePagination } from 'components/third-party/ReactTable';
 import moment from 'moment';
 
 import { CloseOutlined, EyeFilled } from '@ant-design/icons';
@@ -26,6 +25,10 @@ import { TextField } from '@mui/material';
 import trimFc from 'utils/trimFc';
 import { useNavigate } from 'react-router';
 import useAuth from 'hooks/useAuth';
+import { DefaultColumnFilter, GlobalFilter, renderFilterTypes } from 'utils/react-table';
+import { Row } from 'react-table';
+import { useGlobalFilter } from 'react-table';
+import { axiosServices } from 'utils/axios';
 
 // Define a type for the data
 type Reservation = {
@@ -64,7 +67,19 @@ type Schedule = {
 };
 
 // ==============================|| Dashboard ||============================== //
-function ReactTable({ columns, data, striped }: { columns: Column[]; data: Schedule[]; striped?: boolean }) {
+function ReactTable({
+  columns,
+  data,
+  handleAddEdit
+}: {
+  columns: Column[];
+  data: Schedule[];
+  striped?: boolean;
+  handleAddEdit?: () => void;
+}) {
+  const filterTypes = useMemo(() => renderFilterTypes, []);
+  const defaultColumn = useMemo(() => ({ Filter: DefaultColumnFilter }), []);
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -73,43 +88,59 @@ function ReactTable({ columns, data, striped }: { columns: Column[]; data: Sched
     prepareRow,
     gotoPage,
     setPageSize,
-    state: { pageIndex, pageSize }
+    state: { pageIndex, pageSize },
+    preGlobalFilteredRows,
+    setGlobalFilter,
+    globalFilter,
+    page
   } = useTable(
     {
       columns,
       data,
+      defaultColumn,
+      filterTypes,
       initialState: { pageIndex: 0, pageSize: 10 }
     },
+    useGlobalFilter,
     useFilters,
     usePagination
   );
 
   return (
     <>
+      <Stack direction="row" spacing={2} justifyContent="space-between" sx={{ padding: 2 }}>
+        <GlobalFilter preGlobalFilteredRows={preGlobalFilteredRows} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <CSVExport data={rows.map((d: Row) => d.original)} filename={'my-schedules.csv'} />
+        </Stack>
+      </Stack>
       <Table {...getTableProps()}>
-        <TableHead>
-          {headerGroups.map((headerGroup: HeaderGroup<{}>) => (
+        <TableHead sx={{ borderTopWidth: 2 }}>
+          {headerGroups.map((headerGroup) => (
             <TableRow {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column: HeaderGroup<{}>) => (
+              {headerGroup.headers.map((column: HeaderGroup) => (
                 <TableCell {...column.getHeaderProps([{ className: column.className }])}>{column.render('Header')}</TableCell>
               ))}
             </TableRow>
           ))}
         </TableHead>
-        <TableBody {...getTableBodyProps()} {...(striped && { className: 'striped' })}>
-          {rows.map((row, i) => {
-            prepareRow(row);
-            return (
-              <TableRow {...row.getRowProps()}>
-                {row.cells.map((cell: Cell<{}>) => (
-                  <TableCell {...cell.getCellProps([{ className: cell.column.className }])}>{cell.render('Cell')}</TableCell>
-                ))}
-              </TableRow>
-            );
-          })}
-
+        <TableBody {...getTableBodyProps()}>
+          {page.length > 0 ? (
+            page.map((row, i) => {
+              prepareRow(row);
+              return (
+                <TableRow {...row.getRowProps()}>
+                  {row.cells.map((cell: Cell) => (
+                    <TableCell {...cell.getCellProps([{ className: cell.column.className }])}>{cell.render('Cell')}</TableCell>
+                  ))}
+                </TableRow>
+              );
+            })
+          ) : (
+            <EmptyTable msg="No Data" colSpan={12} />
+          )}
           <TableRow>
-            <TableCell sx={{ p: 2 }} colSpan={7}>
+            <TableCell sx={{ p: 2 }} colSpan={12}>
               <TablePagination gotoPage={gotoPage} rows={rows} setPageSize={setPageSize} pageIndex={pageIndex} pageSize={pageSize} />
             </TableCell>
           </TableRow>
@@ -124,7 +155,6 @@ const MySchedules = () => {
   const [open, setOpen] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const navigate = useNavigate();
-  const striped = true;
   const { user } = useAuth();
   const columns = useMemo(
     () => [
@@ -210,9 +240,9 @@ const MySchedules = () => {
   }, []);
 
   const getScheduleData = () => {
-    axios
+    axiosServices
       // @ts-ignore
-      .get(`https://localhost:7051/api/Reservation/getSchedulesByUserId/${user.id}`)
+      .get(`/api/Reservation/getSchedulesByUserId/${user.id}`)
       .then((response) => {
         if (response.status === 200) {
           setData(response.data);
@@ -225,7 +255,7 @@ const MySchedules = () => {
               alert: {
                 color: 'error'
               },
-              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+              anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
               close: false
             })
           );
@@ -241,7 +271,7 @@ const MySchedules = () => {
             alert: {
               color: 'error'
             },
-            anchorOrigin: { vertical: 'top', horizontal: 'center' },
+            anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
             close: false
           })
         );
@@ -260,13 +290,13 @@ const MySchedules = () => {
           alert: {
             color: 'error'
           },
-          anchorOrigin: { vertical: 'top', horizontal: 'center' },
+          anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
           close: false
         })
       );
     } else {
-      axios
-        .delete(`https://localhost:7051/api/Schedule/${schedule.id}`)
+      axiosServices
+        .delete(`/api/Schedule/${schedule.id}`)
         .then((response) => {
           if (response.status == 200) {
             getScheduleData();
@@ -353,8 +383,8 @@ const MySchedules = () => {
         amount: amount,
         scheduleId: selectedItem.id
       };
-      axios
-        .post(`https://localhost:7051/api/Reservation/createForSchedule/${selectedItem.id}`, data)
+      axiosServices
+        .post(`/api/Reservation/createForSchedule/${selectedItem.id}`, data)
         .then((response) => {
           if (response.status == 201) {
             alert(response.status);
@@ -367,7 +397,7 @@ const MySchedules = () => {
                 alert: {
                   color: 'success'
                 },
-                anchorOrigin: { vertical: 'top', horizontal: 'center' },
+                anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
                 close: false
               })
             );
@@ -384,7 +414,7 @@ const MySchedules = () => {
                 alert: {
                   color: 'error'
                 },
-                anchorOrigin: { vertical: 'top', horizontal: 'center' },
+                anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
                 close: false
               })
             );
@@ -401,7 +431,7 @@ const MySchedules = () => {
               alert: {
                 color: 'error'
               },
-              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+              anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
               close: false
             })
           );
@@ -586,14 +616,9 @@ const MySchedules = () => {
           </DialogContent>
         </Box>
       </Dialog>
-      <MainCard
-        content={false}
-        title="Schedule Data"
-        secondary={<CSVExport data={data.slice(0, 10)} filename={striped ? 'striped-table.csv' : 'basic-table.csv'} />}
-      >
-        <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}></Stack>
+      <MainCard content={false}>
         <ScrollX>
-          <ReactTable columns={columns} data={data} striped={striped} />
+          <ReactTable columns={columns} data={data} />
         </ScrollX>
       </MainCard>
     </>

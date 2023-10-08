@@ -29,7 +29,6 @@ import { openSnackbar } from 'store/reducers/snackbar';
 
 import ScrollX from 'components/ScrollX';
 import { CSVExport, TablePagination } from 'components/third-party/ReactTable';
-import axios from 'axios';
 
 import { CheckCircleOutlined, CloseCircleOutlined, PlusCircleOutlined, WarningFilled } from '@ant-design/icons';
 import { dispatch } from 'store';
@@ -43,6 +42,7 @@ import { AlertTitle } from '@mui/material';
 import { useNavigate, useParams } from 'react-router';
 import moment from 'moment';
 import Avatar from 'components/@extended/Avatar';
+import { axiosServices } from 'utils/axios';
 
 // Define a type for the data
 
@@ -205,8 +205,8 @@ const EditSchedule = () => {
   }, []);
 
   const getScheduleData = () => {
-    axios
-      .get('https://localhost:7051/api/Train')
+    axiosServices
+      .get('/api/Train')
       .then((response) => {
         if (response.status == 200) {
           setData(response.data);
@@ -219,7 +219,7 @@ const EditSchedule = () => {
               alert: {
                 color: 'error'
               },
-              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+              anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
               close: false
             })
           );
@@ -235,7 +235,7 @@ const EditSchedule = () => {
             alert: {
               color: 'error'
             },
-            anchorOrigin: { vertical: 'top', horizontal: 'center' },
+            anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
             close: false
           })
         );
@@ -291,8 +291,8 @@ const EditSchedule = () => {
         reservations: []
       };
 
-      axios
-        .put(`https://localhost:7051/api/Schedule/${params.id}`, data)
+      axiosServices
+        .put(`/api/Schedule/${params.id}`, data)
         .then((response) => {
           if (response.status == 200) {
             dispatch(
@@ -303,7 +303,7 @@ const EditSchedule = () => {
                 alert: {
                   color: 'success'
                 },
-                anchorOrigin: { vertical: 'top', horizontal: 'center' },
+                anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
                 close: false
               })
             );
@@ -317,7 +317,7 @@ const EditSchedule = () => {
                 alert: {
                   color: 'error'
                 },
-                anchorOrigin: { vertical: 'top', horizontal: 'center' },
+                anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
                 close: false
               })
             );
@@ -333,7 +333,7 @@ const EditSchedule = () => {
               alert: {
                 color: 'error'
               },
-              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+              anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
               close: false
             })
           );
@@ -343,8 +343,8 @@ const EditSchedule = () => {
 
   useEffect(() => {
     // Fetch the data of the schedule to edit using the scheduleId
-    axios
-      .get(`https://localhost:7051/api/Schedule/${params.id}`)
+    axiosServices
+      .get(`/api/Schedule/${params.id}`)
       .then((response) => {
         if (response.status === 200) {
           const scheduleData = response.data;

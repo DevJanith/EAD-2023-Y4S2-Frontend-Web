@@ -1,7 +1,25 @@
 // material-ui
 
 // project import
-import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Grid, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Divider,
+  Grid,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Typography
+} from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 // third-party
 import { Cell, Column, HeaderGroup, Row, useFilters, useGlobalFilter, usePagination, useTable } from 'react-table';
@@ -9,7 +27,6 @@ import { openSnackbar } from 'store/reducers/snackbar';
 // project import
 
 import { CloseOutlined, DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons';
-import axios from 'axios';
 import IconButton from 'components/@extended/IconButton';
 import MainCard from 'components/MainCard';
 import ScrollX from 'components/ScrollX';
@@ -18,6 +35,7 @@ import moment from 'moment';
 import { useNavigate } from 'react-router';
 import { dispatch } from 'store';
 import { DefaultColumnFilter, GlobalFilter, renderFilterTypes } from 'utils/react-table';
+import { axiosServices } from 'utils/axios';
 // Define a type for the data
 type Reservation = {
   id: string;
@@ -55,7 +73,16 @@ type Schedule = {
 };
 
 // ==============================|| REACT TABLE ||============================== //
-function ReactTable({ columns, data, handleAddEdit }: { columns: Column[]; data: Schedule[]; striped?: boolean, handleAddEdit: () => void }) {
+function ReactTable({
+  columns,
+  data,
+  handleAddEdit
+}: {
+  columns: Column[];
+  data: Schedule[];
+  striped?: boolean;
+  handleAddEdit: () => void;
+}) {
   const filterTypes = useMemo(() => renderFilterTypes, []);
   const defaultColumn = useMemo(() => ({ Filter: DefaultColumnFilter }), []);
 
@@ -71,14 +98,14 @@ function ReactTable({ columns, data, handleAddEdit }: { columns: Column[]; data:
     preGlobalFilteredRows,
     setGlobalFilter,
     globalFilter,
-    page,
+    page
   } = useTable(
     {
       columns,
       data,
       defaultColumn,
       filterTypes,
-      initialState: { pageIndex: 0, pageSize: 10 },
+      initialState: { pageIndex: 0, pageSize: 10 }
     },
     useGlobalFilter,
     useFilters,
@@ -90,7 +117,7 @@ function ReactTable({ columns, data, handleAddEdit }: { columns: Column[]; data:
       <Stack direction="row" spacing={2} justifyContent="space-between" sx={{ padding: 2 }}>
         <GlobalFilter preGlobalFilteredRows={preGlobalFilteredRows} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
         <Stack direction="row" alignItems="center" spacing={1}>
-          <CSVExport data={rows.map((d: Row) => d.original)} filename={'filtering-table.csv'} />
+          <CSVExport data={rows.map((d: Row) => d.original)} filename={'all-schedules.csv'} />
           <Button variant="contained" startIcon={<PlusOutlined />} onClick={handleAddEdit}>
             Add New Schedule
           </Button>
@@ -248,7 +275,7 @@ const Schedule = () => {
           alert: {
             color: 'error'
           },
-          anchorOrigin: { vertical: 'top', horizontal: 'center' },
+          anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
           close: false
         })
       );
@@ -258,8 +285,8 @@ const Schedule = () => {
   };
 
   const getScheduleData = () => {
-    axios
-      .get('https://localhost:7051/api/Schedule')
+    axiosServices
+      .get('/api/Schedule')
       .then((response) => {
         if (response.status == 200) {
           setData(response.data);
@@ -273,7 +300,7 @@ const Schedule = () => {
               alert: {
                 color: 'error'
               },
-              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+              anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
               close: false
             })
           );
@@ -289,7 +316,7 @@ const Schedule = () => {
             alert: {
               color: 'error'
             },
-            anchorOrigin: { vertical: 'top', horizontal: 'center' },
+            anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
             close: false
           })
         );
@@ -307,13 +334,13 @@ const Schedule = () => {
           alert: {
             color: 'error'
           },
-          anchorOrigin: { vertical: 'top', horizontal: 'center' },
+          anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
           close: false
         })
       );
     } else {
-      axios
-        .delete(`https://localhost:7051/api/Schedule/${schedule.id}`)
+      axiosServices
+        .delete(`/api/Schedule/${schedule.id}`)
         .then((response) => {
           if (response.status == 200) {
             dispatch(
@@ -324,7 +351,7 @@ const Schedule = () => {
                 alert: {
                   color: 'success'
                 },
-                anchorOrigin: { vertical: 'top', horizontal: 'center' },
+                anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
                 close: false
               })
             );
@@ -343,7 +370,7 @@ const Schedule = () => {
               alert: {
                 color: 'error'
               },
-              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+              anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
               close: false
             })
           );
@@ -489,7 +516,13 @@ const Schedule = () => {
       </Dialog>
       <MainCard content={false}>
         <ScrollX>
-          <ReactTable columns={columns} data={data} handleAddEdit={() => { navigate('/application/schedule-management/schedule-create'); }} />
+          <ReactTable
+            columns={columns}
+            data={data}
+            handleAddEdit={() => {
+              navigate('/application/schedule-management/schedule-create');
+            }}
+          />
         </ScrollX>
       </MainCard>
     </>

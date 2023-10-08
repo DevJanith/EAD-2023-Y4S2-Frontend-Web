@@ -28,7 +28,6 @@ import { openSnackbar } from 'store/reducers/snackbar';
 
 import ScrollX from 'components/ScrollX';
 import { CSVExport, TablePagination } from 'components/third-party/ReactTable';
-import axios from 'axios';
 
 import { CheckCircleOutlined, CloseCircleOutlined, CloseOutlined, PlusCircleOutlined, WarningFilled } from '@ant-design/icons';
 import { dispatch } from 'store';
@@ -43,6 +42,7 @@ import { useNavigate } from 'react-router';
 import IconButton from 'components/@extended/IconButton';
 import { CardContent } from '@mui/material';
 import Avatar from 'components/@extended/Avatar';
+import { axiosServices } from 'utils/axios';
 
 // Define a type for the data
 
@@ -204,8 +204,8 @@ const CreateSchedule = () => {
   }, []);
 
   const getScheduleData = () => {
-    axios
-      .get('https://localhost:7051/api/Train')
+    axiosServices
+      .get('/api/Train')
       .then((response) => {
         if (response.status == 200) {
           setData(response.data);
@@ -266,8 +266,8 @@ const CreateSchedule = () => {
         reservations: []
       };
 
-      axios
-        .post('https://localhost:7051/api/Schedule', data)
+      axiosServices
+        .post('/api/Schedule', data)
         .then((response) => {
           if (response.status == 201) {
             dispatch(
@@ -278,7 +278,7 @@ const CreateSchedule = () => {
                 alert: {
                   color: 'success'
                 },
-                anchorOrigin: { vertical: 'top', horizontal: 'center' },
+                anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
                 close: false
               })
             );
@@ -293,7 +293,7 @@ const CreateSchedule = () => {
                 alert: {
                   color: 'error'
                 },
-                anchorOrigin: { vertical: 'top', horizontal: 'center' },
+                anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
                 close: false
               })
             );
@@ -309,7 +309,7 @@ const CreateSchedule = () => {
               alert: {
                 color: 'error'
               },
-              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+              anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
               close: false
             })
           );

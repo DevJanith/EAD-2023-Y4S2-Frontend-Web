@@ -62,12 +62,20 @@ export const JWTProvider = ({ children }: { children: React.ReactElement }) => {
           axiosServices.defaults.headers.common.Authorization = `Bearer ${serviceToken}`;
           const response = await axiosServices.get('/api/User/GetCurrentUser');
 
-          const { user } = response.data;
+          // const { user } = response.data;
+
+          console.log(response.data);
+
           dispatch({
             type: LOGIN,
             payload: {
               isLoggedIn: true,
-              user
+              user: {
+                id: response.data.id,
+                email: response.data.email,
+                name: `${salutations.find(salutation => salutation.id == response.data.salutation)?.description || "-"} ${response.data.firstName} ${response.data.lastName}`,
+                role: userTypes.find(userType => userType.id == response.data.userType)?.description || "-"
+              }
             }
           });
         } else {

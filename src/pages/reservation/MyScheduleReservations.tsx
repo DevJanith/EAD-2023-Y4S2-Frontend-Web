@@ -32,13 +32,14 @@ import { dispatch } from 'store';
 import { openSnackbar } from 'store/reducers/snackbar';
 import trimFc from 'utils/trimFc';
 import { Slider } from '@mui/material';
+import useAuth from 'hooks/useAuth';
 // Define a type for the data
 
 // ==============================|| Dashboard ||============================== //
 
 const MyScheduleReservations = () => {
   const [data, setData] = useState([]);
-
+  const { user } = useAuth();
   const [selectedSchedule, setSelectedSchedule] = useState<any>({});
   const [selectedItem, setSelectedItem] = useState<any>({});
 
@@ -87,7 +88,8 @@ const MyScheduleReservations = () => {
 
           let reservationData: any = [];
           response.data.reservations.forEach((item: any) => {
-            if (item.userId == 'string') {
+            // @ts-ignore
+            if (item.userId == user.id) {
               reservationData.push(item);
             }
           });
@@ -145,7 +147,8 @@ const MyScheduleReservations = () => {
       let amount = seatCount * selectedSchedule.ticketPrice;
       let data = {
         id: selectedItem.id,
-        userId: sessionStorage.getItem('userId') ? sessionStorage.getItem('userId') : 'string',
+        // @ts-ignore
+        userId: user.id,
         displayName: values.displayName,
         createdAt: moment(),
         reservedCount: seatCount,
@@ -210,6 +213,7 @@ const MyScheduleReservations = () => {
   const cancelReservation = () => {
     let data = {
       id: selectedItem.id,
+      // @ts-ignore
       userId: selectedItem.userId,
       displayName: selectedItem.displayName,
       createdAt: selectedItem.createdAt,

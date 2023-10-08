@@ -5,6 +5,14 @@ import Loadable from 'components/Loadable';
 import CommonLayout from 'layout/CommonLayout';
 import MainLayout from 'layout/MainLayout';
 import AuthGuard from 'utils/route-guard/AuthGuard';
+import Schedule from 'pages/schedule/schedule';
+import EditSchedule from 'pages/schedule/EditSchedule';
+import CreateSchedule from 'pages/schedule/CreateSchedule';
+import ScheduleReservations from 'pages/reservation/ScheduleReservations';
+import ActiveSchedules from 'pages/schedule/ActiveSchedules';
+import MySchedules from 'pages/reservation/MySchedules';
+import MyScheduleReservations from 'pages/reservation/MyScheduleReservations';
+import IncomingSchedules from 'pages/schedule/IncomingSchedules';
 
 // pages routing
 const AuthLogin = Loadable(lazy(() => import('pages/auth/login')));
@@ -49,6 +57,58 @@ const MainRoutes = {
             {
               path: 'dashboard',
               element: <Dashboard />
+            },
+            {
+              path: 'schedule',
+              element: <Schedule />
+            },
+            {
+              path: 'incoming-schedules',
+              element: <IncomingSchedules />
+            },
+            {
+              path: 'schedule/:id',
+              element: <EditSchedule />
+            },
+            {
+              path: 'schedule-create',
+              element: <CreateSchedule />
+            },
+            {
+              path: 'schedule/reservations/:id',
+              element: <ScheduleReservations />
+            },
+            // {
+            //   path: 'dashboard',
+            //   element: <Dashboard />
+            // },
+            // {
+            //   path: 'schedule',
+            //   element: <Schedule />
+            // },
+            // {
+            //   path: 'schedule/:id',
+            //   element: <EditSchedule />
+            // },
+            // {
+            //   path: 'schedule-create',
+            //   element: <CreateSchedule />
+            // },
+            // {
+            //   path: 'schedule/reservations/:id',
+            //   element: <ScheduleReservations />
+            // },
+            {
+              path: 'active-schedules',
+              element: <ActiveSchedules />
+            },
+            {
+              path: 'my-schedules',
+              element: <MySchedules />
+            },
+            {
+              path: 'my-schedule/reservations/:id',
+              element: <MyScheduleReservations />
             }
           ]
         }, 
@@ -141,7 +201,7 @@ const MainRoutes = {
           element: <AuthCodeVerification />
         }
       ]
-    },
+    }
   ]
 };
 

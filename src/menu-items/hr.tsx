@@ -37,13 +37,6 @@ const hr: NavItemType = {
                     type: 'item',
                     icon: icons.OrderedListOutlined,
                     url: '/hr/employee-management/list',
-                },
-                {
-                    id: 'employee-profile',
-                    title: <FormattedMessage id="employee-profile" />,
-                    type: 'item',
-                    icon: icons.UserOutlined,
-                    url: '/hr/employee-management/profile',
                 }
             ]
         },

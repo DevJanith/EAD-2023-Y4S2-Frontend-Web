@@ -8,7 +8,8 @@ import {
   OrderedListOutlined,
   ScheduleOutlined,
   UserOutlined,
-  UsergroupAddOutlined
+  UsergroupAddOutlined,
+  MessageOutlined
 } from '@ant-design/icons';
 
 // type
@@ -21,7 +22,8 @@ const icons = {
   ControlOutlined,
   OrderedListOutlined,
   ScheduleOutlined,
-  UsergroupAddOutlined
+  UsergroupAddOutlined,
+  MessageOutlined
 };
 
 // ==============================|| MENU ITEMS - SUPPORT ||============================== //
@@ -43,13 +45,13 @@ const application: NavItemType = {
           type: 'item',
           icon: icons.OrderedListOutlined,
           url: '/application/user-management/list',
-        }, 
+        },
         {
-          id: 'user-profile',
-          title: <FormattedMessage id="user-profile" />,
+          id: 'user-requests',
+          title: <FormattedMessage id="user-requests" />,
           type: 'item',
-          icon: icons.UserOutlined,
-          url: '/application/user-management/profile',
+          icon: icons.MessageOutlined,
+          url: '/application/user-management/requests',
         }
       ]
     },

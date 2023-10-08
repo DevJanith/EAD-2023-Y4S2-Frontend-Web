@@ -5,7 +5,7 @@ import { Link, Stack, Typography } from '@mui/material';
 
 const Footer = () => (
   <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ p: '24px 16px 0px', mt: 'auto' }}>
-    <Typography variant="caption"> project_name &copy; All rights reserved</Typography>
+    <Typography variant="caption"> Ticket Now &copy; All rights reserved</Typography>
     <Stack spacing={1.5} direction="row" justifyContent="space-between" alignItems="center">
       <Link component={RouterLink} to="#" target="_blank" variant="caption" color="textPrimary">
         About us

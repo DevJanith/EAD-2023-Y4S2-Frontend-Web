@@ -7,7 +7,8 @@ import {
   ControlOutlined,
   OrderedListOutlined,
   ScheduleOutlined,
-  UserOutlined
+  UserOutlined,
+  UsergroupAddOutlined
 } from '@ant-design/icons';
 
 // type
@@ -19,7 +20,8 @@ const icons = {
   ClusterOutlined,
   ControlOutlined,
   OrderedListOutlined,
-  ScheduleOutlined
+  ScheduleOutlined,
+  UsergroupAddOutlined
 };
 
 // ==============================|| MENU ITEMS - SUPPORT ||============================== //
@@ -29,6 +31,28 @@ const application: NavItemType = {
   title: <FormattedMessage id="application" />,
   type: 'group',
   children: [
+    {
+      id: 'user-management',
+      title: <FormattedMessage id="user-management" />,
+      type: 'collapse',
+      icon: icons.UsergroupAddOutlined,
+      children: [
+        {
+          id: 'user-list',
+          title: <FormattedMessage id="user-list" />,
+          type: 'item',
+          icon: icons.OrderedListOutlined,
+          url: '/application/user-management/list',
+        }, 
+        {
+          id: 'user-profile',
+          title: <FormattedMessage id="user-profile" />,
+          type: 'item',
+          icon: icons.UserOutlined,
+          url: '/application/user-management/profile',
+        }
+      ]
+    },
     {
       id: 'train-management',
       title: <FormattedMessage id="train-management" />,

@@ -10,9 +10,11 @@ import authReducer from 'store/reducers/auth';
 
 // project import
 import Loader from 'components/Loader';
-import axios from 'utils/axios';
-import { KeyedObject } from 'types/root';
+import salutations from 'data/salutations';
+import userTypes from 'data/userTypes';
 import { AuthProps, JWTContextType } from 'types/auth';
+import { KeyedObject } from 'types/root';
+import axios, { axiosServices } from 'utils/axios';
 
 const chance = new Chance();
 
@@ -57,7 +59,9 @@ export const JWTProvider = ({ children }: { children: React.ReactElement }) => {
         const serviceToken = window.localStorage.getItem('serviceToken');
         if (serviceToken && verifyToken(serviceToken)) {
           setSession(serviceToken);
-          const response = await axios.get('/api/account/me');
+          axiosServices.defaults.headers.common.Authorization = `Bearer ${serviceToken}`;
+          const response = await axiosServices.get('/api/User/GetCurrentUser');
+
           const { user } = response.data;
           dispatch({
             type: LOGIN,
@@ -123,20 +127,81 @@ export const JWTProvider = ({ children }: { children: React.ReactElement }) => {
     window.localStorage.setItem('users', JSON.stringify(users));
   };
 
+  const signIn = async (nic: string, password: string) => {
+    const response = await axiosServices.post('/api/User/SignIn', { nic, password });
+
+    const { token, userDetails } = response.data;
+    setSession(token);
+    axiosServices.defaults.headers.common.Authorization = `Bearer ${token}`;
+    dispatch({
+      type: LOGIN,
+      payload: {
+        isLoggedIn: true,
+        user: {
+          id: userDetails.id,
+          email: userDetails.email,
+          name: `${salutations.find(salutation => salutation.id == userDetails.salutation)?.description || "-"} ${userDetails.firstName} ${userDetails.lastName}`,
+          role: userTypes.find(userType => userType.id == userDetails.userType)?.description || "-"
+        }
+      }
+    });
+  };
+
+  const signUp = async (nic: string, email: string, password: string, userType: number, salutation: number, firstName: string, lastName: string, contactNumber: string, confirmPassword: string) => {
+
+    const response = await axiosServices.post('/api/User/SignUp', {
+      salutation,
+      firstName,
+      lastName,
+      contactNumber,
+      email,
+      nic,
+      userType,
+      password,
+    });
+
+    const user = response.data.result;
+
+    if (window.localStorage.getItem('users') !== undefined && window.localStorage.getItem('users') !== null) {
+      const localUsers = window.localStorage.getItem('users');
+      const users = [
+        ...JSON.parse(localUsers!),
+        {
+          id: user._id,
+          email: user.email,
+          password: user.password,
+          name: `${user.firstName} ${user.lastName}`
+        }
+      ];
+      window.localStorage.setItem('users', JSON.stringify(users));
+    } else {
+      const users = [
+        {
+          id: user._id,
+          email: user.email,
+          password: user.password,
+          name: `${user.firstName} ${user.lastName}`
+        }
+      ];
+      window.localStorage.setItem('users', JSON.stringify(users));
+    }
+
+  };
+
   const logout = () => {
     setSession(null);
     dispatch({ type: LOGOUT });
   };
 
-  const resetPassword = async (email: string) => {};
+  const resetPassword = async (email: string) => { };
 
-  const updateProfile = () => {};
+  const updateProfile = () => { };
 
   if (state.isInitialized !== undefined && !state.isInitialized) {
     return <Loader />;
   }
 
-  return <JWTContext.Provider value={{ ...state, login, logout, register, resetPassword, updateProfile }}>{children}</JWTContext.Provider>;
+  return <JWTContext.Provider value={{ ...state, login, logout, register, signIn, signUp, resetPassword, updateProfile }}>{children}</JWTContext.Provider>;
 };
 
 export default JWTContext;

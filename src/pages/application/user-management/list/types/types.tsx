@@ -1,21 +1,7 @@
 import { Column } from 'react-table';
+import { User, Users } from 'types/user';
 
-export interface dataProps {
-    id?: number | string
-    salutation?: string
-    firstName?: string
-    lastName?: string
-    contactNumber?: string
-    email?: string
-    nic?: string
-    userType?: "Admin" | "Back-Office" | "Travel-Agent" | "User"
-    status?: "Default" | "New" | "Approved" | "Deleted"
-    isActive?: boolean
-    createdOn?: string
-    updatedOn?: string
-    createdBy?: string
-    updatedBy?: string
-}
+export interface dataProps extends Users { }
 
 export interface ReactTableProps {
     columns: Column[]
@@ -23,19 +9,4 @@ export interface ReactTableProps {
     handleAddEdit: () => void
 }
 
-export interface userProps {
-    id?: number | string
-    salutation?: string
-    firstName?: string
-    lastName?: string
-    contactNumber?: string
-    email?: string
-    nic?: string
-    userType?: "Admin" | "Back-Office" | "Travel-Agent" | "User"
-    status?: "Default" | "New" | "Approved" | "Deleted"
-    isActive?: boolean
-    createdOn?: string
-    updatedOn?: string
-    createdBy?: string
-    updatedBy?: string
-}
+export interface userProps extends User { }

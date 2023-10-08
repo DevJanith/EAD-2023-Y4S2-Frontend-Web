@@ -9,7 +9,7 @@ const axiosServices = axios.create({ baseURL: 'https://localhost:7051/' });
 // const axiosServices = axios.create({ baseURL: 'https://192.168.1.3:8082/' }); 
 
 // Azure Server
-// const axiosServices = axios.create({ baseURL: 'https://restapi.azurewebsites.net//' }); 
+// const axiosServices = axios.create({ baseURL: 'https://restapi.azurewebsites.net/' }); 
 
 
 // ==============================|| AXIOS - FOR MOCK SERVICES ||============================== //

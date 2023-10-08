@@ -145,5 +145,8 @@
   "schedule-management": "Schedule Management",
   "schedule-list": "Schedule List",
   "reservation-management": "Reservation Management",
-  "reservation-list": "Reservation List"
+  "reservation-list": "Reservation List",
+  "employee-management": "Employee Management",
+  "employee-list": "Employee List",
+  "employee-profile": "Employee Profile"
 }

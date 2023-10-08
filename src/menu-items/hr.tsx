@@ -26,24 +26,24 @@ const hr: NavItemType = {
     type: 'group',
     children: [
         {
-            id: 'user-management',
-            title: <FormattedMessage id="user-management" />,
+            id: 'employee-management',
+            title: <FormattedMessage id="employee-management" />,
             type: 'collapse',
             icon: icons.UsergroupAddOutlined,
             children: [
                 {
-                    id: 'user-list',
-                    title: <FormattedMessage id="user-list" />,
+                    id: 'employee-list',
+                    title: <FormattedMessage id="employee-list" />,
                     type: 'item',
                     icon: icons.OrderedListOutlined,
-                    url: '/hr/user-management/list',
+                    url: '/hr/employee-management/list',
                 },
                 {
-                    id: 'user-profile',
-                    title: <FormattedMessage id="user-profile" />,
+                    id: 'employee-profile',
+                    title: <FormattedMessage id="employee-profile" />,
                     type: 'item',
                     icon: icons.UserOutlined,
-                    url: '/hr/user-management/profile',
+                    url: '/hr/employee-management/profile',
                 }
             ]
         },

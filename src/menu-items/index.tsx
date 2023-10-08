@@ -9,7 +9,7 @@ import hr from './hr';
 // ==============================|| MENU ITEMS ||============================== //
 
 const menuItems: { items: NavItemType[] } = {
-  items: [home, hr, application]
+  items: [home, application, hr]
 };
 
 export default menuItems;

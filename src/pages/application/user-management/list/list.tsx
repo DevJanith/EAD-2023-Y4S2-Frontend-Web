@@ -36,9 +36,16 @@ import { DeleteTwoTone, EditTwoTone, EyeTwoTone, PlusOutlined } from '@ant-desig
 //types 
 import { Typography } from '@mui/material';
 import Dot from 'components/@extended/Dot';
+import salutations from 'data/salutations';
+import statuses from 'data/statuses';
+import userTypes from 'data/userTypes';
 import AddEditUser from 'sections/application/user-management/AddEditUser';
 import AlertUserDelete from 'sections/application/user-management/AlertUserDelete';
+import { useDispatch, useSelector } from 'store';
+import { openSnackbar } from 'store/reducers/snackbar';
+import { fetchUsers, toInitialState } from 'store/reducers/user';
 import { ColorProps } from 'types/extended';
+import { queryParamsProps } from 'types/user';
 import { ReactTableProps, dataProps, userProps } from './types/types';
 
 // ==============================|| REACT TABLE ||============================== //
@@ -81,7 +88,7 @@ function ReactTable({ columns, data, handleAddEdit }: ReactTableProps) {
                 <Stack direction="row" alignItems="center" spacing={1}>
                     <CSVExport data={rows.map((d: Row) => d.original)} filename={'filtering-table.csv'} />
                     <Button variant="contained" startIcon={<PlusOutlined />} onClick={handleAddEdit}>
-                        Add New Nutrition
+                        Add New User
                     </Button>
                 </Stack>
             </Stack>
@@ -135,10 +142,10 @@ const UserStatus = ({ status }: Props) => {
     switch (status) {
         case 'Default':
             color = 'primary';
-            title = 'New';
+            title = 'Default';
             break;
         case 'New':
-            color = 'secondary';
+            color = 'warning';
             title = 'New';
             break;
         case 'Approved':
@@ -153,7 +160,7 @@ const UserStatus = ({ status }: Props) => {
             color = 'success';
             title = 'Active';
             break;
-        case "Inactive":
+        case "In-Active":
             color = 'error';
             title = 'In-Active';
             break;
@@ -174,6 +181,8 @@ const UserStatus = ({ status }: Props) => {
 
 const List = () => {
     const theme = useTheme();
+    const dispatch = useDispatch();
+    const { users, error, success, isLoading } = useSelector(state => state.user);
 
     // table
     const [data, setData] = useState<dataProps[]>([])
@@ -198,13 +207,9 @@ const List = () => {
                         // Handle any other data types if necessary
                         return <>-</>;
                     }
-                },
+                }, 
                 {
-                    Header: 'NIC (User_Name)',
-                    accessor: 'nic'
-                },
-                {
-                    Header: 'User Full Name',
+                    Header: 'User Name',
                     accessor: 'firstName',
                     Cell: ({ row }: { row: Row }) => {
                         //@ts-ignore
@@ -214,7 +219,7 @@ const List = () => {
                             return <>-</>
                         }
                         if (typeof data.firstName === 'string') {
-                            return <> {data.salutation}{data.firstName} {data.lastName}</>;
+                            return <> {salutations.find(salutation => salutation.id == data.salutation)?.description}{data.firstName} {data.lastName}</>;
                         }
                         if (typeof data.firstName === 'number') {
                             return <>{data.firstName}</>;
@@ -224,16 +229,33 @@ const List = () => {
                     }
                 },
                 {
-                    Header: 'Contact Number',
-                    accessor: 'contactNumber'
+                    Header: 'NIC',
+                    accessor: 'nic'
                 },
                 {
                     Header: 'Email',
                     accessor: 'email'
                 },
                 {
+                    Header: 'Contact Number',
+                    accessor: 'contactNumber'
+                },
+                {
                     Header: 'User Type',
-                    accessor: 'userType'
+                    accessor: 'userType',
+                    Cell: ({ row }: { row: Row }) => {
+                        if (row.values.userType === undefined || row.values.userType === null || row.values.userType === '') {
+                            return <>-</>
+                        }
+                        if (typeof row.values.userType === 'string') {
+                            return <> {userTypes.find(userType => userType.id == row.values.userType)?.description} </>;
+                        }
+                        if (typeof row.values.userType === 'number') {
+                            return <> {userTypes.find(userType => userType.id == row.values.userType)?.description} </>;
+                        }
+                        // Handle any other data types if necessary
+                        return <>-</>;
+                    }
                 },
                 {
                     Header: 'Status',
@@ -243,10 +265,10 @@ const List = () => {
                             return <>-</>
                         }
                         if (typeof row.values.status === 'string') {
-                            return <><UserStatus status={row.values.status} />  </>;
+                            return <><UserStatus status={statuses.find(status => status.id == row.values.status)?.description!} />  </>;
                         }
                         if (typeof row.values.status === 'number') {
-                            return <>{row.values.status}</>;
+                            return <><UserStatus status={statuses.find(status => status.id == row.values.status)?.description!} />  </>;
                         }
                         // Handle any other data types if necessary
                         return <>-</>;
@@ -272,52 +294,55 @@ const List = () => {
                         return <>-</>;
                     }
                 },
-                {
-                    Header: 'Created By | On',
-                    accessor: 'createdOn',
-                    Cell: ({ row }: { row: Row }) => {
-                        //@ts-ignore
-                        const data: dataProps = row.original
+                // {
+                //     Header: 'Created By | On',
+                //     accessor: 'createdOn',
+                //     Cell: ({ row }: { row: Row }) => {
+                //         //@ts-ignore
+                //         const data: dataProps = row.original
 
-                        if (row.values.createdOn === undefined || row.values.createdOn === null || row.values.createdOn === '') {
-                            return <>-</>
-                        }
-                        if (typeof row.values.createdOn === 'string') {
-                            return <> {data.createdBy} | {row.values.createdOn}  </>;
-                        }
-                        if (typeof row.values.createdOn === 'number') {
-                            return <>{row.values.createdOn}</>;
-                        }
-                        // Handle any other data types if necessary
-                        return <>-</>;
-                    }
-                },
-                {
-                    Header: 'Updated By | On',
-                    accessor: 'updatedOn',
-                    Cell: ({ row }: { row: Row }) => {
-                        //@ts-ignore
-                        const data: dataProps = row.original
+                //         if (row.values.createdOn === undefined || row.values.createdOn === null || row.values.createdOn === '') {
+                //             return <>-</>
+                //         }
+                //         if (typeof row.values.createdOn === 'string') {
+                //             return <> {data.createdBy} | {row.values.createdOn}  </>;
+                //         }
+                //         if (typeof row.values.createdOn === 'number') {
+                //             return <>{row.values.createdOn}</>;
+                //         }
+                //         // Handle any other data types if necessary
+                //         return <>-</>;
+                //     }
+                // },
+                // {
+                //     Header: 'Updated By | On',
+                //     accessor: 'updatedOn',
+                //     Cell: ({ row }: { row: Row }) => {
+                //         //@ts-ignore
+                //         const data: dataProps = row.original
 
-                        if (row.values.updatedOn === undefined || row.values.updatedOn === null || row.values.updatedOn === '') {
-                            return <>-</>
-                        }
-                        if (typeof row.values.updatedOn === 'string') {
-                            return <> {data.updatedBy} | {row.values.updatedOn}  </>;
-                        }
-                        if (typeof row.values.updatedOn === 'number') {
-                            return <>{row.values.updatedOn}</>;
-                        }
-                        // Handle any other data types if necessary
-                        return <>-</>;
-                    }
-                },
+                //         if (row.values.updatedOn === undefined || row.values.updatedOn === null || row.values.updatedOn === '') {
+                //             return <>-</>
+                //         }
+                //         if (typeof row.values.updatedOn === 'string') {
+                //             return <> {data.updatedBy} | {row.values.updatedOn}  </>;
+                //         }
+                //         if (typeof row.values.updatedOn === 'number') {
+                //             return <>{row.values.updatedOn}</>;
+                //         }
+                //         // Handle any other data types if necessary
+                //         return <>-</>;
+                //     }
+                // },
                 {
                     id: "actions",
                     Header: 'Actions',
                     accessor: 'actions',
                     className: 'cell-center',
                     Cell: ({ row }: { row: Row }) => {
+                        //@ts-ignore
+                        const data: dataProps = row.original;
+
                         return (
                             <>
                                 <Stack direction="row" alignItems="center" justifyContent="center" spacing={0}>
@@ -336,6 +361,19 @@ const List = () => {
                                             color="primary"
                                             onClick={(e: MouseEvent<HTMLButtonElement>) => {
                                                 e.stopPropagation();
+                                                handleAddEdit()
+                                                setUser(({
+                                                    id: data.id,
+                                                    salutation: data.salutation,
+                                                    firstName: data.firstName,
+                                                    lastName: data.lastName,
+                                                    contactNumber: data.contactNumber,
+                                                    email: data.email,
+                                                    nic: data.nic,
+                                                    userType: data.userType,
+                                                    status: data.status,
+                                                    isActive: data.isActive,
+                                                }))
                                             }}
                                         >
                                             <EditTwoTone twoToneColor={theme.palette.primary.main} />
@@ -345,8 +383,9 @@ const List = () => {
                                         <IconButton
                                             color="error"
                                             onClick={(e: MouseEvent<HTMLButtonElement>) => {
-                                                setUserId(row.values.id)
                                                 e.stopPropagation();
+                                                setUserId(data.id)
+                                                setOpenAlert(true)
                                             }}
                                         >
                                             <DeleteTwoTone twoToneColor={theme.palette.error.main} />
@@ -378,43 +417,63 @@ const List = () => {
         setOpenAlert(!openAlert);
     };
 
+    /**
+    * API Config 
+    * User API
+    */
     useEffect(() => {
-        setData([
-            {
-                id: 1,
-                salutation: "Mr.",
-                firstName: "John",
-                lastName: "Doe",
-                contactNumber: "123-456-7890",
-                email: "johndoe@example.com",
-                nic: "200102402805",
-                userType: "Admin",
-                status: "Approved",
-                isActive: true,
-                createdOn: "2023-10-05",
-                updatedOn: "2023-10-05",
-                createdBy: "AdminUser",
-                updatedBy: "AdminUser",
-            },
-            {
-                id: 2,
-                salutation: "Ms.",
-                firstName: "Jane",
-                lastName: "Smith",
-                contactNumber: "987-654-3210",
-                email: "janesmith@example.com",
-                nic: "200102402814",
-                userType: "User",
-                status: "New",
-                isActive: true,
-                createdOn: "2023-10-04",
-                updatedOn: "2023-10-04",
-                createdBy: "BackOfficeUser",
-                updatedBy: "BackOfficeUser",
-            },
-        ])
-    }, [])
+        const queryParams: queryParamsProps = {
+            page: 1,
+            perPage: 1000,
+            direction: "desc",
+        };
+        dispatch(fetchUsers(queryParams));
+    }, [dispatch, success]);
 
+    useEffect(() => {
+        setData(users?.users || [])
+    }, [users])
+
+    //  handel error 
+    useEffect(() => {
+        if (error != null) {
+            dispatch(
+                openSnackbar({
+                    open: true,
+                    //@ts-ignore
+                    message: error ? error.Message : "Something went wrong ...",
+                    variant: 'alert',
+                    alert: {
+                        color: 'error'
+                    },
+                    close: true
+                })
+            );
+            dispatch(toInitialState())
+        }
+    }, [error])
+
+    //  handel success
+    useEffect(() => {
+        if (success != null) {
+            dispatch(
+                openSnackbar({
+                    open: true,
+                    message: success,
+                    variant: 'alert',
+                    alert: {
+                        color: 'success'
+                    },
+                    close: true
+                })
+            );
+            dispatch(toInitialState())
+        }
+    }, [success])
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
     return (
         <>
             <MainCard content={false}>
@@ -432,7 +491,7 @@ const List = () => {
                     sx={{ '& .MuiDialog-paper': { p: 0 }, transition: 'transform 225ms' }}
                     aria-describedby="alert-dialog-slide-description"
                 >
-                    <AddEditUser user={user!} onCancel={handleAddEdit} />
+                    <AddEditUser user={user} onCancel={handleAddEdit} />
                 </Dialog>
                 {/* alert model */}
                 {!user && <AlertUserDelete title={""} open={openAlert} handleClose={handleAlertClose} deleteId={userId} />}

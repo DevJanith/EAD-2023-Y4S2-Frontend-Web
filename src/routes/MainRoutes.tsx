@@ -49,10 +49,28 @@ const MainRoutes = {
           ]
         }, 
         {
-          path: 'hr',
+          path: 'application',
           children: [
             {
               path: 'user-management',
+              children: [
+                {
+                  path: 'list',
+                  element: <UserList />
+                },
+                {
+                  path: 'profile',
+                  element: <UserProfile />
+                }
+              ]
+            }
+          ]
+        },
+        {
+          path: 'hr',
+          children: [
+            {
+              path: 'employee-management',
               children: [
                 {
                   path: 'list',

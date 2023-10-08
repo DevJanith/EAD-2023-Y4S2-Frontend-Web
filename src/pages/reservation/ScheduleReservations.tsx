@@ -48,6 +48,7 @@ import { openSnackbar } from 'store/reducers/snackbar';
 import trimFc from 'utils/trimFc';
 import { useFormik } from 'formik';
 import { Slider } from '@mui/material';
+import useAuth from 'hooks/useAuth';
 // Define a type for the data
 type Reservation = {
   id: string;
@@ -143,7 +144,7 @@ const ScheduleReservations = () => {
   const [data, setData] = useState([]);
   // const [selectedItem, setSelectedItem] = useState<any>({});
   const [selectedSchedule, setSelectedSchedule] = useState<any>({});
-
+  const { user } = useAuth();
   const params = useParams();
 
   const striped = true;
@@ -343,7 +344,8 @@ const ScheduleReservations = () => {
       let amount = seatCount * selectedSchedule.ticketPrice;
       let data = {
         id: selectedItem.id,
-        userId: sessionStorage.getItem('userId') ? sessionStorage.getItem('userId') : 'string',
+        // @ts-ignore
+        userId: user.id,
         displayName: values.displayName,
         createdAt: moment(),
         reservedCount: seatCount,

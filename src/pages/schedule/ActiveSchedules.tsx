@@ -24,6 +24,7 @@ import IconButton from 'components/@extended/IconButton';
 import { useFormik } from 'formik';
 import { TextField } from '@mui/material';
 import trimFc from 'utils/trimFc';
+import useAuth from 'hooks/useAuth';
 
 // Define a type for the data
 type Reservation = {
@@ -119,7 +120,7 @@ function ReactTable({ columns, data, striped }: { columns: Column[]; data: Sched
 const ActiveSchedules = () => {
   const [data, setData] = useState([]);
   const [selectedItem, setSelectedItem] = useState<any>({});
-
+  const { user } = useAuth();
   const striped = true;
   const columns = useMemo(
     () => [
@@ -198,8 +199,6 @@ const ActiveSchedules = () => {
   );
 
   useEffect(() => {
-    console.log(data);
-
     getScheduleData();
   }, []);
 
@@ -339,7 +338,8 @@ const ActiveSchedules = () => {
 
       let amount = seatCount * selectedItem.ticketPrice;
       let data = {
-        userId: sessionStorage.getItem('userId') ? sessionStorage.getItem('userId') : 'string',
+        // @ts-ignore
+        userId: user.id,
         displayName: values.displayName,
         createdAt: moment(),
         reservedCount: seatCount,

@@ -10,7 +10,7 @@ export type User = {
     nic?: string;
     userType?: number;
     status?: number;
-    isActive?: true;
+    isActive?: boolean;
     password?: string;
     createdOn?: Date;
     updatedOn?: Date;
@@ -28,7 +28,7 @@ export type Users = {
     nic?: string;
     userType?: number;
     status?: number;
-    isActive?: true;
+    isActive?: boolean;
     password?: string;
     createdOn?: Date;
     updatedOn?: Date;
@@ -59,6 +59,6 @@ export interface queryParamsProps {
     page: number
     direction: "asc" | "desc"
     status?: 0 | 1 | 2 | 3
-    userType?: 0 | 1 | 2 | 3
+    userTypes?: string
     isActive?: boolean
 } 

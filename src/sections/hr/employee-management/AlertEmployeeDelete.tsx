@@ -15,12 +15,12 @@ interface Props {
   title: string;
   open: boolean;
   handleClose: (status: boolean) => void;
-  deleteId?: string;
+  deleteId?: string | undefined;
 }
 
-// ==============================|| User - DELETE ||============================== //
+// ==============================|| Employee - DELETE ||============================== //
 
-export default function AlertUserDelete({ title, open, handleClose, deleteId }: Props) {
+export default function AlertEmployeeDelete({ title, open, handleClose, deleteId }: Props) {
 
   return (
     <Dialog
@@ -49,7 +49,7 @@ export default function AlertUserDelete({ title, open, handleClose, deleteId }: 
             </Button>
             <Button fullWidth color="error" variant="contained" onClick={() => {
               //DELETE API call
-              dispatch(deleteUser(deleteId!)) 
+              dispatch(deleteUser(deleteId!))
               handleClose(true)
             }} autoFocus>
               Delete

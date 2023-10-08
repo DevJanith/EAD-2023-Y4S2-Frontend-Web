@@ -26,6 +26,10 @@ const Dashboard = Loadable(lazy(() => import('pages/home/dashboard')));
 const UserList = Loadable(lazy(() => import('pages/application/user-management/list/list')))
 const UserProfile = Loadable(lazy(() => import('pages/application/user-management/profile/profile')))
 
+// render - hr page
+const EmployeeList = Loadable(lazy(() => import('pages/hr/employee-management/list/list')))
+const EmployeeProfile = Loadable(lazy(() => import('pages/hr/employee-management/profile/profile')))
+
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
@@ -74,11 +78,11 @@ const MainRoutes = {
               children: [
                 {
                   path: 'list',
-                  element: <UserList />
+                  element: <EmployeeList />
                 },
                 {
                   path: 'profile',
-                  element: <UserProfile />
+                  element: <EmployeeProfile />
                 }
               ]
             }

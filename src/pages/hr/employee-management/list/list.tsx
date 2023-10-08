@@ -39,8 +39,8 @@ import Dot from 'components/@extended/Dot';
 import salutations from 'data/salutations';
 import statuses from 'data/statuses';
 import userTypes from 'data/userTypes';
-import AddEditUser from 'sections/application/user-management/AddEditUser';
-import AlertUserDelete from 'sections/application/user-management/AlertUserDelete';
+import AddEditEmployee from 'sections/hr/employee-management/AddEditEmployee';
+import AlertEmployeeDelete from 'sections/hr/employee-management/AlertEmployeeDelete';
 import { useDispatch, useSelector } from 'store';
 import { openSnackbar } from 'store/reducers/snackbar';
 import { fetchUsers, toInitialState } from 'store/reducers/user';
@@ -88,7 +88,7 @@ function ReactTable({ columns, data, handleAddEdit }: ReactTableProps) {
                 <Stack direction="row" alignItems="center" spacing={1}>
                     <CSVExport data={rows.map((d: Row) => d.original)} filename={'filtering-table.csv'} />
                     <Button variant="contained" startIcon={<PlusOutlined />} onClick={handleAddEdit}>
-                        Add New User
+                        Add New Employee
                     </Button>
                 </Stack>
             </Stack>
@@ -209,7 +209,7 @@ const List = () => {
                     }
                 },
                 {
-                    Header: 'User Name',
+                    Header: 'Employee Name',
                     accessor: 'firstName',
                     Cell: ({ row }: { row: Row }) => {
                         //@ts-ignore
@@ -362,7 +362,7 @@ const List = () => {
                                             onClick={(e: MouseEvent<HTMLButtonElement>) => {
                                                 e.stopPropagation();
                                                 handleAddEdit()
-                                                setUser(({
+                                                setEmployee(({
                                                     id: data.id,
                                                     salutation: data.salutation,
                                                     firstName: data.firstName,
@@ -384,7 +384,7 @@ const List = () => {
                                             color="error"
                                             onClick={(e: MouseEvent<HTMLButtonElement>) => {
                                                 e.stopPropagation();
-                                                setUserId(data.id)
+                                                setEmployeeId(data.id)
                                                 setOpenAlert(true)
                                             }}
                                         >
@@ -402,16 +402,16 @@ const List = () => {
 
     //dialog model 
     const [addEdit, setAddEdit] = useState<boolean>(false);
-    const [user, setUser] = useState<userProps>();
+    const [employee, setEmployee] = useState<userProps>();
 
     const handleAddEdit = () => {
         setAddEdit(!addEdit);
-        if (user && !addEdit) setUser(undefined);
+        if (employee && !addEdit) setEmployee(undefined);
     };
 
     //alert model
     const [openAlert, setOpenAlert] = useState(false);
-    const [userId, setUserId] = useState<string | undefined>()
+    const [employeeId, setEmployeeId] = useState<string | undefined>()
 
     const handleAlertClose = () => {
         setOpenAlert(!openAlert);
@@ -426,7 +426,7 @@ const List = () => {
             page: 1,
             perPage: 1000,
             direction: "desc",
-            userTypes: "2,3"
+            userTypes: "0,1"
         };
         dispatch(fetchUsers(queryParams));
     }, [dispatch, success]);
@@ -492,10 +492,10 @@ const List = () => {
                     sx={{ '& .MuiDialog-paper': { p: 0 }, transition: 'transform 225ms' }}
                     aria-describedby="alert-dialog-slide-description"
                 >
-                    <AddEditUser user={user} onCancel={handleAddEdit} />
+                    <AddEditEmployee employee={employee} onCancel={handleAddEdit} />
                 </Dialog>
                 {/* alert model */}
-                {!user && <AlertUserDelete title={""} open={openAlert} handleClose={handleAlertClose} deleteId={userId} />}
+                {!employee && <AlertEmployeeDelete title={""} open={openAlert} handleClose={handleAlertClose} deleteId={employeeId} />}
             </MainCard>
         </>
     );

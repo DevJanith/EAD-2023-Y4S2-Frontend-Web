@@ -200,7 +200,7 @@ export function updateUser(updatedUser: User) {
  * @param userId 
  * @returns 
  */
-export function deleteUser(userId: number) {
+export function deleteUser(userId: string) {
     return async () => {
         dispatch(slice.actions.startLoading());
 

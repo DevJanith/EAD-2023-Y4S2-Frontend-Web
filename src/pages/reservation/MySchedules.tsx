@@ -25,6 +25,7 @@ import { useFormik } from 'formik';
 import { TextField } from '@mui/material';
 import trimFc from 'utils/trimFc';
 import { useNavigate } from 'react-router';
+import useAuth from 'hooks/useAuth';
 
 // Define a type for the data
 type Reservation = {
@@ -124,6 +125,7 @@ const MySchedules = () => {
   const [openDelete, setOpenDelete] = useState(false);
   const navigate = useNavigate();
   const striped = true;
+  const { user } = useAuth();
   const columns = useMemo(
     () => [
       {
@@ -209,11 +211,8 @@ const MySchedules = () => {
 
   const getScheduleData = () => {
     axios
-      .get(
-        `https://localhost:7051/api/Reservation/getSchedulesByUserId/${
-          sessionStorage.getItem('userId') ? sessionStorage.getItem('userId') : 'string'
-        }`
-      )
+      // @ts-ignore
+      .get(`https://localhost:7051/api/Reservation/getSchedulesByUserId/${user.id}`)
       .then((response) => {
         if (response.status === 200) {
           setData(response.data);
@@ -344,7 +343,8 @@ const MySchedules = () => {
 
       let amount = seatCount * selectedItem.ticketPrice;
       let data = {
-        userId: sessionStorage.getItem('userId') ? sessionStorage.getItem('userId') : 'string',
+        // @ts-ignore
+        userId: user.id,
         displayName: values.displayName,
         createdAt: moment(),
         reservedCount: seatCount,

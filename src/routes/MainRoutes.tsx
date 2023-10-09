@@ -11,9 +11,9 @@ import ActiveSchedules from 'pages/schedule/ActiveSchedules';
 import CreateSchedule from 'pages/schedule/CreateSchedule';
 import EditSchedule from 'pages/schedule/EditSchedule';
 import IncomingSchedules from 'pages/schedule/IncomingSchedules';
+import TravelAgentBooking from 'pages/schedule/TravelAgentBooking';
 import Schedule from 'pages/schedule/schedule';
 import AuthGuard from 'utils/route-guard/AuthGuard';
-import TravelAgentBooking from 'pages/schedule/TravelAgentBooking';
 
 // pages routing
 const AuthLogin = Loadable(lazy(() => import('pages/auth/login')));
@@ -34,6 +34,7 @@ const Dashboard = Loadable(lazy(() => import('pages/home/dashboard')));
 // render - application page
 const UserList = Loadable(lazy(() => import('pages/application/user-management/list/list')));
 const UserProfile = Loadable(lazy(() => import('pages/application/user-management/profile/profile')));
+const TrainList = Loadable(lazy(() => import('pages/application/train-management/list/list')));
 
 // render - hr page
 const EmployeeList = Loadable(lazy(() => import('pages/hr/employee-management/list/list')));
@@ -128,6 +129,15 @@ const MainRoutes = {
                   path: 'profile',
                   element: <UserProfile />
                 }
+              ]
+            },
+            {
+              path: 'train-management',
+              children: [
+                {
+                  path: 'list',
+                  element: <TrainList />
+                }, 
               ]
             },
             {

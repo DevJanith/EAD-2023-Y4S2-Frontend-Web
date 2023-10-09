@@ -13,6 +13,7 @@ import EditSchedule from 'pages/schedule/EditSchedule';
 import IncomingSchedules from 'pages/schedule/IncomingSchedules';
 import Schedule from 'pages/schedule/schedule';
 import AuthGuard from 'utils/route-guard/AuthGuard';
+import TravelAgentBooking from 'pages/schedule/TravelAgentBooking';
 
 // pages routing
 const AuthLogin = Loadable(lazy(() => import('pages/auth/login')));
@@ -31,12 +32,12 @@ const MaintenanceComingSoon = Loadable(lazy(() => import('pages/maintenance/comi
 const Dashboard = Loadable(lazy(() => import('pages/home/dashboard')));
 
 // render - application page
-const UserList = Loadable(lazy(() => import('pages/application/user-management/list/list')))
-const UserProfile = Loadable(lazy(() => import('pages/application/user-management/profile/profile')))
+const UserList = Loadable(lazy(() => import('pages/application/user-management/list/list')));
+const UserProfile = Loadable(lazy(() => import('pages/application/user-management/profile/profile')));
 
 // render - hr page
-const EmployeeList = Loadable(lazy(() => import('pages/hr/employee-management/list/list')))
-const EmployeeProfile = Loadable(lazy(() => import('pages/hr/employee-management/profile/profile')))
+const EmployeeList = Loadable(lazy(() => import('pages/hr/employee-management/list/list')));
+const EmployeeProfile = Loadable(lazy(() => import('pages/hr/employee-management/profile/profile')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -77,12 +78,12 @@ const MainRoutes = {
             // {
             //   path: 'incoming-schedules',
             //   element: <IncomingSchedules />
-            // }, 
+            // },
             // {
             //   path: 'schedule-create',
             //   element: <CreateSchedule />
             // },
-          
+
             // {
             //   path: 'dashboard',
             //   element: <Dashboard />
@@ -110,7 +111,7 @@ const MainRoutes = {
             // {
             //   path: 'my-schedules',
             //   element: <MySchedules />
-            // }, 
+            // },
           ]
         },
         {
@@ -143,12 +144,16 @@ const MainRoutes = {
                 {
                   path: 'schedule-create',
                   element: <CreateSchedule />
-                },
+                }
               ]
             },
             {
               path: 'reservation-management',
               children: [
+                {
+                  path: 'travel-agent-booking',
+                  element: <TravelAgentBooking />
+                },
                 {
                   path: 'active-schedules',
                   element: <ActiveSchedules />
@@ -156,9 +161,9 @@ const MainRoutes = {
                 {
                   path: 'my-schedules',
                   element: <MySchedules />
-                },
+                }
               ]
-            },
+            }
           ]
         },
         {
@@ -178,7 +183,7 @@ const MainRoutes = {
               ]
             }
           ]
-        },
+        }
       ]
     },
     {

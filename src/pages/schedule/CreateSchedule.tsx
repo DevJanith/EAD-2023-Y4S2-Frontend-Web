@@ -22,12 +22,12 @@ import { Grid, Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 
-import { Cell, Column, HeaderGroup, useFilters, usePagination, useTable } from 'react-table';
+import { Cell, Column, HeaderGroup, Row, useFilters, usePagination, useTable } from 'react-table';
 import { openSnackbar } from 'store/reducers/snackbar';
 // project import
 
 import ScrollX from 'components/ScrollX';
-import { CSVExport, TablePagination } from 'components/third-party/ReactTable';
+import { CSVExport, EmptyTable, TablePagination } from 'components/third-party/ReactTable';
 
 import { CheckCircleOutlined, CloseCircleOutlined, CloseOutlined, PlusCircleOutlined, WarningFilled } from '@ant-design/icons';
 import { dispatch } from 'store';
@@ -43,22 +43,16 @@ import IconButton from 'components/@extended/IconButton';
 import { CardContent } from '@mui/material';
 import Avatar from 'components/@extended/Avatar';
 import { axiosServices } from 'utils/axios';
+import { DefaultColumnFilter, GlobalFilter, renderFilterTypes } from 'utils/react-table';
+import { useGlobalFilter } from 'react-table';
 
 // Define a type for the data
 
-type Train = {
-  id: string;
-  trainName: string;
-  trainNumber: string;
-  allocatedDriver: string;
-  allocatedGuard: string;
-  status: string;
-  publishStatus: string;
-  totalSeats: number;
-};
-
 // ==============================|| Dashboard ||============================== //
-function ReactTable({ columns, data, striped }: { columns: Column[]; data: Train[]; striped?: boolean }) {
+function ReactTable({ columns, data, handleAddEdit }: { columns: Column[]; data: any[]; striped?: boolean; handleAddEdit?: () => void }) {
+  const filterTypes = useMemo(() => renderFilterTypes, []);
+  const defaultColumn = useMemo(() => ({ Filter: DefaultColumnFilter }), []);
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -67,43 +61,59 @@ function ReactTable({ columns, data, striped }: { columns: Column[]; data: Train
     prepareRow,
     gotoPage,
     setPageSize,
-    state: { pageIndex, pageSize }
+    state: { pageIndex, pageSize },
+    preGlobalFilteredRows,
+    setGlobalFilter,
+    globalFilter,
+    page
   } = useTable(
     {
       columns,
       data,
+      defaultColumn,
+      filterTypes,
       initialState: { pageIndex: 0, pageSize: 10 }
     },
+    useGlobalFilter,
     useFilters,
     usePagination
   );
 
   return (
     <>
+      <Stack direction="row" spacing={2} justifyContent="space-between" sx={{ padding: 2 }}>
+        <GlobalFilter preGlobalFilteredRows={preGlobalFilteredRows} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <CSVExport data={rows.map((d: Row) => d.original)} filename={'trains.csv'} />
+        </Stack>
+      </Stack>
       <Table {...getTableProps()}>
-        <TableHead>
-          {headerGroups.map((headerGroup: HeaderGroup<{}>) => (
+        <TableHead sx={{ borderTopWidth: 2 }}>
+          {headerGroups.map((headerGroup) => (
             <TableRow {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column: HeaderGroup<{}>) => (
+              {headerGroup.headers.map((column: HeaderGroup) => (
                 <TableCell {...column.getHeaderProps([{ className: column.className }])}>{column.render('Header')}</TableCell>
               ))}
             </TableRow>
           ))}
         </TableHead>
-        <TableBody {...getTableBodyProps()} {...(striped && { className: 'striped' })}>
-          {rows.map((row, i) => {
-            prepareRow(row);
-            return (
-              <TableRow {...row.getRowProps()}>
-                {row.cells.map((cell: Cell<{}>) => (
-                  <TableCell {...cell.getCellProps([{ className: cell.column.className }])}>{cell.render('Cell')}</TableCell>
-                ))}
-              </TableRow>
-            );
-          })}
-
+        <TableBody {...getTableBodyProps()}>
+          {page.length > 0 ? (
+            page.map((row, i) => {
+              prepareRow(row);
+              return (
+                <TableRow {...row.getRowProps()}>
+                  {row.cells.map((cell: Cell) => (
+                    <TableCell {...cell.getCellProps([{ className: cell.column.className }])}>{cell.render('Cell')}</TableCell>
+                  ))}
+                </TableRow>
+              );
+            })
+          ) : (
+            <EmptyTable msg="No Data" colSpan={12} />
+          )}
           <TableRow>
-            <TableCell sx={{ p: 2 }} colSpan={7}>
+            <TableCell sx={{ p: 2 }} colSpan={12}>
               <TablePagination gotoPage={gotoPage} rows={rows} setPageSize={setPageSize} pageIndex={pageIndex} pageSize={pageSize} />
             </TableCell>
           </TableRow>
@@ -116,7 +126,7 @@ const CreateSchedule = () => {
   const [data, setData] = useState([]);
   const [selectedTrain, setSelectedTrain] = useState<any>(null);
   const navigate = useNavigate();
-  const striped = true;
+
   const columns = useMemo(
     () => [
       {
@@ -373,14 +383,9 @@ const CreateSchedule = () => {
           <Divider />
 
           <DialogContent>
-            <MainCard
-              content={false}
-              title="Upate Train Schedule"
-              secondary={<CSVExport data={data.slice(0, 10)} filename={striped ? 'striped-table.csv' : 'basic-table.csv'} />}
-            >
-              <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2}></Stack>
+            <MainCard content={false}>
               <ScrollX>
-                <ReactTable columns={columns} data={data} striped={striped} />
+                <ReactTable columns={columns} data={data} />
               </ScrollX>
             </MainCard>
           </DialogContent>

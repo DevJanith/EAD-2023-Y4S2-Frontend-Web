@@ -14,7 +14,8 @@ import {
   FieldTimeOutlined,
   AppstoreAddOutlined,
   CheckCircleOutlined,
-  UserSwitchOutlined
+  UserSwitchOutlined,
+  IdcardOutlined
 } from '@ant-design/icons';
 
 // type
@@ -33,7 +34,8 @@ const icons = {
   FieldTimeOutlined,
   AppstoreAddOutlined,
   CheckCircleOutlined,
-  UserSwitchOutlined
+  UserSwitchOutlined,
+  IdcardOutlined
 };
 
 // ==============================|| MENU ITEMS - SUPPORT ||============================== //
@@ -130,11 +132,18 @@ const application: NavItemType = {
         //   url: '/application/reservation-management/list',
         // },
         {
+          id: 'travel-agent-booking',
+          title: <FormattedMessage id="Travel Agent Booking" />,
+          type: 'item',
+          url: '/application/reservation-management/travel-agent-booking',
+          icon: icons.CheckCircleOutlined
+        },
+        {
           id: 'active schedules',
-          title: <FormattedMessage id="Active Schedules" />,
+          title: <FormattedMessage id="Book Tickets" />,
           type: 'item',
           url: '/application/reservation-management/active-schedules',
-          icon: icons.CheckCircleOutlined
+          icon: icons.IdcardOutlined
         },
         {
           id: 'my schedules',

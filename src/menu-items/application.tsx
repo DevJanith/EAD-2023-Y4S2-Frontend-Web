@@ -10,7 +10,12 @@ import {
   UserOutlined,
   UsergroupAddOutlined,
   MessageOutlined,
-  DashboardOutlined
+  DashboardOutlined,
+  FieldTimeOutlined,
+  AppstoreAddOutlined,
+  CheckCircleOutlined,
+  UserSwitchOutlined,
+  IdcardOutlined
 } from '@ant-design/icons';
 
 // type
@@ -25,7 +30,12 @@ const icons = {
   ScheduleOutlined,
   UsergroupAddOutlined,
   MessageOutlined,
-  DashboardOutlined
+  DashboardOutlined,
+  FieldTimeOutlined,
+  AppstoreAddOutlined,
+  CheckCircleOutlined,
+  UserSwitchOutlined,
+  IdcardOutlined
 };
 
 // ==============================|| MENU ITEMS - SUPPORT ||============================== //
@@ -46,14 +56,14 @@ const application: NavItemType = {
           title: <FormattedMessage id="user-list" />,
           type: 'item',
           icon: icons.OrderedListOutlined,
-          url: '/application/user-management/list',
+          url: '/application/user-management/list'
         },
         {
           id: 'user-requests',
           title: <FormattedMessage id="user-requests" />,
           type: 'item',
           icon: icons.MessageOutlined,
-          url: '/application/user-management/requests',
+          url: '/application/user-management/requests'
         }
       ]
     },
@@ -68,8 +78,8 @@ const application: NavItemType = {
           title: <FormattedMessage id="train-list" />,
           type: 'item',
           icon: icons.OrderedListOutlined,
-          url: '/application/train-management/list',
-        },
+          url: '/application/train-management/list'
+        }
       ]
     },
     {
@@ -89,28 +99,28 @@ const application: NavItemType = {
           id: 'schedule',
           title: <FormattedMessage id="All Train Schedules" />,
           type: 'item',
-          url: '/application/schedule-management/schedule',  
-          icon: icons.DashboardOutlined
-        }, 
+          url: '/application/schedule-management/schedule',
+          icon: icons.OrderedListOutlined
+        },
         {
           id: 'incoming schedules',
           title: <FormattedMessage id="Incoming Schedules" />,
           type: 'item',
           url: '/application/schedule-management/incoming-schedules',
-          icon: icons.DashboardOutlined
+          icon: icons.FieldTimeOutlined
         },
         {
           id: 'schedule create',
           title: <FormattedMessage id="Create Train Schedule" />,
           type: 'item',
           url: '/application/schedule-management/schedule-create',
-          icon: icons.DashboardOutlined
-        },
+          icon: icons.AppstoreAddOutlined
+        }
       ]
     },
     {
       id: 'reservation-management',
-      title: <FormattedMessage id="reservation-management" />,
+      title: <FormattedMessage id="ticket-booking" />,
       type: 'collapse',
       icon: icons.ControlOutlined,
       children: [
@@ -122,21 +132,28 @@ const application: NavItemType = {
         //   url: '/application/reservation-management/list',
         // },
         {
+          id: 'travel-agent-booking',
+          title: <FormattedMessage id="Travel Agent Booking" />,
+          type: 'item',
+          url: '/application/reservation-management/travel-agent-booking',
+          icon: icons.CheckCircleOutlined
+        },
+        {
           id: 'active schedules',
-          title: <FormattedMessage id="Active Schedules" />,
+          title: <FormattedMessage id="Book Tickets" />,
           type: 'item',
           url: '/application/reservation-management/active-schedules',
-          icon: icons.DashboardOutlined
+          icon: icons.IdcardOutlined
         },
         {
           id: 'my schedules',
           title: <FormattedMessage id="My Schedules" />,
           type: 'item',
           url: '/application/reservation-management/my-schedules',
-          icon: icons.DashboardOutlined
+          icon: icons.UserSwitchOutlined
         }
       ]
-    },
+    }
   ]
 };
 

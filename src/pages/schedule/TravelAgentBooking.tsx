@@ -15,7 +15,7 @@ import ScrollX from 'components/ScrollX';
 import { CSVExport, EmptyTable, TablePagination } from 'components/third-party/ReactTable';
 import moment from 'moment';
 
-import { CloseOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined, CloseOutlined, PlusCircleOutlined, WarningFilled } from '@ant-design/icons';
 import { dispatch } from 'store';
 
 import { Slider } from '@mui/material';
@@ -23,11 +23,14 @@ import IconButton from 'components/@extended/IconButton';
 import { useFormik } from 'formik';
 import { TextField } from '@mui/material';
 import trimFc from 'utils/trimFc';
-import useAuth from 'hooks/useAuth';
 import { useGlobalFilter } from 'react-table';
 import { Row } from 'react-table';
 import { DefaultColumnFilter, GlobalFilter, renderFilterTypes } from 'utils/react-table';
 import { axiosServices } from 'utils/axios';
+import { Alert } from '@mui/material';
+import { AlertTitle } from '@mui/material';
+import Avatar from 'components/@extended/Avatar';
+import { CardContent } from '@mui/material';
 
 // Define a type for the data
 type Reservation = {
@@ -148,11 +151,104 @@ function ReactTable({
     </>
   );
 }
-const ActiveSchedules = () => {
+
+function ReactTableUser({
+  columns,
+  data,
+  handleAddEdit
+}: {
+  columns: Column[];
+  data: any[];
+  striped?: boolean;
+  handleAddEdit?: () => void;
+}) {
+  const filterTypes = useMemo(() => renderFilterTypes, []);
+  const defaultColumn = useMemo(() => ({ Filter: DefaultColumnFilter }), []);
+
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+    gotoPage,
+    setPageSize,
+    state: { pageIndex, pageSize },
+    preGlobalFilteredRows,
+    setGlobalFilter,
+    globalFilter,
+    page
+  } = useTable(
+    {
+      columns,
+      data,
+      defaultColumn,
+      filterTypes,
+      initialState: { pageIndex: 0, pageSize: 10 }
+    },
+    useGlobalFilter,
+    useFilters,
+    usePagination
+  );
+
+  return (
+    <>
+      <Stack direction="row" spacing={2} justifyContent="space-between" sx={{ padding: 2 }}>
+        <GlobalFilter preGlobalFilteredRows={preGlobalFilteredRows} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <CSVExport data={rows.map((d: Row) => d.original)} filename={'active-schedules.csv'} />
+        </Stack>
+      </Stack>
+      <Table {...getTableProps()}>
+        <TableHead sx={{ borderTopWidth: 2 }}>
+          {headerGroups.map((headerGroup) => (
+            <TableRow {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map((column: HeaderGroup) => (
+                <TableCell {...column.getHeaderProps([{ className: column.className }])}>{column.render('Header')}</TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableHead>
+        <TableBody {...getTableBodyProps()}>
+          {page.length > 0 ? (
+            page.map((row, i) => {
+              prepareRow(row);
+              return (
+                <TableRow {...row.getRowProps()}>
+                  {row.cells.map((cell: Cell) => (
+                    <TableCell {...cell.getCellProps([{ className: cell.column.className }])}>{cell.render('Cell')}</TableCell>
+                  ))}
+                </TableRow>
+              );
+            })
+          ) : (
+            <EmptyTable msg="No Data" colSpan={12} />
+          )}
+          <TableRow>
+            <TableCell sx={{ p: 2 }} colSpan={12}>
+              <TablePagination gotoPage={gotoPage} rows={rows} setPageSize={setPageSize} pageIndex={pageIndex} pageSize={pageSize} />
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+    </>
+  );
+}
+
+const TravelAgentBooking = () => {
   const [data, setData] = useState([]);
   const [selectedItem, setSelectedItem] = useState<any>({});
-  const { user } = useAuth();
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [userList, setUserList] = useState<any>(null);
+  const [openUserDialog, setOpenUserDialog] = useState<any>(false);
 
+  const handleClickOpenUserDialog = () => {
+    setOpenUserDialog(true);
+  };
+
+  const handleCloseUserDialog = () => {
+    setOpenUserDialog(false);
+  };
   const columns = useMemo(
     () => [
       {
@@ -229,8 +325,62 @@ const ActiveSchedules = () => {
     []
   );
 
+  const userColumns = useMemo(
+    () => [
+      {
+        Header: 'NIC',
+        accessor: 'nic',
+        className: 'cell-left'
+      },
+      {
+        Header: 'First Name',
+        accessor: 'firstName'
+      },
+      {
+        Header: 'Last Name',
+        accessor: 'lastName'
+      },
+      {
+        Header: 'Contact Number',
+        accessor: 'contactNumber'
+      },
+      {
+        Header: 'Email',
+        accessor: 'email'
+      },
+
+      {
+        Header: 'Actions',
+        accessor: 'progress',
+        className: 'cell-center',
+        Cell: ({ row }: { row: any }) => (
+          <>
+            <Button
+              variant="outlined"
+              color="primary"
+              startIcon={<PlusCircleOutlined />}
+              onClick={() => {
+                handleCloseUserDialog();
+                setSelectedUser(row.original);
+              }}
+            >
+              Select User
+            </Button>
+          </>
+        )
+      }
+      //   {
+      //     Header: 'Profile Progress',
+      //     accessor: 'progress',
+      //     Cell: ({ value }: { value: number }) => <LinearWithLabel value={value} sx={{ minWidth: 75 }} />
+      //   }
+    ],
+    []
+  );
+
   useEffect(() => {
     getScheduleData();
+    getUserList();
   }, []);
 
   const getScheduleData = () => {
@@ -239,6 +389,45 @@ const ActiveSchedules = () => {
       .then((response) => {
         if (response.status === 200) {
           setData(response.data);
+        } else {
+          dispatch(
+            openSnackbar({
+              open: true,
+              message: 'Something went wrong!',
+              variant: 'alert',
+              alert: {
+                color: 'error'
+              },
+              anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
+              close: false
+            })
+          );
+          console.log('ERROR  >>> ');
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: 'Something went wrong!',
+            variant: 'alert',
+            alert: {
+              color: 'error'
+            },
+            anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
+            close: false
+          })
+        );
+      });
+  };
+  const getUserList = () => {
+    axiosServices
+      .get('/api/User?page=1&perPage=100&direction=1&status=0&userTypes=3&isActive=true')
+      .then((response) => {
+        if (response.status === 200) {
+          setUserList(response.data.users);
+          console.log(userList);
         } else {
           dispatch(
             openSnackbar({
@@ -366,44 +555,74 @@ const ActiveSchedules = () => {
     validationSchema,
     onSubmit: async (values, { setErrors, setStatus, setSubmitting }) => {
       // submit location
+      if (selectedUser == null) {
+        dispatch(
+          openSnackbar({
+            open: true,
+            message: 'Please select a User.',
+            variant: 'alert',
+            alert: {
+              color: 'warning'
+            },
+            anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
+            close: false
+          })
+        );
+      } else {
+        let amount = seatCount * selectedItem.ticketPrice;
+        let data = {
+          // @ts-ignore
+          userId: selectedUser.id,
+          displayName: values.displayName,
+          createdAt: moment(),
+          reservedCount: seatCount,
+          reservationDate: selectedItem.startDatetime,
+          reservationStatus: 'RESERVED',
+          amount: amount,
+          scheduleId: selectedItem.id
+        };
+        axiosServices
+          .post(`/api/Reservation/createForSchedule/${selectedItem.id}`, data)
+          .then((response) => {
+            if (response.status == 201) {
+              dispatch(
+                openSnackbar({
+                  open: true,
+                  message: 'Reservation created succesfully.',
+                  variant: 'alert',
+                  alert: {
+                    color: 'success'
+                  },
+                  anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
+                  close: false
+                })
+              );
 
-      let amount = seatCount * selectedItem.ticketPrice;
-      let data = {
-        // @ts-ignore
-        userId: user.id,
-        displayName: values.displayName,
-        createdAt: moment(),
-        reservedCount: seatCount,
-        reservationDate: selectedItem.startDatetime,
-        reservationStatus: 'RESERVED',
-        amount: amount,
-        scheduleId: selectedItem.id
-      };
-      axiosServices
-        .post(`/api/Reservation/createForSchedule/${selectedItem.id}`, data)
-        .then((response) => {
-          if (response.status == 201) {
-            dispatch(
-              openSnackbar({
-                open: true,
-                message: 'Reservation created succesfully.',
-                variant: 'alert',
-                alert: {
-                  color: 'success'
-                },
-                anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
-                close: false
-              })
-            );
+              handleClose();
 
+              getScheduleData();
+            } else {
+              dispatch(
+                openSnackbar({
+                  open: true,
+                  message: response.data,
+                  variant: 'alert',
+                  alert: {
+                    color: 'error'
+                  },
+                  anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
+                  close: false
+                })
+              );
+            }
+          })
+          .catch((err) => {
+            console.log(err);
             handleClose();
-
-            getScheduleData();
-          } else {
             dispatch(
               openSnackbar({
                 open: true,
-                message: response.data,
+                message: err,
                 variant: 'alert',
                 alert: {
                   color: 'error'
@@ -412,24 +631,8 @@ const ActiveSchedules = () => {
                 close: false
               })
             );
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-          console.log(err.response);
-          dispatch(
-            openSnackbar({
-              open: true,
-              message: err.response.data,
-              variant: 'alert',
-              alert: {
-                color: 'error'
-              },
-              anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
-              close: false
-            })
-          );
-        });
+          });
+      }
     }
   });
 
@@ -461,6 +664,40 @@ const ActiveSchedules = () => {
               Yes
             </Button>
           </DialogActions>
+        </Box>
+      </Dialog>
+
+      {/* Users Dialog */}
+      <Dialog
+        open={openUserDialog}
+        onClose={handleCloseUserDialog}
+        fullWidth={true}
+        PaperProps={{
+          style: {
+            minWidth: '90%'
+          }
+        }}
+      >
+        <Box sx={{ p: 1, py: 1.5 }}>
+          <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
+            <DialogTitle>
+              <Typography variant="h4">Select Train For Schedule</Typography>
+            </DialogTitle>
+
+            <IconButton shape="rounded" color="error" onClick={handleCloseUserDialog}>
+              <CloseOutlined />
+            </IconButton>
+          </Stack>
+
+          <Divider />
+
+          <DialogContent>
+            <MainCard content={false}>
+              <ScrollX>
+                <ReactTableUser columns={userColumns} data={userList} />
+              </ScrollX>
+            </MainCard>
+          </DialogContent>
         </Box>
       </Dialog>
 
@@ -549,6 +786,71 @@ const ActiveSchedules = () => {
             </Stack>
 
             <Divider sx={{ my: 2 }} />
+            <Grid item xs={12} sm={12}>
+              <Grid item>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  color="primary"
+                  startIcon={<PlusCircleOutlined />}
+                  onClick={() => {
+                    handleClickOpenUserDialog();
+                  }}
+                  sx={{
+                    mb: 1
+                  }}
+                >
+                  Add User
+                </Button>
+              </Grid>
+              <Stack spacing={1}>
+                {selectedUser != null ? (
+                  <div>
+                    <MainCard content={false}>
+                      <CardContent>
+                        <Grid container spacing={3} alignItems="center">
+                          <Grid item xs={12}>
+                            <Grid container spacing={2}>
+                              <Grid item>
+                                {/*  @ts-ignore */}
+
+                                <Avatar color="primary">
+                                  <CheckCircleOutlined />
+                                </Avatar>
+                              </Grid>
+                              <Grid item xs zeroMinWidth>
+                                {/*  @ts-ignore */}
+                                <Typography align="left" variant="subheading" color="secondary">
+                                  {/*  @ts-ignore */}
+                                  Name : {selectedUser.firstName + ' ' + selectedUser.lastName}
+                                </Typography>
+                              </Grid>
+                              <Grid item xs zeroMinWidth>
+                                <Typography align="left" variant="subtitle1">
+                                  {/*  @ts-ignore */}
+                                  NIC : {selectedUser.nic}
+                                </Typography>
+                              </Grid>
+                            </Grid>
+
+                            <Divider
+                              sx={{
+                                mt: 2
+                              }}
+                            />
+                          </Grid>
+                        </Grid>
+                      </CardContent>
+                    </MainCard>
+                  </div>
+                ) : (
+                  <Alert color="warning" variant="border" icon={<WarningFilled />}>
+                    <AlertTitle>No User Selected.</AlertTitle>
+                    <Typography variant="h6">Please select a user.</Typography>
+                  </Alert>
+                )}
+              </Stack>
+            </Grid>
 
             <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={1.5} sx={{ mt: 2 }}>
               <Typography variant="h5">Number of Seats : </Typography>
@@ -624,4 +926,4 @@ const ActiveSchedules = () => {
   );
 };
 
-export default ActiveSchedules;
+export default TravelAgentBooking;

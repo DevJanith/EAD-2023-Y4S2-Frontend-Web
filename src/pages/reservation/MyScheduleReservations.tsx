@@ -9,7 +9,6 @@ import { Grid, Typography } from '@mui/material';
 
 import MainCard from 'components/MainCard';
 import { CSVExport } from 'components/third-party/ReactTable';
-import axios from 'axios';
 import moment from 'moment';
 
 import { ClockCircleOutlined, CheckCircleOutlined, CloseCircleOutlined, EditOutlined, CloseOutlined } from '@ant-design/icons';
@@ -33,6 +32,7 @@ import { openSnackbar } from 'store/reducers/snackbar';
 import trimFc from 'utils/trimFc';
 import { Slider } from '@mui/material';
 import useAuth from 'hooks/useAuth';
+import { axiosServices } from 'utils/axios';
 // Define a type for the data
 
 // ==============================|| Dashboard ||============================== //
@@ -80,8 +80,8 @@ const MyScheduleReservations = () => {
     return daysUntilReservation >= 5;
   };
   const getScheduleData = () => {
-    axios
-      .get(`https://localhost:7051/api/Schedule/${params.id}`)
+    axiosServices
+      .get(`/api/Schedule/${params.id}`)
       .then((response) => {
         if (response.status == 200) {
           setSelectedSchedule(response.data);
@@ -104,7 +104,7 @@ const MyScheduleReservations = () => {
               alert: {
                 color: 'error'
               },
-              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+              anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
               close: false
             })
           );
@@ -120,7 +120,7 @@ const MyScheduleReservations = () => {
             alert: {
               color: 'error'
             },
-            anchorOrigin: { vertical: 'top', horizontal: 'center' },
+            anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
             close: false
           })
         );
@@ -157,8 +157,8 @@ const MyScheduleReservations = () => {
         amount: amount,
         scheduleId: selectedItem.id
       };
-      axios
-        .put(`https://localhost:7051/api/Reservation/updateReservationForSchedule/${params.id}/${selectedItem.id}`, data)
+      axiosServices
+        .put(`/api/Reservation/updateReservationForSchedule/${params.id}/${selectedItem.id}`, data)
         .then((response) => {
           if (response.status == 200) {
             dispatch(
@@ -169,7 +169,7 @@ const MyScheduleReservations = () => {
                 alert: {
                   color: 'success'
                 },
-                anchorOrigin: { vertical: 'top', horizontal: 'center' },
+                anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
                 close: false
               })
             );
@@ -185,7 +185,7 @@ const MyScheduleReservations = () => {
                 alert: {
                   color: 'error'
                 },
-                anchorOrigin: { vertical: 'top', horizontal: 'center' },
+                anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
                 close: false
               })
             );
@@ -202,7 +202,7 @@ const MyScheduleReservations = () => {
               alert: {
                 color: 'error'
               },
-              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+              anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
               close: false
             })
           );
@@ -223,8 +223,8 @@ const MyScheduleReservations = () => {
       amount: selectedItem.amount,
       scheduleId: selectedItem.scheduleId
     };
-    axios
-      .put(`https://localhost:7051/api/Reservation/updateReservationForSchedule/${params.id}/${selectedItem.id}`, data)
+    axiosServices
+      .put(`/api/Reservation/updateReservationForSchedule/${params.id}/${selectedItem.id}`, data)
       .then((response) => {
         if (response.status == 200) {
           dispatch(
@@ -235,7 +235,7 @@ const MyScheduleReservations = () => {
               alert: {
                 color: 'success'
               },
-              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+              anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
               close: false
             })
           );
@@ -251,7 +251,7 @@ const MyScheduleReservations = () => {
               alert: {
                 color: 'error'
               },
-              anchorOrigin: { vertical: 'top', horizontal: 'center' },
+              anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
               close: false
             })
           );
@@ -268,7 +268,7 @@ const MyScheduleReservations = () => {
             alert: {
               color: 'error'
             },
-            anchorOrigin: { vertical: 'top', horizontal: 'center' },
+            anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
             close: false
           })
         );

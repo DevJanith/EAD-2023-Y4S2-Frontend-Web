@@ -168,6 +168,7 @@ const AddEditEmployee = ({ employee, onCancel }: Props) => {
         navigator.clipboard.writeText(generatedPassword);
         // You may want to provide user feedback upon successful copy.
     };
+    
     return (
         <>
             <FormikProvider value={formik}>

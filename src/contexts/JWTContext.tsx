@@ -175,20 +175,20 @@ export const JWTProvider = ({ children }: { children: React.ReactElement }) => {
       const users = [
         ...JSON.parse(localUsers!),
         {
-          id: user._id,
+          id: user.id,
           email: user.email,
-          password: user.password,
-          name: `${user.firstName} ${user.lastName}`
+          name: `${salutations.find(salutation => salutation.id == user.salutation)?.description || "-"} ${user.firstName} ${user.lastName}`,
+          role: userTypes.find(userType => userType.id == user.userType)?.description || "-"
         }
       ];
       window.localStorage.setItem('users', JSON.stringify(users));
     } else {
       const users = [
         {
-          id: user._id,
+          id: user.id,
           email: user.email,
-          password: user.password,
-          name: `${user.firstName} ${user.lastName}`
+          name: `${salutations.find(salutation => salutation.id == user.salutation)?.description || "-"} ${user.firstName} ${user.lastName}`,
+          role: userTypes.find(userType => userType.id == user.userType)?.description || "-"
         }
       ];
       window.localStorage.setItem('users', JSON.stringify(users));

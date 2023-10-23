@@ -446,6 +446,7 @@ const CreateSchedule = () => {
                   error={formik.touched.startDatetime && Boolean(formik.errors.startDatetime)}
                   helperText={formik.touched.startDatetime && formik.errors.startDatetime}
                   fullWidth
+                  inputProps={{ min: new Date().toISOString().slice(0, 16) }}
                 />
               </Stack>
             </Grid>
@@ -468,6 +469,7 @@ const CreateSchedule = () => {
                   error={formik.touched.endDatetime && Boolean(formik.errors.endDatetime)}
                   helperText={formik.touched.endDatetime && formik.errors.endDatetime}
                   fullWidth
+                  inputProps={{ min: new Date().toISOString().slice(0, 16) }}
                 />
               </Stack>
             </Grid>

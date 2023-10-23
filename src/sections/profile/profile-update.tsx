@@ -81,7 +81,7 @@ const ProfileUpdate = ({ onCancel }: Props) => {
         contactNumber: Yup.string()
             .matches(/^(?:\+94|0)[1-9][0-9]{8}$/, "Invalid Sri Lankan phone number")
             .required("Contact Number is required"),
-        email: Yup.string().email("Invalid email address").required("Email is required"), 
+        email: Yup.string().email("Invalid email address").required("Email is required"),
     });
 
     const formik = useFormik({
@@ -89,6 +89,8 @@ const ProfileUpdate = ({ onCancel }: Props) => {
         validationSchema: ProfileSchema,
         enableReinitialize: true,
         onSubmit: (values, { setSubmitting, resetForm }) => {
+            console.log(values);
+
             try {
                 if (currentUser) {
                     // PUT API

@@ -14,6 +14,7 @@ import productReducer from './product';
 import snackbar from './snackbar';
 import train from './train';
 import user from './user';
+import userRequest from './user-request';
 
 // ==============================|| COMBINE REDUCERS ||============================== //
 
@@ -34,7 +35,8 @@ const reducers = combineReducers({
   kanban,
   invoice,
   user,
-  train
+  train,
+  userRequest
 });
 
 export default reducers;

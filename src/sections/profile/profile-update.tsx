@@ -170,203 +170,209 @@ const ProfileUpdate = ({ onCancel }: Props) => {
 
     return (
         <>
-            <DialogTitle>Profile Update</DialogTitle>
-            <Divider />
-            <DialogContent sx={{ p: 2.5 }}>
-                <Grid container spacing={3}>
-                    <Grid item xs={12} sm={5} md={5} xl={5}>
-                        <Grid container spacing={3}>
-                            <Grid item xs={12}>
-                                <MainCard style={{ height: "363px" }}>
-                                    <Grid container spacing={3} >
+            <FormikProvider value={formik}>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
+                        <DialogTitle>Profile Update</DialogTitle>
+                        <Divider />
+                        <DialogContent sx={{ p: 2.5 }}>
+                            <Grid container spacing={3}>
+                                <Grid item xs={12} sm={5} md={5} xl={5}>
+                                    <Grid container spacing={3}>
                                         <Grid item xs={12}>
-                                            <Stack direction="row" justifyContent="flex-end">
-                                                <Chip label={currentUser?.isActive ? "ACTIVE" : "IN-ACTIVE"} size="small" color={currentUser?.isActive ? "success" : "error"} />
-                                            </Stack>
-                                            <Stack spacing={2.5} alignItems="center">
-                                                <Avatar alt="Avatar 1" size="xl" src={avatar} />
-                                                <Stack spacing={0.5} alignItems="center">
-                                                    <Typography variant="h5">{salutations.find(option => option.id == currentUser?.salutation)?.description || "-"}{currentUser?.firstName} {currentUser?.lastName}</Typography>
-                                                    <Typography color="secondary">{userTypes.find(option => option.id == currentUser?.userType)?.description || "-"}</Typography>
-                                                </Stack>
-                                            </Stack>
-                                        </Grid>
-                                        <Grid item xs={12}>
-                                            <Divider />
-                                        </Grid>
-                                        <Grid item xs={12}>
-                                            <List component="nav" sx={{ p: 0, '& .MuiListItemIcon-root': { minWidth: 32, color: theme.palette.grey[500] } }}>
-                                                <ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick(0, '/apps/profiles/user/personal')}>
-                                                    <ListItemIcon>
-                                                        <UserOutlined />
-                                                    </ListItemIcon>
-                                                    <ListItemText primary="Personal Details" />
-                                                </ListItemButton>
-                                                <ListItemButton selected={selectedIndex === 1} onClick={() => handleListItemClick(1, '/apps/profiles/user/password')}>
-                                                    <ListItemIcon>
-                                                        <LockOutlined />
-                                                    </ListItemIcon>
-                                                    <ListItemText primary="Password Details" />
-                                                </ListItemButton>
-                                            </List>
-                                        </Grid>
-                                    </Grid>
-                                </MainCard>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={12} sm={7} md={7} xl={7}>
-                        <Grid container spacing={3}>
-                            <Grid item xs={12}>
-                                <MainCard title="Personal Details Update">
-                                    <FormikProvider value={formik}>
-                                        <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                            <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-                                                <Grid container spacing={3}>
+                                            <MainCard style={{ height: "363px" }}>
+                                                <Grid container spacing={3} >
                                                     <Grid item xs={12}>
-                                                        <Divider sx={{ my: 0.5 }} />
-                                                        <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
-                                                            <Stack spacing={0.5}>
-                                                                <Typography variant="subtitle1">Active / In Active</Typography>
-                                                                <Typography variant="caption" color="textSecondary">
-                                                                    description here ....
-                                                                </Typography>
+                                                        <Stack direction="row" justifyContent="flex-end">
+                                                            <Chip label={currentUser?.isActive ? "ACTIVE" : "IN-ACTIVE"} size="small" color={currentUser?.isActive ? "success" : "error"} />
+                                                        </Stack>
+                                                        <Stack spacing={2.5} alignItems="center">
+                                                            <Avatar alt="Avatar 1" size="xl" src={avatar} />
+                                                            <Stack spacing={0.5} alignItems="center">
+                                                                <Typography variant="h5">{salutations.find(option => option.id == currentUser?.salutation)?.description || "-"}{currentUser?.firstName} {currentUser?.lastName}</Typography>
+                                                                <Typography color="secondary">{userTypes.find(option => option.id == currentUser?.userType)?.description || "-"}</Typography>
                                                             </Stack>
-                                                            <FormControlLabel
-                                                                control={
-                                                                    <Switch
-                                                                        {...getFieldProps('isActive')}
-                                                                        checked={formik.values.isActive}
-                                                                        sx={{ mt: 0 }}
-                                                                    // onError={formik.touched.isActive && Boolean(formik.errors.isActive)}
-                                                                    />
-                                                                }
-                                                                label=""
-                                                                labelPlacement="start"
-                                                            />
-                                                        </Stack>
-                                                        <Divider sx={{ my: 0.5 }} />
-                                                    </Grid>
-                                                    <Grid item xs={12} sm={12}>
-                                                        <Stack spacing={1.25}>
-                                                            <InputLabel htmlFor="nic">NIC</InputLabel>
-                                                            <TextField
-                                                                fullWidth
-                                                                id="nic"
-                                                                placeholder="Enter NIC"
-                                                                {...getFieldProps('nic')}
-                                                                error={Boolean(touched.nic && errors.nic)}
-                                                                helperText={touched.nic && errors.nic}
-                                                                disabled
-                                                            />
                                                         </Stack>
                                                     </Grid>
-                                                    <Grid item xs={12} sm={4}>
-                                                        <Stack spacing={1.25}>
-                                                            <InputLabel htmlFor="salutation">Salutation</InputLabel>
-                                                            <Autocomplete
-                                                                fullWidth
-                                                                id="salutation"
-                                                                value={salutations.find((option) => option.id === formik.values.salutation) || null}
-                                                                onChange={(event: any, newValue: SalutationsType | null) => {
-                                                                    formik.setFieldValue('salutation', newValue?.id);
-                                                                }}
-                                                                options={salutations}
-                                                                getOptionLabel={(item) => `${item.description}`}
-                                                                renderInput={(params) => (
-                                                                    <TextField
-                                                                        {...params}
-                                                                        placeholder="Select Salutation"
-                                                                        sx={{ '& .MuiAutocomplete-input.Mui-disabled': { WebkitTextFillColor: theme.palette.text.primary } }}
-                                                                    />
-                                                                )}
-                                                            />
-                                                            {formik.touched.salutation && formik.errors.salutation && (
-                                                                <FormHelperText error id="helper-text-salutation">
-                                                                    {formik.errors.salutation}
-                                                                </FormHelperText>
-                                                            )}
-                                                        </Stack>
+                                                    <Grid item xs={12}>
+                                                        <Divider />
                                                     </Grid>
-                                                    <Grid item xs={12} sm={8}>
-                                                        <Stack spacing={1.25}>
-                                                            <InputLabel htmlFor="firstName">First Name</InputLabel>
-                                                            <TextField
-                                                                fullWidth
-                                                                id="firstName"
-                                                                placeholder="Enter First Name"
-                                                                {...getFieldProps('firstName')}
-                                                                error={Boolean(touched.firstName && errors.firstName)}
-                                                                helperText={touched.firstName && errors.firstName}
-                                                            />
-                                                        </Stack>
-                                                    </Grid>
-                                                    <Grid item xs={12} sm={12}>
-                                                        <Stack spacing={1.25}>
-                                                            <InputLabel htmlFor="lastName">Last Name</InputLabel>
-                                                            <TextField
-                                                                fullWidth
-                                                                id="lastName"
-                                                                placeholder="Enter Last Name"
-                                                                {...getFieldProps('lastName')}
-                                                                error={Boolean(touched.lastName && errors.lastName)}
-                                                                helperText={touched.lastName && errors.lastName}
-                                                            />
-                                                        </Stack>
-                                                    </Grid>
-                                                    <Grid item xs={12} sm={12}>
-                                                        <Stack spacing={1.25}>
-                                                            <InputLabel htmlFor="email">Email</InputLabel>
-                                                            <TextField
-                                                                fullWidth
-                                                                type="email"
-                                                                id="email"
-                                                                placeholder="Enter Email"
-                                                                {...getFieldProps('email')}
-                                                                error={Boolean(touched.email && errors.email)}
-                                                                helperText={touched.email && errors.email}
-                                                            />
-                                                        </Stack>
-                                                    </Grid>
-                                                    <Grid item xs={12} sm={12}>
-                                                        <Stack spacing={1.25}>
-                                                            <InputLabel htmlFor="contactNumber">Contact Number</InputLabel>
-                                                            <TextField
-                                                                fullWidth
-                                                                id="contactNumber"
-                                                                placeholder="Enter Contact Number"
-                                                                {...getFieldProps('contactNumber')}
-                                                                error={Boolean(touched.contactNumber && errors.contactNumber)}
-                                                                helperText={touched.contactNumber && errors.contactNumber}
-                                                            />
-                                                        </Stack>
+                                                    <Grid item xs={12}>
+                                                        <List component="nav" sx={{ p: 0, '& .MuiListItemIcon-root': { minWidth: 32, color: theme.palette.grey[500] } }}>
+                                                            <ListItemButton selected={selectedIndex === 0} onClick={() => handleListItemClick(0, '/apps/profiles/user/personal')}>
+                                                                <ListItemIcon>
+                                                                    <UserOutlined />
+                                                                </ListItemIcon>
+                                                                <ListItemText primary="Personal Details" />
+                                                            </ListItemButton>
+                                                            <ListItemButton selected={selectedIndex === 1} onClick={() => handleListItemClick(1, '/apps/profiles/user/password')}>
+                                                                <ListItemIcon>
+                                                                    <LockOutlined />
+                                                                </ListItemIcon>
+                                                                <ListItemText primary="Password Details" />
+                                                            </ListItemButton>
+                                                        </List>
                                                     </Grid>
                                                 </Grid>
-                                            </Form>
-                                        </LocalizationProvider>
-                                    </FormikProvider>
-                                </MainCard>
+                                            </MainCard>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                                <Grid item xs={12} sm={7} md={7} xl={7}>
+                                    <Grid container spacing={3}>
+                                        <Grid item xs={12}>
+                                            <MainCard title="Personal Details Update">
+                                                <FormikProvider value={formik}>
+                                                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                                        <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
+                                                            <Grid container spacing={3}>
+                                                                <Grid item xs={12}>
+                                                                    <Divider sx={{ my: 0.5 }} />
+                                                                    <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+                                                                        <Stack spacing={0.5}>
+                                                                            <Typography variant="subtitle1">Active / In Active</Typography>
+                                                                            <Typography variant="caption" color="textSecondary">
+                                                                                description here ....
+                                                                            </Typography>
+                                                                        </Stack>
+                                                                        <FormControlLabel
+                                                                            control={
+                                                                                <Switch
+                                                                                    {...getFieldProps('isActive')}
+                                                                                    checked={formik.values.isActive}
+                                                                                    sx={{ mt: 0 }}
+                                                                                // onError={formik.touched.isActive && Boolean(formik.errors.isActive)}
+                                                                                />
+                                                                            }
+                                                                            label=""
+                                                                            labelPlacement="start"
+                                                                        />
+                                                                    </Stack>
+                                                                    <Divider sx={{ my: 0.5 }} />
+                                                                </Grid>
+                                                                <Grid item xs={12} sm={12}>
+                                                                    <Stack spacing={1.25}>
+                                                                        <InputLabel htmlFor="nic">NIC</InputLabel>
+                                                                        <TextField
+                                                                            fullWidth
+                                                                            id="nic"
+                                                                            placeholder="Enter NIC"
+                                                                            {...getFieldProps('nic')}
+                                                                            error={Boolean(touched.nic && errors.nic)}
+                                                                            helperText={touched.nic && errors.nic}
+                                                                            disabled
+                                                                        />
+                                                                    </Stack>
+                                                                </Grid>
+                                                                <Grid item xs={12} sm={4}>
+                                                                    <Stack spacing={1.25}>
+                                                                        <InputLabel htmlFor="salutation">Salutation</InputLabel>
+                                                                        <Autocomplete
+                                                                            fullWidth
+                                                                            id="salutation"
+                                                                            value={salutations.find((option) => option.id === formik.values.salutation) || null}
+                                                                            onChange={(event: any, newValue: SalutationsType | null) => {
+                                                                                formik.setFieldValue('salutation', newValue?.id);
+                                                                            }}
+                                                                            options={salutations}
+                                                                            getOptionLabel={(item) => `${item.description}`}
+                                                                            renderInput={(params) => (
+                                                                                <TextField
+                                                                                    {...params}
+                                                                                    placeholder="Select Salutation"
+                                                                                    sx={{ '& .MuiAutocomplete-input.Mui-disabled': { WebkitTextFillColor: theme.palette.text.primary } }}
+                                                                                />
+                                                                            )}
+                                                                        />
+                                                                        {formik.touched.salutation && formik.errors.salutation && (
+                                                                            <FormHelperText error id="helper-text-salutation">
+                                                                                {formik.errors.salutation}
+                                                                            </FormHelperText>
+                                                                        )}
+                                                                    </Stack>
+                                                                </Grid>
+                                                                <Grid item xs={12} sm={8}>
+                                                                    <Stack spacing={1.25}>
+                                                                        <InputLabel htmlFor="firstName">First Name</InputLabel>
+                                                                        <TextField
+                                                                            fullWidth
+                                                                            id="firstName"
+                                                                            placeholder="Enter First Name"
+                                                                            {...getFieldProps('firstName')}
+                                                                            error={Boolean(touched.firstName && errors.firstName)}
+                                                                            helperText={touched.firstName && errors.firstName}
+                                                                        />
+                                                                    </Stack>
+                                                                </Grid>
+                                                                <Grid item xs={12} sm={12}>
+                                                                    <Stack spacing={1.25}>
+                                                                        <InputLabel htmlFor="lastName">Last Name</InputLabel>
+                                                                        <TextField
+                                                                            fullWidth
+                                                                            id="lastName"
+                                                                            placeholder="Enter Last Name"
+                                                                            {...getFieldProps('lastName')}
+                                                                            error={Boolean(touched.lastName && errors.lastName)}
+                                                                            helperText={touched.lastName && errors.lastName}
+                                                                        />
+                                                                    </Stack>
+                                                                </Grid>
+                                                                <Grid item xs={12} sm={12}>
+                                                                    <Stack spacing={1.25}>
+                                                                        <InputLabel htmlFor="email">Email</InputLabel>
+                                                                        <TextField
+                                                                            fullWidth
+                                                                            type="email"
+                                                                            id="email"
+                                                                            placeholder="Enter Email"
+                                                                            {...getFieldProps('email')}
+                                                                            error={Boolean(touched.email && errors.email)}
+                                                                            helperText={touched.email && errors.email}
+                                                                        />
+                                                                    </Stack>
+                                                                </Grid>
+                                                                <Grid item xs={12} sm={12}>
+                                                                    <Stack spacing={1.25}>
+                                                                        <InputLabel htmlFor="contactNumber">Contact Number</InputLabel>
+                                                                        <TextField
+                                                                            fullWidth
+                                                                            id="contactNumber"
+                                                                            placeholder="Enter Contact Number"
+                                                                            {...getFieldProps('contactNumber')}
+                                                                            error={Boolean(touched.contactNumber && errors.contactNumber)}
+                                                                            helperText={touched.contactNumber && errors.contactNumber}
+                                                                        />
+                                                                    </Stack>
+                                                                </Grid>
+                                                            </Grid>
+                                                        </Form>
+                                                    </LocalizationProvider>
+                                                </FormikProvider>
+                                            </MainCard>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                    </Grid>
-                </Grid>
-            </DialogContent>
-            <Divider />
-            <DialogActions sx={{ p: 2.5 }}>
-                <Grid container justifyContent="space-between" alignItems="center">
-                    <Grid item />
-                    <Grid item>
-                        <Stack direction="row" spacing={2} alignItems="center">
-                            <Button color="error" onClick={onCancel}>
-                                Cancel
-                            </Button>
-                            <Button type="submit" variant="contained" disabled={isSubmitting}>
-                                Save
-                            </Button>
-                        </Stack>
-                    </Grid>
-                </Grid>
-            </DialogActions>
+                        </DialogContent>
+                        <Divider />
+                        <DialogActions sx={{ p: 2.5 }}>
+                            <Grid container justifyContent="space-between" alignItems="center">
+                                <Grid item />
+                                <Grid item>
+                                    <Stack direction="row" spacing={2} alignItems="center">
+                                        <Button color="error" onClick={onCancel}>
+                                            Cancel
+                                        </Button>
+                                        <Button type="submit" variant="contained" disabled={isSubmitting}>
+                                            Save
+                                        </Button>
+                                    </Stack>
+                                </Grid>
+                            </Grid>
+                        </DialogActions>
+                    </Form>
+                </LocalizationProvider>
+            </FormikProvider>
         </>
     );
 };

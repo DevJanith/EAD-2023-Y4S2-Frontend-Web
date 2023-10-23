@@ -2,7 +2,7 @@
 
 export type UserRequest = {
     id?: string;
-    email?: string;
+    nic?: string;
     remark?: string;
     createdOn?: Date;
     updatedOn?: Date;
@@ -12,7 +12,7 @@ export type UserRequest = {
 
 export type UserRequests = {
     id?: string;
-    email?: string;
+    nic?: string;
     remark?: string;
     createdOn?: Date;
     updatedOn?: Date;

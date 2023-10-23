@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 
 // material-ui
@@ -29,6 +29,10 @@ import useScriptRef from 'hooks/useScriptRef';
 
 // assets
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
+import AlertUserRequest from './AlertUserRequest';
+import { useDispatch, useSelector } from 'store';
+import { openSnackbar } from 'store/reducers/snackbar';
+import { toInitialState } from 'store/reducers/user-request';
 
 // regex
 const nicRegex = /^[0-9]{9}(V|X)?|[0-9]{12}$/i;
@@ -50,6 +54,55 @@ const AuthLogin = ({ isDemo = false }: { isDemo?: boolean }) => {
     event.preventDefault();
   };
 
+  //alert model
+  const [openAlert, setOpenAlert] = useState(false);
+  const [userRequestNIC, setUserRequestNIC] = useState<string | undefined>()
+
+  const handleAlertClose = () => {
+    setOpenAlert(!openAlert);
+  };
+
+  const dispatch = useDispatch();
+  const { error, success } = useSelector(state => state.userRequest);
+
+
+  //  handel error 
+  useEffect(() => {
+    if (error != null) {       
+      dispatch(
+        openSnackbar({
+          open: true,
+          //@ts-ignore
+          message: error ? error.message : "Something went wrong ...",
+          variant: 'alert',
+          alert: {
+            color: 'error'
+          },
+          close: true
+        })
+      );
+      dispatch(toInitialState())
+    }
+  }, [error])
+
+  //  handel success
+  useEffect(() => {
+    if (success != null) {
+      dispatch(
+        openSnackbar({
+          open: true,
+          message: success,
+          variant: 'alert',
+          alert: {
+            color: 'success'
+          },
+          close: true
+        })
+      );
+      dispatch(toInitialState())
+    }
+  }, [success])
+
   return (
     <>
       <Formik
@@ -60,8 +113,8 @@ const AuthLogin = ({ isDemo = false }: { isDemo?: boolean }) => {
         }}
         validationSchema={Yup.object().shape({
           nic: Yup.string()
-          .matches(nicRegex, 'NIC must be 9 or 12 digits and may end with V or X (case insensitive)')
-          .required('NIC is required'),
+            .matches(nicRegex, 'NIC must be 9 or 12 digits and may end with V or X (case insensitive)')
+            .required('NIC is required'),
           password: Yup.string().max(255).required('Password is required')
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
@@ -73,6 +126,10 @@ const AuthLogin = ({ isDemo = false }: { isDemo?: boolean }) => {
             }
           } catch (err: any) {
             console.error(err);
+            if (err.message == "User Is In-Active") {
+              setOpenAlert(true)
+              setUserRequestNIC(values.nic)
+            }
             if (scriptedRef.current) {
               setStatus({ success: false });
               setErrors({ submit: err.message });
@@ -175,6 +232,8 @@ const AuthLogin = ({ isDemo = false }: { isDemo?: boolean }) => {
           </form>
         )}
       </Formik>
+      {/* alert model */}
+      {userRequestNIC && <AlertUserRequest title={""} open={openAlert} handleClose={handleAlertClose} nic={userRequestNIC} />}
     </>
   );
 };

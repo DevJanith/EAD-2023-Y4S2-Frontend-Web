@@ -80,7 +80,7 @@ export function toInitialState() {
  * @param newUserRequest 
  * @returns 
  */
-export function addUser(newUserRequest: UserRequest) {
+export function addUserRequest(newUserRequest: UserRequest) {
     return async () => {
         dispatch(slice.actions.startLoading());
 

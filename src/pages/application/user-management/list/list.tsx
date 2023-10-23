@@ -495,7 +495,7 @@ const List = () => {
                     <AddEditUser user={user} onCancel={handleAddEdit} />
                 </Dialog>
                 {/* alert model */}
-                {!user && <AlertUserDelete title={""} open={openAlert} handleClose={handleAlertClose} deleteId={userId} />}
+                {userId && <AlertUserDelete title={""} open={openAlert} handleClose={handleAlertClose} deleteId={userId} />}
             </MainCard>
         </>
     );

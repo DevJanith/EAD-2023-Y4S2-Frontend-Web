@@ -10,9 +10,9 @@ import { APP_DEFAULT_PATH } from 'config';
 // assets
 import error500 from 'assets/images/maintenance/un-authorized.gif';
 
-// ==============================|| ERROR 500 - MAIN ||============================== //
+// ==============================|| Access Denied - MAIN ||============================== //
 
-function Error500() {
+function AccessDenied() {
   const theme = useTheme();
   const matchDownSM = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -42,4 +42,4 @@ function Error500() {
   );
 }
 
-export default Error500;
+export default AccessDenied;

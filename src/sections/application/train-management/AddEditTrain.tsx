@@ -2,18 +2,20 @@ import { useState } from 'react';
 
 // material-ui
 import {
+    Autocomplete,
     Button,
     DialogActions,
     DialogContent,
     DialogTitle,
     Divider,
+    FormHelperText,
     Grid,
     InputLabel,
     Stack,
     TextField,
     Tooltip
 } from '@mui/material';
-// import { useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -29,6 +31,8 @@ import AlertTrainDelete from './AlertTrainDelete';
 
 // assets
 import { DeleteFilled } from '@ant-design/icons';
+import trainPublish, { TrainPublishType } from 'data/train-publish';
+import trainStatuses, { TrainStatusType } from 'data/train-statuses';
 import { dispatch } from 'store';
 import { addTrain, updateTrain } from 'store/reducers/train';
 import { Train } from 'types/train';
@@ -64,7 +68,7 @@ export interface Props {
 }
 
 const AddEditTrain = ({ train, onCancel }: Props) => {
-    // const theme = useTheme(); 
+    const theme = useTheme();
 
     const isCreating = !train;
 
@@ -189,30 +193,58 @@ const AddEditTrain = ({ train, onCancel }: Props) => {
                                                 />
                                             </Stack>
                                         </Grid>
-                                        <Grid item xs={12} sm={6}>
+                                        <Grid item xs={12} sm={6}> 
                                             <Stack spacing={1.25}>
-                                                <InputLabel htmlFor="status">Train status</InputLabel>
-                                                <TextField
+                                                <InputLabel htmlFor="status">Train Status</InputLabel>
+                                                <Autocomplete
                                                     fullWidth
                                                     id="status"
-                                                    placeholder="Enter Train Status"
-                                                    {...getFieldProps('status')}
-                                                    error={Boolean(touched.status && errors.status)}
-                                                    helperText={touched.status && errors.status}
+                                                    value={trainStatuses.find((option) => option.description === formik.values.status) || null}
+                                                    onChange={(event: any, newValue: TrainStatusType | null) => {
+                                                        formik.setFieldValue('status', newValue?.description);
+                                                    }}
+                                                    options={trainStatuses}
+                                                    getOptionLabel={(item) => `${item.description}`}
+                                                    renderInput={(params) => (
+                                                        <TextField
+                                                            {...params}
+                                                            placeholder="Select Train Status"
+                                                            sx={{ '& .MuiAutocomplete-input.Mui-disabled': { WebkitTextFillColor: theme.palette.text.primary } }}
+                                                        />
+                                                    )}
                                                 />
+                                                {formik.touched.status && formik.errors.status && (
+                                                    <FormHelperText error id="helper-text-status">
+                                                        {formik.errors.status}
+                                                    </FormHelperText>
+                                                )}
                                             </Stack>
                                         </Grid>
                                         <Grid item xs={12} sm={6}>
                                             <Stack spacing={1.25}>
                                                 <InputLabel htmlFor="publishStatus">Train Publish Status</InputLabel>
-                                                <TextField
+                                                <Autocomplete
                                                     fullWidth
                                                     id="publishStatus"
-                                                    placeholder="Enter Train Publish Status"
-                                                    {...getFieldProps('publishStatus')}
-                                                    error={Boolean(touched.publishStatus && errors.publishStatus)}
-                                                    helperText={touched.publishStatus && errors.publishStatus}
+                                                    value={trainPublish.find((option) => option.description === formik.values.publishStatus) || null}
+                                                    onChange={(event: any, newValue: TrainPublishType | null) => {
+                                                        formik.setFieldValue('publishStatus', newValue?.description);
+                                                    }}
+                                                    options={trainPublish}
+                                                    getOptionLabel={(item) => `${item.description}`}
+                                                    renderInput={(params) => (
+                                                        <TextField
+                                                            {...params}
+                                                            placeholder="Select Train Publish Status"
+                                                            sx={{ '& .MuiAutocomplete-input.Mui-disabled': { WebkitTextFillColor: theme.palette.text.primary } }}
+                                                        />
+                                                    )}
                                                 />
+                                                {formik.touched.publishStatus && formik.errors.publishStatus && (
+                                                    <FormHelperText error id="helper-text-publishStatus">
+                                                        {formik.errors.publishStatus}
+                                                    </FormHelperText>
+                                                )}
                                             </Stack>
                                         </Grid>
                                         <Grid item xs={12} sm={6}>

@@ -51,11 +51,11 @@ export default function AlertUserRequestApprove({ title, open, handleClose, user
             <Button fullWidth color="info" variant="contained" onClick={() => {
               //PUT API call
               dispatch(updateUserRequest({
+                ...userRequest,
                 id: userRequest?.id,
                 nic: userRequest?.nic,
                 remark: userRequest?.remark,
-                status: "APPROVED",
-                ...userRequest
+                status: "APPROVED"
               }))
               handleClose(true)
             }} autoFocus>

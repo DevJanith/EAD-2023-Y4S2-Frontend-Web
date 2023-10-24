@@ -112,10 +112,10 @@ function ReactTable({ columns, data }: ReactTableProps) {
                             );
                         })
                     ) : (
-                        <EmptyTable msg="No Data" colSpan={4} />
+                        <EmptyTable msg="No Data" colSpan={5} />
                     )}
                     <TableRow>
-                        <TableCell sx={{ p: 2 }} colSpan={4}>
+                        <TableCell sx={{ p: 2 }} colSpan={5}>
                             <TablePagination gotoPage={gotoPage} rows={rows} setPageSize={setPageSize} pageIndex={pageIndex} pageSize={pageSize} />
                         </TableCell>
                     </TableRow>

@@ -51,15 +51,15 @@ export default function AlertUserRequestReject({ title, open, handleClose, userR
             <Button fullWidth color="warning" variant="contained" onClick={() => {
               //PUT API call
               dispatch(updateUserRequest({
+                ...userRequest,
                 id: userRequest?.id,
                 nic: userRequest?.nic,
                 remark: userRequest?.remark,
                 status: "REJECTED",
-                ...userRequest
               }))
               handleClose(true)
             }} autoFocus>
-              Approve
+              Reject
             </Button>
           </Stack>
         </Stack>

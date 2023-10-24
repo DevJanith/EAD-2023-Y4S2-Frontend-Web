@@ -35,7 +35,7 @@ import { openSnackbar } from 'store/reducers/snackbar';
 import { toInitialState } from 'store/reducers/user-request';
 
 // regex
-const nicRegex = /^[0-9]{9}(V|X)?|[0-9]{12}$/i;
+const nicRegex = /^(\\d{9}[VXvx]|[0-9]{12})$/i;
 
 // ============================|| JWT - LOGIN ||============================ //
 

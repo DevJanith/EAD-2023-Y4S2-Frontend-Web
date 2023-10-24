@@ -183,6 +183,11 @@ const ProfileUpdate = ({ onCancel }: Props) => {
         }
     }, [success])
 
+    useEffect(() => {
+        console.log(user?.role);
+    }, [user])
+
+
     if (isLoading) {
         return <div>Loading...</div>;
     }
@@ -203,7 +208,7 @@ const ProfileUpdate = ({ onCancel }: Props) => {
                                                 <Grid container spacing={3} >
                                                     <Grid item xs={12}>
                                                         <Stack direction="row" justifyContent="flex-end">
-                                                            <Chip label={currentUser?.isActive ? "ACTIVE" : "IN-ACTIVE"} size="small" color={currentUser?.isActive ? "success" : "error"} disabled={user?.role == "TravelAgent" ? true : false} />
+                                                            <Chip label={currentUser?.isActive ? "ACTIVE" : "IN-ACTIVE"} size="small" color={currentUser?.isActive ? "success" : "error"} />
                                                         </Stack>
                                                         <Stack spacing={2.5} alignItems="center">
                                                             <Avatar alt="Avatar 1" size="xl" src={avatar} />
@@ -260,6 +265,7 @@ const ProfileUpdate = ({ onCancel }: Props) => {
                                                                                     {...getFieldProps('isActive')}
                                                                                     checked={formik.values.isActive}
                                                                                     sx={{ mt: 0 }}
+                                                                                    disabled={user?.role == "TravelAgent" ? true : false}
                                                                                 // onError={formik.touched.isActive && Boolean(formik.errors.isActive)}
                                                                                 />
                                                                             }

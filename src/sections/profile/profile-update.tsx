@@ -32,6 +32,8 @@ import userTypes from "data/userTypes";
 import { updateUser } from 'store/reducers/user';
 import avatar from "../../assets/images/users/vector-2.png";
 import { Switch } from '@mui/material';
+import useAuth from 'hooks/useAuth';
+import { useNavigate } from 'react-router';
 
 // constant
 const getInitialValues = (profile: FormikValues | null) => {
@@ -65,6 +67,22 @@ export interface Props {
 
 const ProfileUpdate = ({ onCancel }: Props) => {
     const theme = useTheme();
+    const navigate = useNavigate();
+
+    const { logout, user } = useAuth();
+
+    const handleLogout = async () => {
+        try {
+            await logout();
+            navigate(`/login`, {
+                state: {
+                    from: ''
+                }
+            });
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
     const dispatch = useDispatch();
     const { currentUser, error, success, isLoading } = useSelector(state => state.user);
@@ -161,6 +179,7 @@ const ProfileUpdate = ({ onCancel }: Props) => {
                 })
             );
             dispatch(toInitialState())
+            handleLogout()
         }
     }, [success])
 
@@ -184,7 +203,7 @@ const ProfileUpdate = ({ onCancel }: Props) => {
                                                 <Grid container spacing={3} >
                                                     <Grid item xs={12}>
                                                         <Stack direction="row" justifyContent="flex-end">
-                                                            <Chip label={currentUser?.isActive ? "ACTIVE" : "IN-ACTIVE"} size="small" color={currentUser?.isActive ? "success" : "error"} />
+                                                            <Chip label={currentUser?.isActive ? "ACTIVE" : "IN-ACTIVE"} size="small" color={currentUser?.isActive ? "success" : "error"} disabled={user?.role == "TravelAgent" ? true : false} />
                                                         </Stack>
                                                         <Stack spacing={2.5} alignItems="center">
                                                             <Avatar alt="Avatar 1" size="xl" src={avatar} />

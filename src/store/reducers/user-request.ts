@@ -53,6 +53,11 @@ const slice = createSlice({
             state.success = null
         },
 
+        // UPDATE USER REQUEST
+        updateUserRequestSuccess(state, action) {
+            state.success = "User Request updated successfully."
+        },
+
         // DELETE USER REQUEST
         deleteUserRequestSuccess(state, action) {
             state.success = "User Request deleted successfully."
@@ -115,6 +120,25 @@ export function fetchUserRequests(queryParams: queryParamsProps) {
     };
 }
 
+/**
+ * UPDATE USER REQUEST
+ * @param updatedUserRequest 
+ * @returns 
+ */
+export function updateUserRequest(updatedUserRequest: UserRequest) {
+    return async () => {
+        dispatch(slice.actions.startLoading());
+
+        try {
+            const response = await axiosServices.put(`/api/UserRequest/${updatedUserRequest.id}`, updatedUserRequest);
+            dispatch(slice.actions.updateUserRequestSuccess(response.data));
+        } catch (error) {
+            dispatch(slice.actions.hasError(error));
+        } finally {
+            dispatch(slice.actions.finishLoading());
+        }
+    };
+}
 
 /**
  * DELETE USER Request

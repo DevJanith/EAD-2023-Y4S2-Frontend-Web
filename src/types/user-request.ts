@@ -4,6 +4,7 @@ export type UserRequest = {
     id?: string;
     nic?: string;
     remark?: string;
+    status?: string;
     createdOn?: Date;
     updatedOn?: Date;
     createdBy?: string;

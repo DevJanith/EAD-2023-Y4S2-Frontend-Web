@@ -32,6 +32,8 @@ import userTypes from "data/userTypes";
 import { updateUser } from 'store/reducers/user';
 import avatar from "../../assets/images/users/vector-2.png";
 import { Switch } from '@mui/material';
+import useAuth from 'hooks/useAuth';
+import { useNavigate } from 'react-router';
 
 // constant
 const getInitialValues = (profile: FormikValues | null) => {
@@ -65,6 +67,22 @@ export interface Props {
 
 const ProfileUpdate = ({ onCancel }: Props) => {
     const theme = useTheme();
+    const navigate = useNavigate();
+
+    const { logout, user } = useAuth();
+
+    const handleLogout = async () => {
+        try {
+            await logout();
+            navigate(`/login`, {
+                state: {
+                    from: ''
+                }
+            });
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
     const dispatch = useDispatch();
     const { currentUser, error, success, isLoading } = useSelector(state => state.user);
@@ -161,8 +179,14 @@ const ProfileUpdate = ({ onCancel }: Props) => {
                 })
             );
             dispatch(toInitialState())
+            handleLogout()
         }
     }, [success])
+
+    useEffect(() => {
+        console.log(user?.role);
+    }, [user])
+
 
     if (isLoading) {
         return <div>Loading...</div>;
@@ -241,6 +265,7 @@ const ProfileUpdate = ({ onCancel }: Props) => {
                                                                                     {...getFieldProps('isActive')}
                                                                                     checked={formik.values.isActive}
                                                                                     sx={{ mt: 0 }}
+                                                                                    disabled={user?.role == "TravelAgent" ? true : false}
                                                                                 // onError={formik.touched.isActive && Boolean(formik.errors.isActive)}
                                                                                 />
                                                                             }

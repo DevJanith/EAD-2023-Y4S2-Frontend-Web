@@ -64,8 +64,6 @@ export const JWTProvider = ({ children }: { children: React.ReactElement }) => {
 
           // const { user } = response.data;
 
-          console.log(response.data);
-
           dispatch({
             type: LOGIN,
             payload: {
@@ -168,7 +166,7 @@ export const JWTProvider = ({ children }: { children: React.ReactElement }) => {
       password,
     });
 
-    const user = response.data.result;
+    const user = response.data;
 
     if (window.localStorage.getItem('users') !== undefined && window.localStorage.getItem('users') !== null) {
       const localUsers = window.localStorage.getItem('users');
@@ -182,7 +180,7 @@ export const JWTProvider = ({ children }: { children: React.ReactElement }) => {
         }
       ];
       window.localStorage.setItem('users', JSON.stringify(users));
-    } else {
+    } else {       
       const users = [
         {
           id: user.id,
